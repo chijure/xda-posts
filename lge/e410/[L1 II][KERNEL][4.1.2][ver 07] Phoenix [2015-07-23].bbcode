@@ -1,0 +1,143 @@
+[IMG]https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-xtp1/v/t1.0-9/11659410_838777136207683_6009287852788067783_n.jpg?oh=4db3c02b9d319a4f9842c93b495594b8&oe=5624A2E0&__gda__=1445797078_98d30e9700ef22bbc8f49faa93d80664[/IMG]
+[CENTER][B][SIZE="7"][COLOR="DeepSkyBlue"]Phoenix[/COLOR] [COLOR="Red"]Kernel[/COLOR][/SIZE][/B]
+Phoenix -Kernel For Optimus L1 II (vee1)
+[B]E410-E411[/B][/CENTER]
+
+
+[QUOTE][COLOR="Red"][B][SIZE="3"]Features[/SIZE][/B][/COLOR]
+[LIST]
+[*] Based on the STOCK Source v10g from LG
+[*] [B]CPU Voltage Control[/B]: use TricksterMod for the moment
+[*] [B]Toolchain[/B]: Built with GCC 4.7 toolchain from SABERMOD
+[*] [B]Linux[/B]: 3.4.13
+[*] [B]CPU OC[/B]: up to 1.4GHz
+[*] [B]GPU OC[/B]: up to 190 Mhz
+[*] [B]Swap[/B]
+[*] [B]F2FS Support[/B]
+[*] [B]zRam Support[/B]: support for zRam memory compression
+[*] [B]KSM[/B]: Kernel Same-page Merging enabled
+[*] [B]Dynamic management of dirty page writeback[/B]
+[*] Undervolt
+[*] [B]Dynamic Fsync[/B]: Faux123's Dynamic File Sync v1.2
+[*] [B]Frontswap[/B]
+[*] [B]Battery Life eXtender (BLX)[/B]
+[*] [B]ARM optimizations [/B]
+[*] [B]Fast Charge[/B]: chad0989 fast_charge driver, allowing to set the amperage of the charger or USB port your device is plugged-in to (default disabled)
+[*] [B]Kernel mode NEON[/B]: NEON-accelerated XOR framework & support for NEON instructions in kernel mode
+[*]Lowered swappiness (60 -> 45)
+[*]Optimized [B]AES[/B] and [B]SHA1[/B] routines for ARM cpu architecture
+[*]Optimized [B]SLUB[/B] memory allocator 
+[*]Optimized [B]ARM RWSEM[/B] (read/write semaphore)
+[*][B]exFAT support[/B]
+[*][B]Fast Random generator (frandom)[/B] support
+[*] [B]Optimizations[/B]: Built with -O2 and many optimization flags
+
+[*] [B]Additional Governors[/B]:
+         - SmartassV2
+
+[*] [B]Additional I/O Schedulers[/B]:
+       - SIO (SImple Ondemand)
+       - SIO PLUS   (SImple Ondemand PLUS)
+       - VR 
+       - Zen
+      - Fiops
+      - Bfq
+[LIST]
+[/LIST]
+[/LIST][/QUOTE]
+
+[B][SIZE="4"]The REQUIREMENTS[/SIZE][/B]
+[LIST]
+[*]A unlocked bootloader
+[*]Custom Recovery CWM/PHILZ/TWRP
+[*]A brain with the ability to read
+[*]The will to recycle your warranty papers
+[/LIST]
+
+[B][SIZE="4"]The INSTRUCTIONS[/SIZE][/B]
+[LIST]
+[*]Copy the zip to your sdcard
+[*]boot into recovery
+[*]flash the zip
+[*]reboot
+[*]enjoy
+[/LIST]
+
+[QUOTE][COLOR="Magenta"][SIZE="3"]SOME INFO OF SOME KERNEL THINGS[/SIZE][/COLOR]
+
+[B][COLOR="Plum"][SIZE="2"][B]SWAP[/B][/SIZE][/COLOR][/B]
+Swap is, in short, virtual RAM. With swap, a small portion of the hard drive is set aside and used like RAM. The computer will attempt to keep as much information as possible in RAM until the RAM is full. At that point, the computer will begin moving inactive blocks of memory (called pages) to the hard disk, freeing up RAM for active processes. If one of the pages on the hard disk needs to be accessed again, it will be moved back into RAM, and a different inactive page in RAM will be moved onto the hard disk ('swapped'). The trade off is disks and SD cards are considerably slower than physical RAM, so when something needs to be swapped, there is a noticeable performance hit.
+ Unlike traditional swap, Android's Memory Manager kills inactive processes to free up memory. Android signals to the process, then the process will usually write out a small bit of specific information about its state (for example, Google Maps may write out the map view coordinates; Browser might write the URL of the page being viewed) and then the process exits. When you next access that application, it is restarted: the application is loaded from storage, and retrieves the state information that it saved when it last closed. In some applications, this makes it seem as if the application never closed at all. This is not much different from traditional swap, except that Android apps are specially programed to write out very specific information, making Android's Memory Manager more efficient that swap. 
+
+[B][COLOR="Plum"][SIZE="2"][B]OVERCLOCK[/B][/SIZE][/COLOR][/B]
+Overclocking is the process of making a computer or component operate faster than the specified clock frequency by the manufacturer by modifying system parameters. One of the most important techniques is running at a higher clock rate (more clock cycles per second; hence the name "overclocking")
+Operating voltages may also be changed (increased), which can increase the speed at which operation remains stable. 
+
+[B]Advantage: [/B]
+You can get more performance from your chipset, you can see visible changes in runtime applications and more as time instant response.
+
+[B]Disadvantage:[/B]
+ * Overclocking is always risky if something is configured improperly and may also result in permanent damage of your hardware. As long as it is done safely you are good to go.
+* You may see some increased power consumption.
+ * Extreme overclocking might kill your hardware.
+
+[B][COLOR="Plum"][SIZE="2"][B]UNDERVOLTING[/B][/SIZE][/COLOR][/B]
+The process where you provide less voltage to your cpu rather than the stock voltage.
+
+[B]Advantage:[/B]
+* Reduced heat from your device.
+* Good battery life.
+
+Disadvantage:
+* Extreme undervolting will make your device unstable and some times even end up with a boot loop.[/QUOTE]
+
+[SIZE="7"][COLOR="black"]The THANKS[/COLOR][/SIZE]
+[LIST]
+[*]Ceastel
+[*]srfarias
+[*]showp1984
+[*]markus-oberhumer
+[*]faux123
+[*]sashalevin
+[*]ardbiesheuvel
+[*]mrg666
+[*]pinkflozd
+[*]kleikamp
+[*]jankara
+[*]marcusk
+[*]sergey-senozhatsky
+[*]tiny4579
+[*]gregkh
+[*]CastagnaIT
+
+[/LIST]
+
+[SIZE="5"][URL="https://mega.co.nz/#F!wJ8EjZQT!fce-SqHdVRkRqgr-do2unQ"]DOWNLOAD[/URL]    [/SIZE]
+
+Do you like my Kernel? use this buttons for support me  [IMG]http://i58.tinypic.com/303juhe.png[/IMG]
+
+
+
+[SIZE="5"][CENTER][B]Fanpage: like = future project[/B][/SIZE]
+[URL="https://www.facebook.com/Phoenix-DEV-1719991991571980/"]https://www.facebook.com/Phoenix-DEV-1719991991571980/[/URL][/CENTER]
+
+[IMG]http://orig11.deviantart.net/bcbb/f/2016/015/8/4/team_phoenix_by_porcha18-d9o0qyk.png[/IMG]
+
+[B][U][SIZE="4"][PLAIN]XDA:DevDB Information[/PLAIN][/SIZE][/U][/B]
+[SIZE=3][B]Kernel Phoenix, Kernel for the LG Optimus L1 II[/B][/SIZE]
+
+[B][U]Contributors[/U][/B]
+[URL="http://xdaforums.com/member.php?u=5782200"]chijure[/URL], [URL="http://xdaforums.com/member.php?u=3124509"]chad0989[/URL], [URL="http://xdaforums.com/member.php?u=6751265"]srfarias[/URL]   
+[URL="http://xdaforums.com/member.php?u=3877923"]bala_gamer[/URL]
+[B]Source Code:[/B] [URL="https://github.com/chijure/android_kernel_lge_vee1"]https://github.com/chijure/android_kernel_lge_vee1[/URL]
+
+[B]Kernel Special Features:[/B] OC CPU 1.4 Ghz, GPU 190 Mhz, UV, Fast Charge, Voltage Control, Swap, Zram, KSM, Dynamic Fsync, Frontswap, BLX, F2FS, Exfat, Frandom, Linux 3.4.4, SmartassV2, SIO, VR, SIO PLUS, FIOPS, BFQ,  ZEN...
+
+[B][U]Version Information[/U][/B]
+[B]Status:[/B] Stable
+[B]Stable Release Date:[/B] 2015-07-23
+[B]Current Stable Version:[/B] 07
+[B]Beta Release Date:[/B] 2015-07-23
+
+[B]Created[/B] 2015-06-06
+[B]Last Updated[/B] 2015-07-23
