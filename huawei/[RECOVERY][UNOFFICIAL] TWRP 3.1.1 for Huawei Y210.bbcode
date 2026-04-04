@@ -1,0 +1,80 @@
+[IMG]https://www.maketecheasier.com/assets/uploads/2019/01/twrp-featured.jpg[/IMG]
+
+Team Win Recovery Project (TWRP) is an open-source software custom recovery image for Android-based devices. It provides a touchscreen-enabled interface that allows users to install third-party firmware and back up the current system, functions often unsupported by stock recovery images. It is, therefore, often installed when rooting Android devices, although it isn't dependent on a device being rooted to be installed.
+
+Functional on both Y210-0010 and Y210-2010 models.
+
+[SIZE="5"][B]Instructions[/B][/SIZE]
+
+[LIST=1]
+[*]Download the recovery image below.
+[*]Download [URL="https://developer.android.com/tools/releases/platform-tools"]fastboot[/URL] on your computer.
+[*]Reboot into bootloader mode with Volume Down + Power buttons.
+[*]Flash the recovery image with fastboot: [CODE]fastboot flash recovery twrp-3.1.1-y210.img[/CODE]
+[*]Reboot into recovery mode with Volume Up + Power buttons.
+[*]SUCCESS! You have successfully installed TWRP and can use it for anything (as long as it isn't listed in the Current Issues section).
+[/LIST]
+
+[SIZE="5"][B]Current Issues[/B][/SIZE]
+
+[LIST]
+[*]None! All features are working properly.
+[/LIST]
+
+[SIZE="5"][B]What's Working[/B][/SIZE]
+
+[LIST]
+[*]Boot to recovery
+[*]Mount /system, /data and /cache
+[*]Nandroid backup and restore
+[*]Install zip packages
+[*]Wipe cache and data
+[*]ADB in recovery
+[*]Offmode charging
+[/LIST]
+
+[SIZE="5"][B]Downloads[/B][/SIZE]
+
+[LIST]
+[*][URL="https://androidfilehost.com/?fid=4497289977301829639"]TWRP 3.1.1 Recovery Image[/URL]
+[/LIST]
+
+[SIZE="5"][B]Source Code[/B][/SIZE]
+
+[LIST]
+[*][URL="https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni/tree/twrp-4.4-deprecated"]Omni TWRP Manifest Source[/URL]
+[*][URL="https://github.com/chijure-android-system-development/android_device_huawei_y210"]Device Tree[/URL]
+[/LIST]
+
+[SIZE="5"][B]Device Specifications[/B][/SIZE]
+
+[LIST]
+[*]Chipset: Qualcomm Snapdragon MSM7627A
+[*]CPU: 1.0 GHz Cortex-A5 single core
+[*]GPU: Adreno 200
+[*]Memory: 256 MB RAM
+[*]Storage: 512 MB ROM
+[*]Display: 3.5" HVGA (320 x 480)
+[*]Rear camera: 3.15 MP
+[*]Android version: 2.3.6 Gingerbread
+[*]Kernel: Linux 2.6.32
+[/LIST]
+
+[SIZE="5"][B]Credits[/B][/SIZE]
+
+[LIST]
+[*]TeamWin for TWRP
+[*]OmniROM
+[*]All testers and contributors
+[/LIST]
+
+[SIZE="2"][I]
+#include <std_disclaimer.h>
+/*
+* Your warranty is now void.
+* I am not responsible for bricked devices, dead SD cards,
+* thermonuclear war, or you getting fired because the alarm app failed.
+* Please do some research before flashing this recovery.
+* YOU are choosing to make these modifications.
+*/
+[/I][/SIZE]
