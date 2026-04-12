@@ -1,0 +1,120 @@
+[CENTER][IMG]http://www.cyanogenmod.org/wp-content/themes/cyanogenmod/images/logo-cid.png[/IMG][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+* Your warranty is now void.
+*
+* I am not responsible for bricked devices, dead SD cards,
+* thermonuclear war, or you getting fired because the alarm app failed.
+* Please do some research if you have any concerns about features included
+* in this ROM before flashing it!
+*
+* YOU are choosing to make these modifications, and if you point your
+* finger at me for messing up your device, I will laugh at you.
+*/[/CODE]
+
+[B]ROM:[/B] CyanogenMod 7
+[B]Device:[/B] Huawei Y210
+[B]Android version:[/B] 2.3.7 Gingerbread
+[B]Status:[/B] Alpha
+[B]Build:[/B] cm-7-20260411-UNOFFICIAL-y210.zip
+[B]MD5:[/B] 976205cfd4abd100548cf67261364cc5
+
+[B]What works:[/B]
+[LIST]
+[*]Display and touchscreen
+[*]Multitouch (Type A)
+[*]Physical keys (power/vol+/vol-) + capacitive keys (back/home/menu)
+[*]Brightness control + RGB notification LED
+[*]Audio playback and voice recording
+[*]Bluetooth bring-up
+[*]Wi-Fi bring-up, scanning and connection
+[*]Basic boot, UI, and system services
+[*]Calls (in/out) and SMS (send/receive)
+[*]SD card mount + USB mass storage
+[/LIST]
+
+[B]Known issues:[/B]
+[LIST]
+[*]Mobile data not validated yet (APN + real IP session)
+[*]Camera lifecycle is still fragile: first preview works, but reopen / release can break mediaserver
+[*]Camera capture still not working
+[*]Wi-Fi framework scan delivery was fragile during bring-up and should be re-validated on each build
+[*]FM radio app crashes (missing `acquireFdNative` JNI stack)
+[*]SIM Toolkit (STK) menu may not show / may hang (depends on SIM proactive commands)
+[*]Headset volume perceived lower than stock (tuning pending)
+[*]GPS fix not validated yet
+[/LIST]
+
+[B]Changelog (2026-04-11):[/B]
+[LIST]
+[*]RIL stabilized: baseband/IMEI/calls/SMS working
+[*]Audio HAL runtime data fixed (filters + libaudioeq) and headset post-proc knob added
+[*]Device function matrix + consistent logging notes added in the device tree
+[/LIST]
+
+[B]Hardware notes (Y210):[/B]
+[LIST]
+[*]No proximity sensor
+[*]No ambient light sensor
+[*]Accelerometer: LIS3DH (gravity + linear acceleration are virtual)
+[/LIST]
+
+[B]Installation:[/B]
+[LIST=1]
+[*]Make a full backup from recovery.
+[*]Wipe data / factory reset.
+[*]Flash the ROM zip.
+[*]Flash Google Apps if your build requires them.
+[*]Reboot.
+[/LIST]
+
+[B]Update from previous build:[/B]
+[LIST=1]
+[*]Wipe cache / dalvik cache.
+[*]Flash the new build.
+[*]Reboot.
+[/LIST]
+
+[B]Downloads:[/B]
+[LIST]
+[*][URL="TODO"]cm-7-20260411-UNOFFICIAL-y210.zip[/URL]
+[*][URL="TODO"]Google Apps link[/URL]
+[*][URL="TODO"]Recovery image or installer[/URL]
+[/LIST]
+
+[COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download links without permission.[/CENTER][/SIZE][/COLOR]
+
+[B]Source code:[/B]
+[LIST]
+[*][URL="https://github.com/chijure-android-system-development/device-y210-gb.git"]Device tree[/URL]
+[*]Kernel: prebuilt zImage shipped in the device tree
+[*]Vendor: proprietary blobs are kept in-tree under `vendor/huawei/y210`
+[/LIST]
+
+[B]Credits:[/B]
+[LIST]
+[*]CyanogenMod team
+[*]Huawei for the original device
+[*]Contributors and testers
+[*]chijure
+[/LIST]
+
+[B][U][SIZE="4"][PLAIN]XDA:DevDB Information[/PLAIN][/SIZE][/U][/B]
+[SIZE=3][B][ROM][UNOFFICIAL] CyanogenMod 7 for Huawei Y210, ROM for the Huawei Y210[/B][/SIZE]
+
+[B][U]Contributors[/U][/B]
+[B]chijure[/B]
+[B]ROM OS Version:[/B] 2.3.7 Gingerbread
+[B]ROM Kernel:[/B] Linux 2.6.32
+[B]ROM Firmware Required:[/B] Custom Recovery
+[B]Based On:[/B] CyanogenMod 7
+
+[B][U]Version Information[/U][/B]
+[B]Status:[/B] Alpha
+[B]Current Stable Version:[/B] N/A
+[B]Current Beta Version:[/B] 20260411
+[B]Build Date:[/B] 2026-04-11
+
+[B]Created[/B] 2026-04-03
+[B]Last Updated[/B] 2026-04-11

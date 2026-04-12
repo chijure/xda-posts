@@ -1,9 +1,10 @@
 # XDA Posts
 
-Colección de 20 publicaciones exportadas del foro XDA Developers en formato BBCode. Incluye kernels, ROMs, recoveries y guías para dispositivos LG y Alcatel.
+Colección de 22 publicaciones exportadas del foro XDA Developers en formato BBCode. Incluye kernels, ROMs, recoveries y guías para dispositivos Huawei, LG y Alcatel.
 
 ## Estructura
 - `alcatel/`: 1 post (Phoenix Kernel V1 para POP C1/C2/C3).
+- `huawei/`: 2 posts para Huawei Y210.
 - `lge/`: 19 posts de la línea Optimus (L1 II, L3, L7 II, G3 Stylus, etc.).
   - `lge/e410/`: ROMs y recoveries para LG L1 II (CWM, TWRP, CM10/11, guías de root/bootloader).
   - `lge/e400/`: Kernel y Aroma installer para LG L3.
