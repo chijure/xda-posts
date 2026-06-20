@@ -1,5 +1,3 @@
-[CENTER][IMG]http://www.cyanogenmod.org/wp-content/themes/cyanogenmod/images/logo-cid.png[/IMG][/CENTER]
-
 [CODE]#include <std_disclaimer.h>
 /*
 * Your warranty is now void.
@@ -16,121 +14,169 @@
 [B]ROM:[/B] CyanogenMod 7
 [B]Device:[/B] Huawei Y210
 [B]Android version:[/B] 2.3.7 Gingerbread
-[B]Status:[/B] Beta
-[B]Build:[/B] cm-7-20260531-UNOFFICIAL-y210.zip
-[B]MD5:[/B] 781a2e883dde496369793bd8ecefc0e3
+[B]Status:[/B] Status: Beta / mostly usable
+[B]Build:[/B] cm-7-20260619-UNOFFICIAL-y210.zip
+[B]MD5:[/B] 09b4564ac74dfc5d5546c0f2b1d031b8
+
+This is an unofficial CyanogenMod 7 port for the Huawei Y210, based on the legacy Qualcomm MSM7x27A/MSM7K-era stack. The current focus is real device stability and compatibility with the stock Y210 behaviour, especially graphics, gralloc/copybit/framebuffer, audio, radio, Wi-Fi, Bluetooth and camera bring-up.
+
+[COLOR="Red"][B]Read before flashing:[/B][/COLOR] this is still a beta release. Please read the known issues before flashing.
 
 [SIZE="4"][B]What works:[/B][/SIZE]
 [LIST]
-[*][B]Boot & system:[/B] Full boot to launcher, system_server, SurfaceFlinger, mediaserver stable
-[*][B]Display:[/B] Framebuffer, Adreno 200 HW acceleration, gralloc/copybit, backlight
-[*][B]Touchscreen:[/B] Single and multitouch (Type A protocol)
-[*][B]Physical + capacitive keys:[/B] Power, vol+/vol-, back/home/menu
-[*][B]Auto-rotation:[/B] LIS3DH accelerometer, gravity sensor, linear acceleration
-[*][B]Lights & haptics:[/B] Backlight, RGB notification LED, vibrator
-[*][B]Audio:[/B] Speaker playback and microphone recording
-[*][B]Wi-Fi:[/B] Enable, scan, associate, DHCP, tethering/hotspot (tested with 2 simultaneous clients)
-[*][B]Bluetooth:[/B] Enable, hci0 UP/RUNNING
-[*][B]Telephony (RIL):[/B] Baseband, IMEI, inbound/outbound calls, SMS, mobile data (HSPA tested on Claro Peru)
-[*][B]Camera:[/B] Preview (640x480 NV21→RGB565), photo capture (~55 KB JPEG), close→reopen, photo↔video switch, video recording H.263 352x288 15fps (MP4)
-[*][B]GPS:[/B] RPC engine, XTRA assisted ephemeris, NTP, AGPS — all initialised at boot
-[*][B]Storage & USB:[/B] /data, SD card, USB mass storage
-[*][B]Power:[/B] Screen suspend/resume, deep sleep (validated 5 min continuous, modem wakeups normal)
-[*][B]FM radio:[/B] /dev/radio0 opens, JNI stack OK, hw.fm.init=1
+[*][B]Boot & system:[/B] boots to launcher after a clean flash/wipe
+[*][B]SurfaceFlinger / mediaserver:[/B] stay alive in the current graphics path
+[*][B]Display / framebuffer:[/B] gralloc.y210 and copybit.y210 load without crashing the UI; 320x480 ARGB8888 framebuffer
+[*][B]HW acceleration:[/B] Adreno 200 path active; SurfaceFlinger reports Adreno renderer; stride bug corrected (no horizontal repetition)
+[*][B]UI / launcher:[/B] usable on-device; status bar renders correctly (ghost/duplication fixed)
+[*][B]Touchscreen:[/B] single-touch and multitouch input; physical and capacitive buttons
+[*][B]Backlight / LED / vibrator:[/B] screen backlight, notification LED and vibrator work
+[*][B]Wi-Fi:[/B] enables, scans, associates and obtains DHCP; hotspot/tethering validated with two clients
+[*][B]Bluetooth:[/B] enables through the restored QCOM path
+[*][B]Telephony / RIL:[/B] baseband, operator registration, signal, IMEI, calls, SMS and HSPA mobile data
+[*][B]Sensors / rotation:[/B] accelerometer, gravity and linear-accel sensors work with stock sensors.default.so; /dev/accel permissions corrected
+[*][B]ADB / logs:[/B] adb logcat and runtime logging are usable
+[*][B]Audio playback:[/B] AudioFlinger -> libaudio output works
+[*][B]Audio recording:[/B] SoundRecorder / voice recorder works
+[*][B]Camera app:[/B] opens consistently with the current libcamera wrapper
+[*][B]Camera:[/B] 640x480 colour portrait preview, JPEG photo capture (~55 KB), close -> reopen, photo/video switch, H.263 352x288 15 fps video recording (MP4 in gallery)
+[*][B]Video playback:[/B] compatible files play; H.264 Baseline was tested
+[*][B]Storage / USB:[/B] /data, SD card and USB mass storage
+[*][B]Suspend / screen off:[/B] screen off/on cycle validated
+[*][B]Performance profile:[/B] Y210 CPU governor and lowmemorykiller profile applied at runtime
 [/LIST]
 
 [SIZE="4"][B]Known issues:[/B][/SIZE]
 [LIST]
-[*]Headset volume slightly lower than stock (MBADRC tuning — usable, no mute)
-[*]Voice call uplink (mic during calls) needs real-world validation
-[*]FM radio audio output in earphones not confirmed
-[*]Bluetooth pairing and A2DP/SCO audio not validated
-[*]GPS satellite fix requires outdoor test (engine stack is fully initialised)
-[*]Wi-Fi needs re-validation after a clean flash (no manual staging)
-[*]Keyboard: minor visual artifact — gap on the "asdf" row may show app background color on some themes
+[*][B]Headset audio:[/B] works, but perceived volume is lower than stock (stock uses proprietary DSP processing not available in CM7)
+[*][B]Headset volume keys:[/B] vol+ / vol- are acknowledged by the UI but behaviour after headset reconnect still needs validation
+[*][B]Voice call uplink:[/B] calls work, but microphone/uplink still needs more real-world validation
+[*][B]Bluetooth audio:[/B] pairing and A2DP/SCO audio are still pending validation
+[*][B]FM radio:[/B] kernel driver patched to prevent firmware reset on second open; audio output in earphones pending final validation on device
+[*][B]Deep sleep / battery drain:[/B] the suspend path sometimes fails (rpcrouter_smd_xprt wakelock); battery may drain faster than expected and deep sleep is not fully confirmed
+[*][B]GPS:[/B] RPC/XTRA/NTP/AGPS initialise, but real satellite fix still needs outdoor testing
+[*][B]Wi-Fi clean flash:[/B] basic Wi-Fi works, but post-flash validation without manual staging should be repeated
+[*][B]Video playback:[/B] compatible H.264 Baseline files play, but newer MP4 files such as H.264 High profile may fail
+[*][B]First boot warning:[/B] com.android.provision may log a non-blocking WindowManager InflateException while creating the starting window after wipe
 [/LIST]
 
 [SIZE="4"][B]Changelog:[/B][/SIZE]
 
-[B]2026-05-31[/B]
+[B]2026-06-13[/B]
 [LIST]
-[*]Performance tuning: I/O scheduler noop for NAND/MMC, CPU ondemand up_threshold 70, sampling 25ms, VM swappiness 10 (init.d permanent)
-[*]Status bar ghost/double-icon fix: 4-layer fix (RIL double-poll, StatusBarManagerService icon guard, Surface.cpp copy-back + buffer zeroing, copybit MDP workaround for 320x25 strip)
-[*]Keyboard background fix: transparent 9-patch on input_basic theme replaced with solid black, eliminating white gap artifact on the asdf row
-[*]Debug log cleanup: removed spdq:/uiq:/vcq: instrumentation from Camera, VideoCamera, QualcommCameraHardware, StagefrightRecorder
+[*]FM radio: patched tavarua kernel driver to skip hardware re-init when firmware is already loaded, preventing firmware loss on second open of /dev/radio0; audio validation pending
+[/LIST]
+
+[B]2026-06-12[/B]
+[LIST]
+[*]Clean flash validated: first boot completes, PackageManager rebuilds state, launcher starts
+[*]Graphics path stable enough for launcher use; gralloc.y210/copybit.y210 no longer collapse the UI
+[*]Adreno 200 renderer active in SurfaceFlinger
+[*]Wi-Fi validated: enable, scan, associate, DHCP
+[*]Bluetooth enables through restored QCOM route
+[*]Audio playback and audio recording validated
+[*]Camera app opens consistently; 640x480 preview remains stable on first open; video recording validated (H.263 352x288 15 fps → MP4)
+[*]Y210 CPU governor and lowmemorykiller runtime profile restored
+[*]Accelerometer /dev/accel permissions corrected (chmod 0664 in init.y210.rc was missing indentation and being silently ignored)
 [/LIST]
 
 [B]2026-05-24[/B]
 [LIST]
-[*]Camera fully functional: close→reopen fix (vtable slot 26), photo↔video switch, video recording H.263 352x288 15fps
-[*]NV21 camera preview colour fix (NV21→RGB565 SW conversion in TextureManager)
-[*]Gralloc single-buffer fix: eliminated "3 columns" / stride=128px horizontal repetition bug
-[*]Audio: FD_CLOEXEC on all persistent audio fds to prevent EBUSY on /dev/msm_pcm_out
-[*]Audio headset: reverted MBADRC to "lite" mode (EQ+IIR) to fix vol+/vol- not audible
+[*]Fixed Adreno 200 horizontal stride bug: gralloc forced to single-buffer so EGL receives a PMEM fd instead of the framebuffer fd, giving correct 320 px stride (was 128 px, causing 2.5x image repetition)
+[*]Fixed framebuffer copy path to use memcpy instead of MSMFB_BLIT for PMEM sub-heap fds
+[*]Fixed FD_CLOEXEC on all persistent audio file descriptors to prevent EBUSY on /dev/msm_pcm_out after fork
+[*]Reverted headset post-processing mask from "full" to "lite" (EQ+IIR, no MBADRC) — MBADRC was compressing the DSP output and nullifying the software volume control
+[*]Fixed missing keymap: default_keypad.kcm and all keylayout .kl files added to device tree
+[*]Fixed ringtone/notification props to use files that exist in CM7 (Huawei_Tune.ogg / Glory.ogg do not exist)
+[*]Added HSDPA/HSPA TCP buffer sizes to init.y210.rc
 [/LIST]
 
-[B]2026-04-26[/B]
+[B]2026-05-23[/B]
 [LIST]
-[*]FM radio partial bring-up: JNI best-effort for private V4L2 controls, fminit setuid-root loads WCN2243 firmware, spawnFmInit() unconditional
-[*]FM audio routing to SND_DEVICE_HEADSET + opens /dev/msm_fm while active
-[*]V4L2 MUTE control fixed (boolean 0/1 instead of 3/4)
+[*]Fixed gralloc.msm7k.so contamination: clean rebuild of libgralloc-qsd8k with Android.mk guards; previous binary had symbols from both gralloc modules causing a bootloop
 [/LIST]
 
-[B]2026-04-11[/B]
+[B]2026-05-22[/B]
 [LIST]
-[*]RIL stabilised: baseband, IMEI, calls, SMS, mobile data (HSPA)
-[*]Audio HAL: runtime filter loading, headset post-proc knob
-[*]Wi-Fi: AR6003/ath6k full bring-up, hotspot/tethering
-[*]GPS: RPC engine, XTRA, AGPS
-[*]Camera first preview working (640x480 NV21)
+[*]Fixed status bar ghost/duplication: StatusBarManagerService now skips redundant propagation to mBar when icon state did not change
+[*]Fixed RIL double-poll: removed redundant notifyRegistrants() call on events 1033/1037 (DATA_NETWORK_STATE_CHANGED), which was causing rapid signal icon flicker
+[*]Fixed page-flip detection in gralloc framebuffer: yres_virtual check corrected; refresh rate guard changed from == 0 to < 1 Hz to correctly detect the Y210 pixel clock
 [/LIST]
 
-[SIZE="4"][B]Hardware notes (Y210):[/B][/SIZE]
+[SIZE="4"][B]Hardware notes:[/B][/SIZE]
 [LIST]
-[*]SoC: Qualcomm MSM7225A, single-core ARM Cortex-A5 @ 1008 MHz, Adreno 200 GPU
-[*]RAM: 256 MB (174 MB available to Android)
-[*]No proximity sensor
-[*]No ambient light sensor
-[*]No compass
-[*]Accelerometer: ST LIS3DH (gravity + linear acceleration are virtual sensors)
+[*]SoC family: Qualcomm MSM7x27A / MSM7K-era
+[*]GPU: Adreno 200
+[*]Framebuffer: 320x480, ARGB8888 (32 bpp)
+[*]Android base: Gingerbread / CyanogenMod 7
+[*]HAL style: legacy Qualcomm/Android 2.3 stack
+[*]FM chip: WCN2243 (I2S digital output to MSM7x27A codec)
 [/LIST]
 
 [SIZE="4"][B]Installation:[/B][/SIZE]
 [LIST=1]
 [*]Make a full nandroid backup from recovery.
-[*]Wipe data / factory reset + wipe cache / dalvik cache.
+[*]Wipe data / factory reset.
+[*]Wipe cache and dalvik cache.
 [*]Flash the ROM zip from recovery.
 [*]Reboot.
+[*]First boot can take a while while PackageManager rebuilds state and dexopts apps.
 [/LIST]
 
-[B]Update from previous build:[/B]
+[B]Update from a previous build:[/B]
 [LIST=1]
-[*]Wipe cache / dalvik cache.
+[*]Wipe cache and dalvik cache.
 [*]Flash the new build.
 [*]Reboot.
 [/LIST]
 
 [SIZE="4"][B]Downloads:[/B][/SIZE]
 [LIST]
-[*][URL="TODO"]cm-7-20260531-UNOFFICIAL-y210.zip[/URL]
-[*][URL="TODO"]Recovery image[/URL]
+[*][URL="https://drive.google.com/file/d/1mx76rt1UvbSHxUd1wdKA0ThD4qYNohdM/view?usp=sharing"]cm-7-20260619-UNOFFICIAL-y210.zip[/URL] - 90 MB | MD5: 09b4564ac74dfc5d5546c0f2b1d031b8
+[*][URL="https://xdaforums.com/t/recovery-unofficial-twrp-3-1-1-for-huawei-y210.4792355/"]TWRP 3.1.1 for Huawei Y210 (unofficial)[/URL]
 [/LIST]
 
 [COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download links without permission.[/CENTER][/SIZE][/COLOR]
 
 [SIZE="4"][B]Source code:[/B][/SIZE]
 [LIST]
-[*][URL="https://github.com/chijure-android-system-development/device-y210-gb.git"]Device tree (patches, build config, device-specific HALs)[/URL]
-[*]Kernel: prebuilt zImage shipped in the device tree
-[*]Vendor: proprietary blobs kept in-tree under [FONT="Courier New"]vendor/huawei/y210[/FONT]
+[*][URL="https://github.com/chijure-android-system-development/android_device_huawei_y210"]Device tree / Y210-specific changes[/URL]
+[*][URL="https://github.com/chijure-android-system-development/android_vendor_huawei_y210"]Vendor blobs / proprietary files[/URL]
+[*]Kernel: prebuilt zImage shipped by the device tree
+[/LIST]
+
+[SIZE="4"][B]Useful validation commands:[/B][/SIZE]
+[CODE]adb logcat
+adb shell dumpsys SurfaceFlinger | grep -i renderer
+adb shell dumpsys wifi | sed -n '1,80p'
+adb shell getprop wlan.driver.status
+adb shell getprop init.svc.ath_supplicant
+adb shell getprop gsm.version.baseband
+adb shell getprop init.svc.mediaserver
+adb shell getprop init.svc.surfaceflinger[/CODE]
+
+Expected Wi-Fi basics when connected:
+[CODE]wlan.driver.status = ok
+init.svc.ath_supplicant = running
+wifi.interface = eth0[/CODE]
+
+[SIZE="4"][B]Bug reports:[/B][/SIZE]
+Please include:
+[LIST]
+[*]Exact Y210 model variant
+[*]Clean flash or dirty flash
+[*]Recovery used
+[*]Short description of the bug
+[*]Relevant logcat; avoid posting huge full logs unless requested
 [/LIST]
 
 [SIZE="4"][B]Credits:[/B][/SIZE]
 [LIST]
-[*]CyanogenMod team — CM7 base
-[*]Qualcomm / CAF — MSM7K hardware abstraction layer
-[*]The XDA community — bring-up references and testing
-[*]chijure — port, debugging, device tree
+[*]CyanogenMod team - CM7 base
+[*]Qualcomm / CAF - legacy MSM/QCOM hardware references
+[*]Huawei Y210 stock ROM - reference behaviour and proprietary components
+[*]XDA community - legacy bring-up references
+[*]chijure - port, debugging and device tree
 [/LIST]
 
 [B][U][SIZE="4"][PLAIN]XDA:DevDB Information[/PLAIN][/SIZE][/U][/B]
@@ -139,15 +185,15 @@
 [B][U]Contributors[/U][/B]
 [B]chijure[/B]
 [B]ROM OS Version:[/B] 2.3.7 Gingerbread
-[B]ROM Kernel:[/B] Linux 2.6.32 (MSM7225A)
-[B]ROM Firmware Required:[/B] Custom Recovery
+[B]ROM Kernel:[/B] Linux 2.6.32
+[B]ROM Firmware Required:[/B] Custom recovery
 [B]Based On:[/B] CyanogenMod 7
 
 [B][U]Version Information[/U][/B]
 [B]Status:[/B] Beta
 [B]Current Stable Version:[/B] N/A
-[B]Current Beta Version:[/B] 20260531
-[B]Build Date:[/B] 2026-05-31
+[B]Current Beta Version:[/B] 20260619
+[B]Build Date:[/B] 2026-06-19
 
-[B]Created[/B] 2026-04-03
-[B]Last Updated[/B] 2026-05-31
+[B]Created[/B] 2026-06-12
+[B]Last Updated[/B] 2026-06-20
