@@ -1,0 +1,199 @@
+[CENTER][SIZE="5"][B][ROM][UNOFFICIAL][4.1.2] CyanogenMod 10 for LG L5 II / LG-E450g (vee5ss)[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, broken NVRAM,
+ * lost IMEI, failed alarms, or any other damage caused by flashing this ROM.
+ * Please make a full Nandroid backup before installing.
+ * You are choosing to make these modifications, and you are responsible
+ * for your device.
+ */[/CODE]
+
+[B]About[/B]
+
+Unofficial CyanogenMod 10 (Android 4.1.2 Jelly Bean) port for the LG L5 II E450g, codename [B]vee5ss[/B], SoC MediaTek MT6575.
+
+This build uses the stock prebuilt kernel and a MediaTek-format boot image generated with [B]mtkbootimg[/B]. The OTA zip updates [B]/system only[/B] — you must flash [B]boot.img separately[/B] via dd (see install instructions).
+
+[B]Device specs[/B]
+[LIST]
+[*]Device: LG L5 II / LG-E450g
+[*]Codename: vee5ss
+[*]SoC: MediaTek MT6575, ARMv7-A Cortex-A9, 1 GHz
+[*]RAM: 512 MB
+[*]Display: 4.0" 480×800 hdpi, SLCD
+[*]Storage: 4 GB internal / external microSD
+[*]Android: 4.1.2 Jelly Bean (JZO54K)
+[/LIST]
+
+[B]Current status — Build 2 (2026-06-30)[/B]
+
+Functional beta. Core system, GPU, radio stack, IMEI, SIM PIN unlock, and calls are all confirmed working.
+
+[B]Working / verified[/B]
+[LIST]
+[*]Boots to Android (sys.boot_completed=1)
+[*]Display + touchscreen
+[*]Hardware acceleration — PowerVR SGX531 binary blobs
+[*]SurfaceFlinger, Launcher, Settings, core apps
+[*]WiFi (connected, verified)
+[*]Bluetooth stack running
+[*]External microSD at /storage/sdcard1
+[*]Internal storage (FUSE/datamedia) at /storage/sdcard0
+[*]Settings > Storage
+[*]LCD brightness control
+[*]Notification LED — custom lights HAL, no stuck-on bug
+[*]Sensors: accelerometer, magnetometer, orientation, proximity
+[*]IMEI confirmed — stock lgpserver reads from /dev/misc2
+[*]Baseband version visible (MAUI.11AMD.TC1.V5.SP.V0.P16)
+[*]RIL connected: gsm.version.ril-impl = mtk gemini ril 1.0
+[*]Modem boots on first attempt (~7 s, no 23 s WDT timeout/reset)
+[*]zRAM ~120 MB swap active (ro.zram.default=25, managed by CM10 compcache)
+[*]Offline charging
+[*]ADB root (ro.secure=0, development build)
+[*]SIM PIN unlock — keyguard shows PIN dialog on boot; PIN accepted; SIM transitions to READY
+[*]Outgoing calls — connected and audible; earpiece and microphone working
+[*]Proximity sensor — screen turns off during calls as expected
+[/LIST]
+
+[B]Not tested / pending[/B]
+[LIST]
+[*]SMS
+[*]Mobile data
+[*]Camera — HAL in place, not tested
+[*]GPS — agpsd daemon included, not tested
+[*]FM Radio — not tested
+[/LIST]
+
+[B]Known bugs[/B]
+[LIST]
+[*][B]MediaScanner SIGSEGV[/B] — if your microSD has folders with Latin-1 encoded characters in the name (e.g. a folder originally named "Imágenes" that shows as "ImM-agenes" on Linux), MediaScanner aborts on invalid UTF-8. Remove the offending folder from your SD via a PC before inserting.
+[*][B]Audio NVRAM calibration missing[/B] — /data/nvram/APCFG/APRDEB/ is empty after clean flash. Audio output works, but EQ/compensation filter is unavailable. Workaround: copy calibration data from a TWRP backup of the stock ROM.
+[*][B]WMT stp_dump NULL[/B] — harmless logcat noise at boot during Combo chip WMT init; no functional impact.
+[*][B]Screen stays off after call ends[/B] — PhoneApp may not release the proximity wakelock if the call ends while the proximity sensor is active (e.g. phone held to ear). Screen appears dead but system is alive. Workaround: reboot. Does not affect calls in progress.
+[/LIST]
+
+[B]Important notes[/B]
+[LIST]
+[*]This ROM is for [B]LG-E450g / vee5ss ONLY[/B]. Do not flash on any other L5 II variant.
+[*]TWRP recovery required — standard CWM does not support the MTK EMMC partition layout on this device.
+[*][B]The OTA zip updates /system only.[/B] You must flash boot.img separately via dd (see Install instructions).
+[*]Make a full Nandroid backup before flashing.
+[*]Back up your NVRAM partition to protect your IMEI and calibration data before testing any MTK ROM.
+[*]GApps: use a Jelly Bean compatible package. CM10 GApps from the era are recommended.
+[/LIST]
+
+[B]Requirements[/B]
+[LIST]
+[*]LG-E450g (vee5ss) — tested hardware only
+[*]TWRP recovery (MTK-compatible build for this device)
+[*]At least 30% battery charge
+[*]Full Nandroid backup (strongly recommended)
+[/LIST]
+
+[B]Install — clean flash[/B]
+[LIST=1]
+[*]Copy the ROM zip AND boot.img to your SD card.
+[*]Boot into TWRP recovery.
+[*]Make a full Nandroid backup.
+[*]Wipe: Data / Factory Reset, Cache, Dalvik Cache.
+[*]Flash the ROM zip (this updates /system only).
+[*]Optional: flash a Jelly Bean compatible GApps package.
+[*]Flash boot.img from the TWRP shell:
+[CODE]dd if=/sdcard/boot.img of=/dev/bootimg bs=4096[/CODE]
+[*]Reboot System.
+[/LIST]
+
+[B]Install — dirty flash / update from older build[/B]
+[LIST=1]
+[*]Boot into TWRP.
+[*]Make a backup.
+[*]Flash the new ROM zip.
+[*]Flash the new boot.img from the TWRP shell:
+[CODE]dd if=/sdcard/boot.img of=/dev/bootimg bs=4096[/CODE]
+[*]Wipe Cache and Dalvik Cache.
+[*]Reboot System.
+[/LIST]
+
+[B]Troubleshooting[/B]
+[LIST]
+[*][B]Kernel panic / VFS: Unable to mount root fs on unknown-block(1,0)[/B] — boot.img was not flashed or the flash failed. Reboot to TWRP and run:
+[CODE]dd if=/sdcard/boot.img of=/dev/bootimg bs=4096[/CODE]
+[*][B]Bootloop after first flash[/B] — wipe Dalvik cache and cache in TWRP, then reboot.
+[*][B]No internal storage / Settings > Storage crash[/B] — should not occur; the storage_list.xml overlay is included in this build.
+[*][B]MediaScanner crash (SIGSEGV in logcat)[/B] — remove any folder with non-ASCII Latin-1 characters from your microSD before first boot.
+[*][B]No signal after SIM insert[/B] — reboot the device after inserting the SIM; hot-swap is not supported on MT6575.
+[/LIST]
+
+[B]Download[/B]
+
+[URL="PUT_DOWNLOAD_LINK_HERE"]cm-10-20260629-UNOFFICIAL-vee5ss.zip[/URL]
+[URL="PUT_DOWNLOAD_LINK_HERE"]boot-20260629-vee5ss.img[/URL]
+
+[CODE]MD5: (see release attachment)[/CODE]
+
+[B]Changelog[/B]
+
+[B]2026-06-29 — Build 2[/B]
+[LIST]
+[*][B]IMEI fix[/B] — replaced hand-written lgpservicestub (returned zeros for Binder transaction 111) with stock lgpserver binary reading IMEI directly from /dev/misc2. IMEI confirmed on fresh boot.
+[*][B]RIL race fix (rild.c)[/B] — rild now polls for /dev/radio/pttycmd1 (up to 15 s) before calling RIL_Init. Prevents null-funcs crash when rild starts before gsm0710muxd creates the ptty channels.
+[*][B]Baseband version fix (GSMPhone.java)[/B] — added retry logic in EVENT_RADIO_ON: re-requests getBasebandVersion() and getIMEI() if the initial requests at radioState=0 got GENERIC_FAILURE from MTK RIL.
+[*][B]zRAM enabled[/B] — ro.zram.default=25 activates ~120 MB compressed swap on boot via CM10 compcache service. Adjustable in Settings → Performance.
+[*][B]Modem boot improved[/B] — modem now boots on first attempt (~7 s NORMAL_BOOT_ID vs previous 23 s WDT timeout/reset cycle).
+[*][B]SIM PIN fix (IccCard.java)[/B] — MTK modem keeps radioState=UNAVAILABLE while a PIN-locked SIM waits for AT+CPIN, so EVENT_RADIO_ON never fires and the keyguard never showed the PIN prompt. Fixed by probing SIM status immediately in EVENT_RADIO_OFF_OR_NOT_AVAILABLE and retrying every 3 s until the RIL responds with PIN_REQUIRED. PIN dialog now appears correctly on boot.
+[*]WiFi and Bluetooth confirmed working.
+[*]Outgoing calls confirmed working; earpiece and microphone verified.
+[*]Device tree cleanup: removed dead lgpservicestub source directory.
+[/LIST]
+
+[B]2026-06-22 — Build 1 (initial public test)[/B]
+[LIST]
+[*]First bootable CM10 build for LG-E450g / vee5ss.
+[*]MediaTek boot image format via mtkbootimg (MTK KERNEL + ROOTFS headers).
+[*]PowerVR SGX531 binary GPU blobs included.
+[*]MTK CCCI radio stack: kernel modules + ccci_mdinit, ccci_fsd, ccci_rpcd, gsm0710muxd.
+[*]Modem firmware (modem.img + DSP_ROM) included.
+[*]Custom lights HAL (lights.mt6575.so) — fixes stuck notification LED bug in stock HAL.
+[*]Sensor HAL: accelerometer, magnetometer, orientation, proximity via /dev/hwmsensor.
+[*]External microSD via vold + storage_list.xml overlay.
+[/LIST]
+
+[B]Source / build[/B]
+[LIST]
+[*]Android base: CyanogenMod 10 / Android 4.1.2
+[*]Device tree: [URL="https://github.com/chijure-android-system-development/android_device_lge_vee5ss"]github.com/chijure-android-system-development/android_device_lge_vee5ss[/URL]
+[*]Vendor blobs: extracted from stock LG-E450g firmware (JZO54K / E450g10b)
+[*]Kernel: stock prebuilt (MT6575, Linux 3.4.x)
+[*]Boot image: generated with mtkbootimg
+[*]Build date: 2026-06-29
+[/LIST]
+
+[B]Credits[/B]
+[LIST]
+[*]CyanogenMod team and contributors
+[*]MediaTek / LG — binary blobs from stock firmware
+[*]XDA community — LG L-series threads and guides
+[*]chijure — port, device tree, HAL fixes, RIL bring-up
+[/LIST]
+
+[B][U][SIZE="4"]XDA:DevDB Information[/SIZE][/U][/B]
+
+[SIZE=3][B][ROM][UNOFFICIAL][4.1.2] CyanogenMod 10 for LG L5 II E450g[/B][/SIZE]
+
+[B][U]Contributors[/U][/B]
+[URL="https://xdaforums.com/member.php?u=5782200"]chijure[/URL]
+
+[B]ROM OS Version:[/B] 4.1.x Jelly Bean
+[B]ROM Kernel:[/B] Linux 3.4.x, stock prebuilt MT6575
+[B]ROM Firmware Required:[/B] LG-E450g (vee5ss), TWRP recovery
+[B]Based On:[/B] CyanogenMod 10
+
+[B][U]Version Information[/U][/B]
+[B]Status:[/B] Beta
+[B]Current Beta Version:[/B] 20260630
+
+[B]Created:[/B] 2026-06-22
+[B]Last Updated:[/B] 2026-06-30

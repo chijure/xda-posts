@@ -1,0 +1,97 @@
+[CENTER][IMG]https://i.imgur.com/unlocked.png[/IMG]
+
+[B][SIZE="5"][COLOR="Red"]WARNING: THIS CAN BRICK YOUR DEVICE — READ CAREFULLY BEFORE PROCEEDING[/COLOR][/SIZE][/B][/CENTER]
+
+[CODE]/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards,
+ * thermonuclear war, or you getting fired because the alarm app failed.
+ * Please do some research if you have any concerns before proceeding.
+ * YOU are choosing to make these modifications, and if you point the finger
+ * at me for messing up your device, I will laugh at you.
+ */[/CODE]
+
+[B]Background[/B]
+
+The popular [URL="https://xdaforums.com/t/l5-ii-unlocked-bootloader-optima-team.2844428/"]Optima Team unlock[/URL] (by slipsystem) [B]does not work on E450G[/B] — it only works on E450 and E460. This guide documents the method that [I]does[/I] work on [B]E450G[/B]: a manual LK/uboot patch to allow booting unsigned recovery images without the "Security Error" message.
+
+[B]HOW TO INSTALL[/B]
+
+[LIST=1]
+[*]Back up your uboot partition [B]first[/B] (see below — do not skip this)
+[*]Verify your uboot SHA256 matches the known-good hash
+[*]Clone the patch repository and run the patching script
+[*]Flash the patched uboot
+[*]Reboot and flash your recovery via [B]dd[/B]
+[/LIST]
+
+[B]Backup first[/B]
+[CODE]adb shell "su -c 'dd if=/dev/uboot of=/storage/sdcard0/uboot_backup.bin bs=4096 count=128'"
+adb pull /storage/sdcard0/uboot_backup.bin
+sha256sum uboot_backup.bin[/CODE]
+
+Expected original SHA256:
+[CODE]d35f0bbf245298a0bcc5d4427b73c293273be2de1777fb3bc669d6a4d963215a[/CODE]
+
+[COLOR="Red"][B]If your hash does not match — stop. Do not proceed.[/B][/COLOR]
+
+[B]Technical reference[/B]
+
+Full documentation of the patch (offsets, analysis, patching script):
+[URL="https://xdaforums.com/t/dev-lg-e450g-lk-uboot-patch-to-boot-unsigned-recovery-images.4791303/"][DEV][LG E450g] LK/uboot patch to boot unsigned recovery images[/URL]
+
+GitHub repository:
+[URL="https://github.com/chijure-android-system-development/lg-e450g-lk-patch"]https://github.com/chijure-android-system-development/lg-e450g-lk-patch[/URL]
+
+The repository contains: offsets, hashes, analysis and the patching script. It does [B]not[/B] include the original or patched uboot binary — you must dump your own.
+
+[B]Known good hashes[/B]
+
+Original uboot SHA256:
+[CODE]d35f0bbf245298a0bcc5d4427b73c293273be2de1777fb3bc669d6a4d963215a[/CODE]
+Patched output SHA256:
+[CODE]973e0ed498917d3ec86dc10d3e1c53357980dfd4df43ced09aa51c644df7e99a[/CODE]
+
+[B]Entering Download Mode[/B]
+
+[B][COLOR="Orange"]The LG L5 II does NOT have Fastboot.[/COLOR][/B] It uses MTK Download Mode (BROM) — there is no [I]fastboot flash[/I] on this device.
+
+To enter Download Mode:
+[LIST=1]
+[*]Power off the device completely.
+[*]Hold [B]Volume Down[/B] and insert the USB cable.
+[*]The screen stays off — this is normal. The PC will detect the device via SP Flash Tool.
+[/LIST]
+
+[B]Installing a custom recovery after unlock[/B]
+
+Once the bootloader is patched, flash recovery directly via [B]dd[/B] from a rooted shell (no Download Mode needed):
+[CODE]su
+dd if=/storage/sdcard1/CWM_6.0.4.4.img of=/dev/recovery
+reboot recovery[/CODE]
+
+[B]FAQ[/B]
+
+[B]Did you make this?[/B]
+Yes. I researched, patched and validated this on real hardware.
+
+[B]Is it safe?[/B]
+Tested on [B]E450G[/B] only. Stock ROM still boots. CWM 6.0.4.4 boots successfully.
+
+[B]Does this work on E450, E455, E460, E450F, E451g?[/B]
+[B]Unknown.[/B] This patch is specific to the E450G uboot binary (hash above). Other variants have different binaries. Do [B]not[/B] flash this on other models unless you have compared the bootloader manually and know what you are doing.
+
+[B]Do I need to make a backup?[/B]
+Yes — [B]and you should verify the SHA256[/B] before doing anything else.
+
+[B]This is not a one-click package[/B]
+
+This is a documented research/dev patch for users who can dump, verify and restore their own bootloader partition. It is not intended for end users looking for a simple installer.
+
+[B]Credits[/B]
+[LIST]
+[*][URL="https://xdaforums.com/member.php?u=5782200"]chijure[/URL] — research, patch, validation on E450G
+[*][URL="https://xdaforums.com/t/l5-ii-unlocked-bootloader-optima-team.2844428/"]slipsystem / Optima Team[/URL] — original unlock for E450/E460 (different method)
+[*]4pda community — prior art and research
+[/LIST]
