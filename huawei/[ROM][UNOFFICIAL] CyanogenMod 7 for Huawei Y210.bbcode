@@ -14,13 +14,13 @@
 [B]ROM:[/B] CyanogenMod 7
 [B]Device:[/B] Huawei Y210
 [B]Android version:[/B] 2.3.7 Gingerbread
-[B]Status:[/B] Status: Beta / mostly usable
+[B]Status:[/B] Stable
 [B]Build:[/B] cm-7-20260712-UNOFFICIAL-y210.zip
 [B]MD5:[/B] 0e6cf6cf3e4afbc18d0b05c4ffc39b32
 
 This is an unofficial CyanogenMod 7 port for the Huawei Y210, based on the legacy Qualcomm MSM7x27A/MSM7K-era stack. The current focus is real device stability and compatibility with the stock Y210 behaviour, especially graphics, gralloc/copybit/framebuffer, audio, radio, Wi-Fi, Bluetooth and camera bring-up.
 
-[COLOR="Red"][B]Read before flashing:[/B][/COLOR] this is still a beta release. Please read the known issues before flashing.
+[COLOR="Red"][B]Read before flashing:[/B][/COLOR] please read the known issues before flashing.
 
 [SIZE="4"][B]What works:[/B][/SIZE]
 [LIST]
@@ -65,7 +65,7 @@ This is an unofficial CyanogenMod 7 port for the Huawei Y210, based on the legac
 [*]Several internal audio HAL stability fixes (uninitialized variables, a broken CSV parser branch, a TTY mode flag that could get silently reset)
 [*]Fixed a pre-existing bug where switching between photo and video mode left the preview frozen (a leftover "keep hardware alive" workaround was reusing a stale camera buffer handle)
 [*]Camera: photo capture now uses the sensor's real 2MP resolution (1600x1200) instead of being capped at VGA
-[*]Status bar: fixed a fixed grey strip on the left of the expanded panel and the date drawing on top of the notification icons
+[*]Status bar: fixed a grey strip on the left of the expanded panel and the date drawing on top of the notification icons
 [*]Fixed the same nine-patch background defect (a degenerate 1px stretch region) across every title-bar-style background in the tree, including PackageInstaller
 [*]Performance: found and fixed the CPU tuning script never being packaged into the build at all, so the Y210 CPU profile was silently never applied on a fresh flash
 [*]Performance: switched the CPU governor from ondemand to interactive (already built into the kernel, unused), switched the NAND I/O scheduler from cfq to noop, and lowered the dirty-page writeback threshold — all verified on real hardware
@@ -221,9 +221,9 @@ Please include:
 [B]Based On:[/B] CyanogenMod 7
 
 [B][U]Version Information[/U][/B]
-[B]Status:[/B] Beta
-[B]Current Stable Version:[/B] N/A
-[B]Current Beta Version:[/B] cm-7-20260712-UNOFFICIAL-y210
+[B]Status:[/B] Stable
+[B]Current Stable Version:[/B] cm-7-20260712-UNOFFICIAL-y210
+[B]Current Beta Version:[/B] N/A
 [B]Build Date:[/B] 2026-07-12
 
 [B]Created[/B] 2026-06-12
