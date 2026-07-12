@@ -15,8 +15,8 @@
 [B]Device:[/B] Huawei Y210
 [B]Android version:[/B] 2.3.7 Gingerbread
 [B]Status:[/B] Status: Beta / mostly usable
-[B]Build:[/B] cm-7-20260619-UNOFFICIAL-y210.zip
-[B]MD5:[/B] 09b4564ac74dfc5d5546c0f2b1d031b8
+[B]Build:[/B] cm-7-20260712-UNOFFICIAL-y210.zip
+[B]MD5:[/B] 0e6cf6cf3e4afbc18d0b05c4ffc39b32
 
 This is an unofficial CyanogenMod 7 port for the Huawei Y210, based on the legacy Qualcomm MSM7x27A/MSM7K-era stack. The current focus is real device stability and compatibility with the stock Y210 behaviour, especially graphics, gralloc/copybit/framebuffer, audio, radio, Wi-Fi, Bluetooth and camera bring-up.
 
@@ -31,36 +31,67 @@ This is an unofficial CyanogenMod 7 port for the Huawei Y210, based on the legac
 [*][B]UI / launcher:[/B] usable on-device; status bar renders correctly (ghost/duplication fixed)
 [*][B]Touchscreen:[/B] single-touch and multitouch input; physical and capacitive buttons
 [*][B]Backlight / LED / vibrator:[/B] screen backlight, notification LED and vibrator work
-[*][B]Wi-Fi:[/B] enables, scans, associates and obtains DHCP; hotspot/tethering validated with two clients
-[*][B]Bluetooth:[/B] enables through the restored QCOM path
-[*][B]Telephony / RIL:[/B] baseband, operator registration, signal, IMEI, calls, SMS and HSPA mobile data
+[*][B]Wi-Fi:[/B] enables, scans, associates and obtains DHCP; hotspot/tethering validated with two clients; validated on a clean flash from scratch
+[*][B]Bluetooth:[/B] pairing, file transfer (Object Push) and A2DP audio validated with real hardware
+[*][B]Telephony / RIL:[/B] baseband, operator registration, signal, IMEI, calls (downlink + uplink/mic confirmed on a real call), SMS and HSPA mobile data
 [*][B]Sensors / rotation:[/B] accelerometer, gravity and linear-accel sensors work with stock sensors.default.so; /dev/accel permissions corrected
 [*][B]ADB / logs:[/B] adb logcat and runtime logging are usable
 [*][B]Audio playback:[/B] AudioFlinger -> libaudio output works
 [*][B]Audio recording:[/B] SoundRecorder / voice recorder works
+[*][B]FM radio:[/B] real tuning (genuine RSSI, real tune events) and real audio of the station, confirmed stable
 [*][B]Camera app:[/B] opens consistently with the current libcamera wrapper
-[*][B]Camera:[/B] 640x480 colour portrait preview, JPEG photo capture (~55 KB), close -> reopen, photo/video switch, H.263 352x288 15 fps video recording (MP4 in gallery)
+[*][B]Camera:[/B] 640x480 colour portrait preview, JPEG photo capture at full 2MP (1600x1200), close -> reopen, photo/video switch (fixed preview freeze), H.263 352x288 15 fps video recording (MP4 in gallery)
 [*][B]Video playback:[/B] compatible files play; H.264 Baseline was tested
 [*][B]Storage / USB:[/B] /data, SD card and USB mass storage
-[*][B]Suspend / screen off:[/B] screen off/on cycle validated
-[*][B]Performance profile:[/B] Y210 CPU governor and lowmemorykiller profile applied at runtime
+[*][B]Suspend / screen off / deep sleep:[/B] screen off/on cycle and continuous deep sleep validated (WiFi WoW mode, only the normal modem wakelock remains)
+[*][B]GPS:[/B] real satellite fix validated outdoors (up to 9 satellites, stable coordinates)
+[*][B]Performance profile:[/B] interactive CPU governor, noop I/O scheduler on NAND and tuned lowmemorykiller profile applied at runtime
 [/LIST]
 
 [SIZE="4"][B]Known issues:[/B][/SIZE]
 [LIST]
-[*][B]Headset audio:[/B] works, but perceived volume is lower than stock (stock uses proprietary DSP processing not available in CM7)
-[*][B]Headset volume keys:[/B] vol+ / vol- are acknowledged by the UI but behaviour after headset reconnect still needs validation
-[*][B]Voice call uplink:[/B] calls work, but microphone/uplink still needs more real-world validation
-[*][B]Bluetooth audio:[/B] pairing and A2DP/SCO audio are still pending validation
-[*][B]FM radio:[/B] kernel driver patched to prevent firmware reset on second open; audio output in earphones pending final validation on device
-[*][B]Deep sleep / battery drain:[/B] the suspend path sometimes fails (rpcrouter_smd_xprt wakelock); battery may drain faster than expected and deep sleep is not fully confirmed
-[*][B]GPS:[/B] RPC/XTRA/NTP/AGPS initialise, but real satellite fix still needs outdoor testing
-[*][B]Wi-Fi clean flash:[/B] basic Wi-Fi works, but post-flash validation without manual staging should be repeated
-[*][B]Video playback:[/B] compatible H.264 Baseline files play, but newer MP4 files such as H.264 High profile may fail
+[*][B]Headset volume:[/B] on some units the perceived volume is low; this turned out to be a physical/dirty headset jack on the tested unit, not a software bug — reseat the jack firmly
+[*][B]HD video (640x480 H.264):[/B] not supported — this Y210 revision has no hardware video encoder for that resolution
+[*][B]GPS raw NMEA sentences:[/B] arrive empty (only "$"); does not affect LocationManager/normal apps, only apps that read raw NMEA directly
 [*][B]First boot warning:[/B] com.android.provision may log a non-blocking WindowManager InflateException while creating the starting window after wipe
 [/LIST]
 
 [SIZE="4"][B]Changelog:[/B][/SIZE]
+
+[B]2026-07-12[/B]
+[LIST]
+[*]FM radio: real audio finally fixed — the missing piece was opening /dev/msm_fm and starting an audmgr session before the audio routing RPC, matching real hardware behaviour
+[*]FM volume: fixed a bug where lowering the slider never actually muted, and a second bug where most of the lower/middle range of the slider had no audible effect
+[*]Several internal audio HAL stability fixes (uninitialized variables, a broken CSV parser branch, a TTY mode flag that could get silently reset)
+[*]Fixed a pre-existing bug where switching between photo and video mode left the preview frozen (a leftover "keep hardware alive" workaround was reusing a stale camera buffer handle)
+[*]Camera: photo capture now uses the sensor's real 2MP resolution (1600x1200) instead of being capped at VGA
+[*]Status bar: fixed a fixed grey strip on the left of the expanded panel and the date drawing on top of the notification icons
+[*]Fixed the same nine-patch background defect (a degenerate 1px stretch region) across every title-bar-style background in the tree, including PackageInstaller
+[*]Performance: found and fixed the CPU tuning script never being packaged into the build at all, so the Y210 CPU profile was silently never applied on a fresh flash
+[*]Performance: switched the CPU governor from ondemand to interactive (already built into the kernel, unused), switched the NAND I/O scheduler from cfq to noop, and lowered the dirty-page writeback threshold — all verified on real hardware
+[/LIST]
+
+[B]2026-07-10[/B]
+[LIST]
+[*]Clean flash from scratch validated end-to-end (no manual staging): 54/54 automated checks passed
+[*]Bluetooth A2DP audio validated with real headphones
+[*]GPS real satellite fix validated outdoors
+[*]Diagnosed low headset volume as a physical/dirty jack issue on the test unit, not software
+[/LIST]
+
+[B]2026-07-09[/B]
+[LIST]
+[*]Voice calls: uplink/microphone confirmed working on a real call
+[*]Bluetooth: pairing and file transfer confirmed working with real hardware
+[*]Kernel: removed a leftover FPGA-only register write that ran on every FM power-up on real hardware (reference-board code path, harmless but incorrect)
+[*]FM: fixed event delivery from the kernel driver to the app (was silently stuck in a loop, never received real tune/RSSI events)
+[/LIST]
+
+[B]2026-07-06[/B]
+[LIST]
+[*]FM radio: real RF tuning confirmed (genuine RSSI and tune events, not simulated)
+[*]FM radio: firmware no longer gets wiped on a second open of the tuner device
+[/LIST]
 
 [B]2026-06-13[/B]
 [LIST]
@@ -132,7 +163,7 @@ This is an unofficial CyanogenMod 7 port for the Huawei Y210, based on the legac
 
 [SIZE="4"][B]Downloads:[/B][/SIZE]
 [LIST]
-[*][URL="https://drive.google.com/file/d/1mx76rt1UvbSHxUd1wdKA0ThD4qYNohdM/view?usp=sharing"]cm-7-20260619-UNOFFICIAL-y210.zip[/URL] - 90 MB | MD5: 09b4564ac74dfc5d5546c0f2b1d031b8
+[*][URL="https://drive.google.com/file/d/1qXAHCLQn5EQlevBcixN4gP0JK94IWu27/view?usp=sharing"]cm-7-20260712-UNOFFICIAL-y210.zip[/URL] - 83 MB | MD5: 0e6cf6cf3e4afbc18d0b05c4ffc39b32
 [*][URL="https://xdaforums.com/t/recovery-unofficial-twrp-3-1-1-for-huawei-y210.4792355/"]TWRP 3.1.1 for Huawei Y210 (unofficial)[/URL]
 [/LIST]
 
@@ -192,8 +223,8 @@ Please include:
 [B][U]Version Information[/U][/B]
 [B]Status:[/B] Beta
 [B]Current Stable Version:[/B] N/A
-[B]Current Beta Version:[/B] 20260619
-[B]Build Date:[/B] 2026-06-19
+[B]Current Beta Version:[/B] cm-7-20260712-UNOFFICIAL-y210
+[B]Build Date:[/B] 2026-07-12
 
 [B]Created[/B] 2026-06-12
-[B]Last Updated[/B] 2026-06-20
+[B]Last Updated[/B] 2026-07-12
