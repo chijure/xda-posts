@@ -69,6 +69,7 @@ The kernel is built from LG's GPL source with fixes for this ROM (backlight, pro
 [*][B]"Media server died" after recording video.[/B] The main cause, a use-after-free in the cm-11.0 OMX node teardown (from its CVE-2017-13154 backport), was found and a fix is included in this build. If you still see camera or media restarts, please report them with a logcat.
 [*][B]Incoming calls while the phone sleeps can be missed in weak coverage.[/B] In poor signal the modem sometimes loses network registration while the CPU is in deep sleep, and the network never pages it. With good signal, calls come in from deep sleep. Still being compared with the stock ROM.
 [*][B]No deep sleep for about 5 minutes after each boot.[/B] The GPS daemon holds a wakelock while it initializes. After that, sleep works normally.
+[*][B]LTE (4G):[/B] enabled (preferred network LTE/WCDMA/GSM, selectable in Settings), but a 4G connection is not confirmed yet. There is no LTE coverage at the test location: the LG stock ROM also stays on 3G (HSPA+) there. If you have 4G coverage, please report whether you get LTE.
 [*][B]GPS:[/B] an outdoor satellite fix is not confirmed yet (0 satellites indoors).
 [*][B]NFC:[/B] the controller polls, but reading a tag is not field-tested. The NFC service also restarts on every screen on/off.
 [*][B]IR blaster:[/B] only the stock QuickRemote app works. Third-party IR apps (Android ConsumerIr API) do not, and the brand list comes from QuickSet's limited database.
