@@ -24,22 +24,30 @@ This guide installs a [B]patched EBT[/B]: [B]two instructions, three bytes[/B] c
 [*]Fully reversible: the original EBT can be reinstalled the same way.
 [/LIST]
 
-[COLOR="Red"][B]Tested on ONE D625 with firmware D62510c (Android 4.4.2, KOT49I). The patch script refuses any other bootloader by SHA-256, so other firmware versions are not supported.[/B][/COLOR]
+[SIZE="4"][B]Supported firmware[/B][/SIZE]
+
+[LIST]
+[*][B]D625 - D62510c[/B] (Android 4.4.2, KOT49I): tested.
+[/LIST]
+
+[COLOR="Red"][B]Do not use this kit on any other firmware.[/B][/COLOR] Other D625 firmware versions have not been checked and may use a different bootloader. Step 4 compares your bootloader's SHA-256 with the D62510c one before anything is written; if it differs, stop. Tested on one D625.
 
 [SIZE="4"][B]Download (everything in one zip)[/B][/SIZE]
 
 [LIST]
-[*][URL="PUT_KIT_AFH_URL_HERE"]LG-D625-Bootloader-Unlock-v2.zip[/URL] - 707 KB | MD5: f3bb3d148e9b2535af43d151b8bb8b91
+[*][URL="PUT_KIT_AFH_URL_HERE"]LG-D625-Bootloader-Unlock-v2.zip[/URL] - 1.6 MB | MD5: 34ec8db44e22568cf88214cbc4a6d8ff
 [*]Mirror: [URL="PUT_KIT_DRIVE_URL_HERE"]Google Drive[/URL] (same file, same MD5)
 [/LIST]
 
-The kit contains nvflash 4.10.1800, the original D625 BCT, the Wiko Wax RAM server (already named [I]wiko-bootloader-server.bin[/I]), the patch script, SHA256 checksums and a README.txt with these same steps. It does [B]not[/B] contain any LG bootloader: you read your own from the phone in Step 3, and the script refuses anything that is not the exact D62510c bootloader. Unzip it and run every command below from its folder.
+[B]Ready to flash:[/B] the kit includes the [B]patched D62510c bootloader[/B] ([I]ebt\ebt-patched-v2-D62510c.bin[/I]) and the [B]stock D62510c bootloader[/B] to go back ([I]ebt\ebt-stock-D62510c.bin[/I]). It also has nvflash 4.10.1800, the original D625 BCT, the Wiko Wax RAM server (already named [I]wiko-bootloader-server.bin[/I]), SHA256 checksums, and a README.txt with these same steps. No Python and no patching are needed. Unzip it and run every command below from its folder.
+
+[B]Why not a TWRP zip or dd, like on the D620?[/B] On Tegra the bootloader is protected by a hash stored in the BCT, and only nvflash's managed download updates it. Writing EBT with dd or a recovery zip leaves the old hash in place, and the phone does not boot. That is why APX mode and nvflash are required.
 
 [SIZE="4"][B]Requirements[/B][/SIZE]
 
 [LIST]
 [*]LG D625 on firmware [B]D62510c[/B], with the [B]battery inserted[/B] the whole time.
-[*]A Windows PC with Python 3 (only the standard library is used).
+[*]A Windows PC. Python 3 is only needed for the optional "patch it yourself" route.
 [*][B]adb and fastboot[/B] ([URL="https://developer.android.com/tools/releases/platform-tools"]Android SDK Platform-Tools[/URL]), and [B]USB debugging[/B] enabled on the phone (Settings > Developer options), for the checks in Step 6.
 [*]The patch repository: [URL="https://github.com/chijure-android-system-development/lg-d625-tegra-bootloader-patch"]lg-d625-tegra-bootloader-patch[/URL]. It includes:
 [LIST]
@@ -86,30 +94,31 @@ Open [I]ptable.txt[/I] and confirm that partition 5 is EBT, 4 is RBL and 16 is S
 
 These are read-only operations. [I]rawdeviceread[/I] uses 4096-byte nvflash sectors. Copy all three files somewhere safe; they are your only way back.
 
-[SIZE="4"][B]Step 4 — Create and verify the patched EBT[/B][/SIZE]
+[SIZE="4"][B]Step 4 — Check that your bootloader is the D62510c one (do not skip)[/B][/SIZE]
 
-The bootloader image is the first 860160 bytes of the EBT partition:
+The bootloader is the first 860160 bytes of the EBT partition. Hash it in PowerShell:
 [CODE]$b = [IO.File]::ReadAllBytes("$PWD\ebt-before.bin")
-[IO.File]::WriteAllBytes("$PWD\bootloader-original.bin", $b[0..860159])
+[BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($b, 0, 860160)).Replace('-','')[/CODE]
+
+[LIST]
+[*][B]10BC066B7F99256F87B05E82B5087C5C6F815A3E865DC094169176FCC69706F7[/B]: stock D62510c bootloader. Continue with Step 5.
+[*][B]C2C787A409EF6FD3EA01F9225DCA4F40D81CF5164DE631F9BB067BF4FF43541B[/B]: already patched. You are done; go to Step 6.
+[*][COLOR="Red"][B]Anything else: STOP.[/B][/COLOR] Your bootloader is different and this patch is not for it. Do not flash anything.
+[/LIST]
+
+[B]Optional, patch it yourself:[/B] instead of using the included file, extract your bootloader and run the offline script. It only accepts the stock D62510c bootloader and must produce the same file as the kit (SHA-256 c2c787a4…):
+[CODE][IO.File]::WriteAllBytes("$PWD\bootloader-original.bin", $b[0..860159])
 python validate_and_patch_ebt.py bootloader-original.bin ebt-patched-v2.bin[/CODE]
-
-The script works offline. It checks the input and output by SHA-256 and refuses anything else:
-[CODE]Original SHA256: 10bc066b7f99256f87b05e82b5087c5c6f815a3e865dc094169176fcc69706f7
-Patched SHA256:  c2c787a409ef6fd3ea01f9225dca4f40d81cf5164de631f9bb067bf4ff43541b[/CODE]
-
-[COLOR="Red"][B]If the script refuses your file, STOP. Your bootloader is different, and this patch is not for it.[/B][/COLOR]
-
-Keep [I]bootloader-original.bin[/I]: you need it to restore the stock bootloader.
 
 [SIZE="4"][B]Step 5 — Install the patched EBT[/B][/SIZE]
 
-[CODE].\tools\nvflash.exe --resume --download 5 ebt-patched-v2.bin --sync[/CODE]
+[CODE].\tools\nvflash.exe --resume --download 5 ebt\ebt-patched-v2-D62510c.bin --sync[/CODE]
 
 [COLOR="Red"][B]Use exactly this managed --download … --sync command.[/B][/COLOR] Do [B]not[/B] write EBT with dd, --rawdevicewrite or any raw sector write, and do [B]not[/B] edit the BCT by hand. The managed download updates the bootloader hash and the BCT signature. A raw write skips that, and the BootROM then falls back to RBL or refuses to boot.
 
 On the test unit, --sync ended with exit code 0 and the USB device disappeared. Unplug the phone, pull and reinsert the battery if needed, and power it on. Android should boot normally.
 
-[COLOR="Red"][B]If Android does not boot,[/B][/COLOR] do not try anything else: enter APX again and follow [B]Restore the stock bootloader[/B] below with your [I]bootloader-original.bin[/I].
+[COLOR="Red"][B]If Android does not boot,[/B][/COLOR] do not try anything else: enter APX again and follow [B]Restore the stock bootloader[/B] below.
 
 [SIZE="4"][B]Step 6 — Verify[/B][/SIZE]
 
@@ -125,12 +134,12 @@ Expected: [B]unlocked: yes[/B] and [B]secure: no[/B]. You can now test a recover
 [CODE].\tools\nvflash.exe --resume --read 5 ebt-after.bin
 .\tools\nvflash.exe --resume --read 4 rbl-after.bin
 .\tools\nvflash.exe --resume --rawdeviceread 0 1024 bct-after.bin[/CODE]
-The first 860160 bytes of [I]ebt-after.bin[/I] must equal [I]ebt-patched-v2.bin[/I], and [I]rbl-after.bin[/I] must be identical to [I]rbl-before.bin[/I]. [I]bct-after.bin[/I] differs from [I]bct-before.bin[/I] by design: nvflash wrote the new bootloader hash. Keep it with your backups.
+The first 860160 bytes of [I]ebt-after.bin[/I] must equal [I]ebt\ebt-patched-v2-D62510c.bin[/I], and [I]rbl-after.bin[/I] must be identical to [I]rbl-before.bin[/I]. [I]bct-after.bin[/I] differs from [I]bct-before.bin[/I] by design: nvflash wrote the new bootloader hash. Keep it with your backups.
 
 [SIZE="4"][B]Restore the stock bootloader[/B][/SIZE]
 
-Enter APX, repeat Step 2, then use the same managed flow with your original file:
-[CODE].\tools\nvflash.exe --resume --download 5 bootloader-original.bin --sync[/CODE]
+Enter APX, repeat Step 2, then use the same managed flow with the stock bootloader from the kit:
+[CODE].\tools\nvflash.exe --resume --download 5 ebt\ebt-stock-D62510c.bin --sync[/CODE]
 
 Do not restore only the original BCT while the patched EBT is installed. A full APX recovery procedure is documented at [URL="https://github.com/chijure/lg-d625-tegra4i-recovery"]lg-d625-tegra4i-recovery[/URL].
 
@@ -150,7 +159,7 @@ No. Those use a Snapdragon 400 and a completely different bootloader. This is fo
 The script will refuse your bootloader. Do not try to force it.
 
 [B]Is a one-click tool available?[/B]
-No. This is a documented patch for users who can back up, verify and restore their own bootloader.
+No. The kit has the patched bootloader ready, but the backup and the hash check in Steps 3 and 4 are deliberately manual: they are what keeps a wrong firmware from being flashed.
 
 [SIZE="4"][B]Technical details[/B][/SIZE]
 
