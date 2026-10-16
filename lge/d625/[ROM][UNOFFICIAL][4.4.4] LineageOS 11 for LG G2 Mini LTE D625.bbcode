@@ -1,4 +1,4 @@
-[CENTER][SIZE="5"][B][ROM][UNOFFICIAL][4.4.4] CyanogenMod 11 for LG G2 Mini LTE D625[/B][/SIZE][/CENTER]
+[CENTER][SIZE="5"][B][ROM][UNOFFICIAL][4.4.4] LineageOS 11 for LG G2 Mini LTE D625[/B][/SIZE][/CENTER]
 
 [CODE]#include <std_disclaimer.h>
 /*
@@ -12,7 +12,7 @@
 
 [SIZE="4"][B]About[/B][/SIZE]
 
-This is an unofficial [B]CyanogenMod 11 (Android 4.4.4 KitKat)[/B] build for the [B]LG G2 Mini LTE D625[/B] (codename [B]g2mv[/B]). It is the first custom ROM for this model, which uses an [B]NVIDIA Tegra 4i[/B] instead of a Snapdragon, so nothing from the D620/D618 ports applies to it.
+This is an unofficial [B]LineageOS 11 (Android 4.4.4 KitKat)[/B] build for the [B]LG G2 Mini LTE D625[/B] (codename [B]g2mv[/B]). It is the first custom ROM for this model, which uses an [B]NVIDIA Tegra 4i[/B] instead of a Snapdragon, so nothing from the D620/D618 ports applies to it.
 
 The kernel is built from LG's GPL source with fixes for this ROM (backlight, proximity, flash, KnockON). Proprietary files come from stock firmware D62510c. Every result listed below was checked on real hardware.
 
@@ -27,7 +27,7 @@ The kernel is built from LG's GPL source with fixes for this ROM (backlight, pro
 [SIZE="4"][B]Device specs[/B][/SIZE]
 [LIST]
 [*]Device: LG G2 Mini LTE (LG-D625), codename g2mv
-[*]Android version: 4.4.4 KitKat (CyanogenMod 11)
+[*]Android version: 4.4.4 KitKat (LineageOS 11, the LineageOS-maintained cm-11.0 branch with later security patches)
 [*]Kernel: Linux 3.4.65, compiled from source (pda_android_defconfig)
 [*]SoC: NVIDIA Tegra 4i (T148), quad-core ARM Cortex-A9 up to 1.73 GHz
 [*]GPU: NVIDIA ULP GeForce (OpenGL ES 2.0), up to 595 MHz
@@ -44,7 +44,7 @@ The kernel is built from LG's GPL source with fixes for this ROM (backlight, pro
 [SIZE="4"][B]What's working:[/B][/SIZE]
 [LIST]
 [*][B]Boot:[/B] boots to the launcher; screen ready about 13 s after the kernel starts on a normal boot.
-[*][B]Display and HW acceleration:[/B] NVIDIA GLES driver and hwcomposer overlays. The RT8542 backlight is controlled by CM. Auto-brightness works.
+[*][B]Display and HW acceleration:[/B] NVIDIA GLES driver and hwcomposer overlays. The RT8542 backlight is controlled by the ROM. Auto-brightness works.
 [*][B]Touch:[/B] multitouch, with an on-screen navigation bar.
 [*][B]KnockON (double tap to wake):[/B] toggle in Settings > Display. It wakes from deep sleep and is blocked when the proximity sensor is covered (pocket).
 [*][B]Calls and SIM:[/B] Icera modem, voice calls and HSPA data (tested on Claro Peru). The in-call proximity sensor turns the screen off at your ear.
@@ -60,13 +60,13 @@ The kernel is built from LG's GPL source with fixes for this ROM (backlight, pro
 [*][B]IR blaster:[/B] stock LG QuickRemote and UEI QuickSet (TV codes from the built-in database).
 [*][B]GPS:[/B] the stack and AGPS start, but see the known issues.
 [*][B]NVIDIA power management:[/B] powerservice and ussrd run as on stock, with the interactive CPU governor.
-[*][B]Root:[/B] built-in CM superuser (Settings > Developer options > Root access).
+[*][B]Root:[/B] built-in superuser (Settings > Developer options > Root access).
 [/LIST]
 
 [SIZE="4"][B]Known issues:[/B][/SIZE]
 [LIST]
 [*][B]Recorded video looks pixelated.[/B] The NVIDIA H.264 encoder ignores the requested bitrate and writes about 180 kbps instead of 4 Mbps. Photos are not affected. Under investigation.
-[*][B]"Media server died" after recording video.[/B] The main cause, a use-after-free in CM 11's OMX node teardown, was found and a fix is included in this build. If you still see camera or media restarts, please report them with a logcat.
+[*][B]"Media server died" after recording video.[/B] The main cause, a use-after-free in the cm-11.0 OMX node teardown (from its CVE-2017-13154 backport), was found and a fix is included in this build. If you still see camera or media restarts, please report them with a logcat.
 [*][B]Incoming calls while the phone sleeps can be missed in weak coverage.[/B] In poor signal the modem sometimes loses network registration while the CPU is in deep sleep, and the network never pages it. With good signal, calls come in from deep sleep. Still being compared with the stock ROM.
 [*][B]No deep sleep for about 5 minutes after each boot.[/B] The GPS daemon holds a wakelock while it initializes. After that, sleep works normally.
 [*][B]GPS:[/B] an outdoor satellite fix is not confirmed yet (0 satellites indoors).
@@ -100,7 +100,7 @@ Screenshots:
 
 [SIZE="4"][B]Source code:[/B][/SIZE]
 [LIST]
-[*][URL="https://github.com/chijure-android-system-development/android_device_lge_g2mv"]Device tree[/URL] (branch cm-11.0). Its README documents every fix and the known issues in detail, and patches/ holds the changes to CM projects (bionic, frameworks/av, Camera2, system/core, libnfc-nci).
+[*][URL="https://github.com/chijure-android-system-development/android_device_lge_g2mv"]Device tree[/URL] (branch cm-11.0). Its README documents every fix and the known issues in detail, and patches/ holds the changes to LineageOS projects (bionic, frameworks/av, Camera2, system/core, libnfc-nci).
 [*][URL="https://github.com/chijure-android-system-development/android_kernel_lge_d625"]Kernel[/URL] (branch cm-11.0)
 [*][URL="https://github.com/chijure-android-system-development/android_vendor_lge_g2mv"]Vendor blobs[/URL] (branch cm-11.0)
 [*][URL="https://github.com/chijure-android-system-development/lg-d625-tegra-bootloader-patch"]Bootloader patch[/URL]
@@ -118,7 +118,7 @@ Do not report issues from Snapdragon G2 Mini models.
 
 [SIZE="4"][B]Thanks to:[/B][/SIZE]
 [LIST]
-[*]CyanogenMod team: CM 11 base
+[*]LineageOS team: LineageOS 11 (cm-11.0) base, and the CyanogenMod team before it
 [*]NVIDIA and LG: original device software and the GPL kernel source
 [*]Cpasjuste: CM 11 tree for the Wiko Wax / Blackphone (Tegra 4i), used as a reference
 [*]CyanogenMod LG msm8226 kernel: KnockON reference for the same Atmel touch driver
@@ -128,14 +128,14 @@ Do not report issues from Snapdragon G2 Mini models.
 [/LIST]
 
 [B][U][SIZE="4"][PLAIN]XDA:DevDB Information[/PLAIN][/SIZE][/U][/B]
-[SIZE=3][B][ROM][UNOFFICIAL][4.4.4] CyanogenMod 11 for LG G2 Mini LTE D625, ROM for the LG G2 Mini[/B][/SIZE]
+[SIZE=3][B][ROM][UNOFFICIAL][4.4.4] LineageOS 11 for LG G2 Mini LTE D625, ROM for the LG G2 Mini[/B][/SIZE]
 
 [B][U]Contributors[/U][/B]
 [B]chijure[/B]
 [B]ROM OS Version:[/B] 4.4.4 KitKat
 [B]ROM Kernel:[/B] Linux 3.4.65
 [B]ROM Firmware Required:[/B] Patched bootloader, TWRP, firmware D62510c
-[B]Based On:[/B] CyanogenMod 11
+[B]Based On:[/B] LineageOS 11
 
 [B][U]Version Information[/U][/B]
 [B]Status:[/B] Beta
