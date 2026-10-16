@@ -14,7 +14,7 @@
 
 This is an unofficial [B]LineageOS 11 (Android 4.4.4 KitKat)[/B] build for the [B]LG G2 Mini LTE D625[/B] (codename [B]g2mv[/B]). It is the first custom ROM for this model, which uses an [B]NVIDIA Tegra 4i[/B] instead of a Snapdragon, so nothing from the D620/D618 ports applies to it.
 
-The kernel is built from LG's GPL source with fixes for this ROM (backlight, proximity, flash, KnockON). Proprietary files come from stock firmware D62510c. Every result listed below was checked on real hardware.
+The kernel is built from LG's GPL source with fixes for this ROM (backlight, proximity, flash, KnockON, live battery voltage). Proprietary files come from stock firmware D62510c. Every result listed below was checked on real hardware with this kernel.
 
 [COLOR="Red"][B]Only for the Tegra 4i D625. It will not boot on the Snapdragon G2 Mini models (D620, D618...).[/B][/COLOR]
 
@@ -33,51 +33,50 @@ The kernel is built from LG's GPL source with fixes for this ROM (backlight, pro
 [*]GPU: NVIDIA ULP GeForce (OpenGL ES 2.0), up to 595 MHz
 [*]RAM: 1 GB
 [*]Display: 4.7 inch, 540x960, 60 Hz
-[*]Modem: NVIDIA Icera (2G/3G)
+[*]Modem: NVIDIA Icera (2G/3G/LTE)
 [*]Base firmware: D62510c (Android 4.4.2)
 [/LIST]
 
 [SIZE="4"][B]Current status: Beta[/B][/SIZE]
 
-[COLOR="Red"][B]Read the known issues before flashing.[/B][/COLOR] This is a first public build. Calls, data, Wi-Fi and Bluetooth work, but some items below are still being fixed.
+[COLOR="Red"][B]Read the known issues before flashing.[/B][/COLOR] This is a first public build. Everything in the list below was tested, but a few items still need a field test.
 
 [SIZE="4"][B]What's working:[/B][/SIZE]
 [LIST]
-[*][B]Boot:[/B] boots to the launcher; screen ready about 13 s after the kernel starts on a normal boot.
-[*][B]Display and HW acceleration:[/B] NVIDIA GLES driver and hwcomposer overlays. The RT8542 backlight is controlled by the ROM. Auto-brightness works.
+[*][B]Boot:[/B] boots to the launcher in about 15-25 s, including the first boot after a clean install.
+[*][B]Display and HW acceleration:[/B] NVIDIA GLES driver and hwcomposer overlays. The RT8542 backlight is controlled by the ROM. Auto-brightness works. GPU performance matches the LG stock ROM (79 FPS vs 78.6 FPS in the same 1280x720 test scene).
 [*][B]Touch:[/B] multitouch, with an on-screen navigation bar.
 [*][B]KnockON (double tap to wake):[/B] toggle in Settings > Display. It wakes from deep sleep and is blocked when the proximity sensor is covered (pocket).
-[*][B]Calls and SIM:[/B] Icera modem, voice calls and HSPA data (tested on Claro Peru). The in-call proximity sensor turns the screen off at your ear.
+[*][B]Calls, SMS and SIM:[/B] Icera modem, voice calls, SMS and HSPA+ data (tested on Claro Peru). The in-call proximity sensor turns the screen off at your ear. Incoming calls wake the phone from deep sleep.
 [*][B]Wi-Fi:[/B] Broadcom bcmdhd, WPA2.
-[*][B]Bluetooth:[/B] BCM4334, scan and pairing.
+[*][B]Bluetooth:[/B] BCM4334, scan, pairing and file transfer.
 [*][B]Audio:[/B] speaker, earpiece, headset and microphone, using the stock NVIDIA audio HAL.
-[*][B]Camera:[/B] photos, flash, video recording and playback with NVIDIA hardware codecs.
+[*][B]Camera:[/B] photos and flash. Video recording at stock quality: [B]1080p at 17 Mbps[/B] on the back camera (with stabilization) and 720p at 12 Mbps on the front camera. Gallery thumbnails and hardware video playback.
 [*][B]Torch:[/B] works from the Torch app and as video light. The LED switches off when the camera closes.
 [*][B]Sensors:[/B] accelerometer, magnetometer, proximity and light.
 [*][B]Vibrator:[/B] max77660 haptics.
 [*][B]Deep sleep:[/B] Tegra LP0 suspend. The modem wakes the phone for calls and SMS.
-[*][B]Offline charging:[/B] stock LG charge animation when the phone is off.
-[*][B]IR blaster:[/B] stock LG QuickRemote and UEI QuickSet (TV codes from the built-in database).
-[*][B]GPS:[/B] the stack and AGPS start, but see the known issues.
+[*][B]Offline charging:[/B] stock LG charge animation when the phone is off; Power boots Android.
+[*][B]NFC:[/B] PN547 controller. Android Beam between two phones works (photo sent over NFC + Bluetooth).
+[*][B]IR blaster:[/B] standard Android ConsumerIr support, so any IR remote app that uses the Android API can use it. The stock LG QuickRemote app also works.
+[*][B]GPS:[/B] BCM4752 with AGPS (SUPL) and LTO orbit data download.
 [*][B]NVIDIA power management:[/B] powerservice and ussrd run as on stock, with the interactive CPU governor.
 [*][B]Root:[/B] built-in superuser (Settings > Developer options > Root access).
 [/LIST]
 
 [SIZE="4"][B]Known issues:[/B][/SIZE]
 [LIST]
-[*][B]Recorded video looks pixelated.[/B] The NVIDIA H.264 encoder ignores the requested bitrate and writes about 180 kbps instead of 4 Mbps. Photos are not affected. Under investigation.
-[*][B]"Media server died" after recording video.[/B] The main cause, a use-after-free in the cm-11.0 OMX node teardown (from its CVE-2017-13154 backport), was found and a fix is included in this build. If you still see camera or media restarts, please report them with a logcat.
-[*][B]Incoming calls while the phone sleeps can be missed in weak coverage.[/B] In poor signal the modem sometimes loses network registration while the CPU is in deep sleep, and the network never pages it. With good signal, calls come in from deep sleep. Still being compared with the stock ROM.
-[*][B]No deep sleep for about 5 minutes after each boot.[/B] The GPS daemon holds a wakelock while it initializes. After that, sleep works normally.
+[*][B]Incoming calls while the phone sleeps can be missed in weak coverage.[/B] In poor signal the modem sometimes loses network registration while the CPU is in deep sleep, and the network never pages it. With good signal, calls come in from deep sleep.
 [*][B]LTE (4G):[/B] enabled (preferred network LTE/WCDMA/GSM, selectable in Settings), but a 4G connection is not confirmed yet. There is no LTE coverage at the test location: the LG stock ROM also stays on 3G (HSPA+) there. If you have 4G coverage, please report whether you get LTE.
-[*][B]GPS:[/B] an outdoor satellite fix is not confirmed yet (0 satellites indoors).
-[*][B]NFC:[/B] the controller polls, but reading a tag is not field-tested. The NFC service also restarts on every screen on/off.
-[*][B]IR blaster:[/B] only the stock QuickRemote app works. Third-party IR apps (Android ConsumerIr API) do not, and the brand list comes from QuickSet's limited database.
+[*][B]GPS:[/B] the chip, AGPS and orbit data work, but an outdoor satellite fix is not confirmed yet (0 satellites indoors).
+[*][B]NFC:[/B] reading a tag or card is not tested yet (Android Beam is).
+[*][B]IR blaster:[/B] the LED was checked with a camera; controlling a real TV is not tested yet.
+[*][B]Location without Google services:[/B] there is no network location provider, only GPS. The lock screen weather widget therefore uses GPS for its location, limited to 60 seconds and at most once per hour. You can also set a fixed city in its settings.
 [/LIST]
 
 [SIZE="4"][B]Download:[/B][/SIZE]
 [LIST]
-[*][URL="PUT_DOWNLOAD_URL_HERE"]PUT_ZIP_FILENAME_HERE[/URL] - PUT_SIZE_HERE | MD5: PUT_MD5_HERE
+[*][URL="PUT_DOWNLOAD_URL_HERE"]lineage-11-20261016-UNOFFICIAL-g2mv.zip[/URL] - 258 MB | MD5: 60d531d2b80cde53e30049edda94a3dc
 [*]Google Apps (optional): any [B]Android 4.4 (KitKat)[/B] GApps package, for example PUT_GAPPS_NAME_HERE
 [/LIST]
 
@@ -101,7 +100,7 @@ Screenshots:
 
 [SIZE="4"][B]Source code:[/B][/SIZE]
 [LIST]
-[*][URL="https://github.com/chijure-android-system-development/android_device_lge_g2mv"]Device tree[/URL] (branch cm-11.0). Its README documents every fix and the known issues in detail, and patches/ holds the changes to LineageOS projects (bionic, frameworks/av, Camera2, system/core, libnfc-nci).
+[*][URL="https://github.com/chijure-android-system-development/android_device_lge_g2mv"]Device tree[/URL] (branch cm-11.0). Its README documents every fix and the known issues in detail. Most fixes use LineageOS build flags and overlays; patches/ holds the only two source patches (bionic, LockClock) and a script to apply them.
 [*][URL="https://github.com/chijure-android-system-development/android_kernel_lge_d625"]Kernel[/URL] (branch cm-11.0)
 [*][URL="https://github.com/chijure-android-system-development/android_vendor_lge_g2mv"]Vendor blobs[/URL] (branch cm-11.0)
 [*][URL="https://github.com/chijure-android-system-development/lg-d625-tegra-bootloader-patch"]Bootloader patch[/URL]
@@ -141,8 +140,8 @@ Do not report issues from Snapdragon G2 Mini models.
 [B][U]Version Information[/U][/B]
 [B]Status:[/B] Beta
 [B]Current Stable Version:[/B] N/A
-[B]Current Beta Version:[/B] PUT_ZIP_FILENAME_HERE
-[B]Build Date:[/B] PUT_BUILD_DATE_HERE
+[B]Current Beta Version:[/B] lineage-11-20261016-UNOFFICIAL-g2mv
+[B]Build Date:[/B] 2026-10-16
 
 [B]Created[/B] 2026-10-16
 [B]Last Updated[/B] 2026-10-16
