@@ -1,0 +1,171 @@
+[CENTER][SIZE="5"][B][GUIDE] How To Unlock the Bootloader LG G2 Mini LTE D625 (Tegra 4i)[/B][/SIZE]
+
+[B][SIZE="4"][COLOR="Red"]WARNING: THIS MODIFIES THE BOOTLOADER — READ EVERYTHING BEFORE STARTING[/COLOR][/SIZE][/B][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost IMEI,
+ * or any other damage. Back up everything and verify every hash before
+ * flashing. YOU are choosing to make these modifications.
+ */[/CODE]
+
+[SIZE="4"][B]About[/B][/SIZE]
+
+The LG G2 Mini LTE [B]D625[/B] uses an [B]NVIDIA Tegra 4i[/B], not a Snapdragon, and has no official unlock. LG's bootloader (EBT) refuses any recovery or boot image that is not signed by LG.
+
+This guide installs a [B]patched EBT[/B]: [B]two instructions, three bytes[/B] changed so the signature check is skipped. The patch is applied with NVIDIA's own [B]nvflash[/B] from APX mode, which also updates the bootloader hash in the BCT. Android keeps booting normally, and fastboot then reports [B]unlocked: yes[/B] and [B]secure: no[/B].
+
+[B]What you get:[/B]
+[LIST]
+[*]Unsigned recovery images boot, for example [URL="PUT_TWRP_THREAD_URL_HERE"]TWRP 3.1.1-1 for D625[/URL].
+[*][B]No data wipe:[/B] this is not [I]fastboot oem unlock[/I], and userdata is untouched.
+[*]Fully reversible: the original EBT can be reinstalled the same way.
+[/LIST]
+
+[COLOR="Red"][B]Tested on ONE D625 with firmware D62510c (Android 4.4.2, KOT49I). The patch script refuses any other bootloader by SHA-256, so other firmware versions are not supported.[/B][/COLOR]
+
+[SIZE="4"][B]Download (everything in one zip)[/B][/SIZE]
+
+[LIST]
+[*][URL="PUT_KIT_AFH_URL_HERE"]LG-D625-Bootloader-Unlock-v2.zip[/URL] - 707 KB | MD5: f3bb3d148e9b2535af43d151b8bb8b91
+[*]Mirror: [URL="PUT_KIT_DRIVE_URL_HERE"]Google Drive[/URL] (same file, same MD5)
+[/LIST]
+
+The kit contains nvflash 4.10.1800, the original D625 BCT, the Wiko Wax RAM server (already named [I]wiko-bootloader-server.bin[/I]), the patch script, SHA256 checksums and a README.txt with these same steps. It does [B]not[/B] contain any LG bootloader: you read your own from the phone in Step 3, and the script refuses anything that is not the exact D62510c bootloader. Unzip it and run every command below from its folder.
+
+[SIZE="4"][B]Requirements[/B][/SIZE]
+
+[LIST]
+[*]LG D625 on firmware [B]D62510c[/B], with the [B]battery inserted[/B] the whole time.
+[*]A Windows PC with Python 3 (only the standard library is used).
+[*][B]adb and fastboot[/B] ([URL="https://developer.android.com/tools/releases/platform-tools"]Android SDK Platform-Tools[/URL]), and [B]USB debugging[/B] enabled on the phone (Settings > Developer options), for the checks in Step 6.
+[*]The patch repository: [URL="https://github.com/chijure-android-system-development/lg-d625-tegra-bootloader-patch"]lg-d625-tegra-bootloader-patch[/URL]. It includes:
+[LIST]
+[*][B]tools/nvflash.exe[/B]: the original NVIDIA nvflash 4.10.1800 used for the test.
+[*][B]bct/bct-original-slot.cfg[/B]: the original D625 BCT, needed to start nvflash.
+[*][B]validate_and_patch_ebt.py[/B]: the offline patch generator.
+[/LIST]
+[*]The [B]Wiko Wax nvflash RAM server[/B]: [I]bootloader.bin[/I] from the Wiko Wax FlashCWM/nvflash package (see the [URL="https://forum.frandroid.com/topic/203892-recovery-twrp-2800-02/"]Wiko Wax TWRP thread[/URL]). DumpWAX and the RAM server are also covered in the [URL="https://forum.frandroid.com/topic/241543-tuto-rooter-changer-de-rom-sur-wiko-wax-4g/"]Wiko Wax root and ROM thread[/URL]. It is included in the kit above, but not in the GitHub repository. The copy used for testing is 718688 bytes, SHA-256:
+[CODE]e6833eca87d3355e3017df9ee5ec6b3c5a275a3652e07eca949e8ac2df9116a5[/CODE]
+The guide calls it [I]wiko-bootloader-server.bin[/I]. It only runs from RAM; it is never written to the phone.
+[*]An APX USB driver on Windows (NVIDIA APX driver or WinUSB) that lets nvflash see the phone.
+[/LIST]
+
+Verify the files from the kit (or repository) folder in PowerShell:
+[CODE](Get-FileHash tools/nvflash.exe -Algorithm SHA256).Hash
+# 000FA264D6614A1D3490B81C0E8FBA5A72B0F70E74CA8141E108229DC7FAB466
+(Get-FileHash bct/bct-original-slot.cfg -Algorithm SHA256).Hash
+# 8583855D33606748415F65AE291A194500BAB1110C8D8CC34119C59854423193[/CODE]
+
+[SIZE="4"][B]Partition numbers (nvflash)[/B][/SIZE]
+
+On the D625, nvflash numbers are [B]EBT = 5[/B], [B]RBL = 4[/B] and [B]SOS (recovery) = 16[/B]. [COLOR="Red"][B]Do not use the Wiko Wax BCT or its partition numbers.[/B][/COLOR] The Wiko server and the LG bootloader are different files.
+
+[SIZE="4"][B]Step 1 — Enter APX mode[/B][/SIZE]
+
+[LIST=1]
+[*]Power off the phone. Keep the battery in.
+[*]Hold [B]Volume Up + Volume Down[/B] and plug in the USB cable.
+[*]The screen stays black. Windows should detect an NVIDIA APX device; install the driver if needed.
+[*]Open a console [B]as administrator[/B] in the repository folder.
+[/LIST]
+
+[SIZE="4"][B]Step 2 — Load the RAM server and read the partition table[/B][/SIZE]
+
+[CODE].\tools\nvflash.exe --bct bct/bct-original-slot.cfg --getpartitiontable ptable.txt --bl wiko-bootloader-server.bin --go[/CODE]
+
+Open [I]ptable.txt[/I] and confirm that partition 5 is EBT, 4 is RBL and 16 is SOS. [B]If it does not match, stop.[/B]
+
+[SIZE="4"][B]Step 3 — Back up EBT, RBL and BCT (do not skip)[/B][/SIZE]
+
+[CODE].\tools\nvflash.exe --resume --read 5 ebt-before.bin
+.\tools\nvflash.exe --resume --read 4 rbl-before.bin
+.\tools\nvflash.exe --resume --rawdeviceread 0 1024 bct-before.bin[/CODE]
+
+These are read-only operations. [I]rawdeviceread[/I] uses 4096-byte nvflash sectors. Copy all three files somewhere safe; they are your only way back.
+
+[SIZE="4"][B]Step 4 — Create and verify the patched EBT[/B][/SIZE]
+
+The bootloader image is the first 860160 bytes of the EBT partition:
+[CODE]$b = [IO.File]::ReadAllBytes("$PWD\ebt-before.bin")
+[IO.File]::WriteAllBytes("$PWD\bootloader-original.bin", $b[0..860159])
+python validate_and_patch_ebt.py bootloader-original.bin ebt-patched-v2.bin[/CODE]
+
+The script works offline. It checks the input and output by SHA-256 and refuses anything else:
+[CODE]Original SHA256: 10bc066b7f99256f87b05e82b5087c5c6f815a3e865dc094169176fcc69706f7
+Patched SHA256:  c2c787a409ef6fd3ea01f9225dca4f40d81cf5164de631f9bb067bf4ff43541b[/CODE]
+
+[COLOR="Red"][B]If the script refuses your file, STOP. Your bootloader is different, and this patch is not for it.[/B][/COLOR]
+
+Keep [I]bootloader-original.bin[/I]: you need it to restore the stock bootloader.
+
+[SIZE="4"][B]Step 5 — Install the patched EBT[/B][/SIZE]
+
+[CODE].\tools\nvflash.exe --resume --download 5 ebt-patched-v2.bin --sync[/CODE]
+
+[COLOR="Red"][B]Use exactly this managed --download … --sync command.[/B][/COLOR] Do [B]not[/B] write EBT with dd, --rawdevicewrite or any raw sector write, and do [B]not[/B] edit the BCT by hand. The managed download updates the bootloader hash and the BCT signature. A raw write skips that, and the BootROM then falls back to RBL or refuses to boot.
+
+On the test unit, --sync ended with exit code 0 and the USB device disappeared. Unplug the phone, pull and reinsert the battery if needed, and power it on. Android should boot normally.
+
+[COLOR="Red"][B]If Android does not boot,[/B][/COLOR] do not try anything else: enter APX again and follow [B]Restore the stock bootloader[/B] below with your [I]bootloader-original.bin[/I].
+
+[SIZE="4"][B]Step 6 — Verify[/B][/SIZE]
+
+With Android running and ADB authorized:
+[CODE]adb reboot bootloader
+fastboot getvar unlocked
+fastboot getvar secure[/CODE]
+
+Expected: [B]unlocked: yes[/B] and [B]secure: no[/B]. You can now test a recovery without installing it:
+[CODE]fastboot boot recovery.img[/CODE]
+
+[B]Optional readback:[/B] enter APX again, repeat Step 2, then:
+[CODE].\tools\nvflash.exe --resume --read 5 ebt-after.bin
+.\tools\nvflash.exe --resume --read 4 rbl-after.bin
+.\tools\nvflash.exe --resume --rawdeviceread 0 1024 bct-after.bin[/CODE]
+The first 860160 bytes of [I]ebt-after.bin[/I] must equal [I]ebt-patched-v2.bin[/I], and [I]rbl-after.bin[/I] must be identical to [I]rbl-before.bin[/I]. [I]bct-after.bin[/I] differs from [I]bct-before.bin[/I] by design: nvflash wrote the new bootloader hash. Keep it with your backups.
+
+[SIZE="4"][B]Restore the stock bootloader[/B][/SIZE]
+
+Enter APX, repeat Step 2, then use the same managed flow with your original file:
+[CODE].\tools\nvflash.exe --resume --download 5 bootloader-original.bin --sync[/CODE]
+
+Do not restore only the original BCT while the patched EBT is installed. A full APX recovery procedure is documented at [URL="https://github.com/chijure/lg-d625-tegra4i-recovery"]lg-d625-tegra4i-recovery[/URL].
+
+[SIZE="4"][B]Next step: TWRP[/B][/SIZE]
+
+[URL="PUT_TWRP_THREAD_URL_HERE"][RECOVERY][UNOFFICIAL] TWRP 3.1.1-1 for LG G2 Mini LTE D625[/URL]
+
+[SIZE="4"][B]FAQ[/B][/SIZE]
+
+[B]Does this wipe my data?[/B]
+No. Nothing is erased, and fastboot oem unlock is not used.
+
+[B]Does it work on the D620, D618 or other G2 Mini models?[/B]
+No. Those use a Snapdragon 400 and a completely different bootloader. This is for the Tegra 4i [B]D625[/B] only.
+
+[B]My firmware is not D62510c.[/B]
+The script will refuse your bootloader. Do not try to force it.
+
+[B]Is a one-click tool available?[/B]
+No. This is a documented patch for users who can back up, verify and restore their own bootloader.
+
+[SIZE="4"][B]Technical details[/B][/SIZE]
+
+Offsets, the BCT integrity analysis and the hardware evidence are in the repository: [URL="https://github.com/chijure-android-system-development/lg-d625-tegra-bootloader-patch/blob/main/BOOTLOADER_PATCH_ANALYSIS.md"]BOOTLOADER_PATCH_ANALYSIS.md[/URL].
+
+[TABLE]
+[TR][TD][B]Live offset[/B][/TD][TD][B]Load address[/B][/TD][TD][B]Original[/B][/TD][TD][B]Patched[/B][/TD][TD][B]Effect[/B][/TD][/TR]
+[TR][TD]0xec5e[/TD][TD]0x80116c5e[/TD][TD]88 b1[/TD][TD]11 e0[/TD][TD]CBZ R0 → B (verification wrapper)[/TD][/TR]
+[TR][TD]0x125e4[/TD][TD]0x8011a5e4[/TD][TD]1b d0[/TD][TD]1b e0[/TD][TD]BEQ → B (generic verification)[/TD][/TR]
+[/TABLE]
+
+[SIZE="4"][B]Credits[/B][/SIZE]
+
+[LIST]
+[*][URL="https://xdaforums.com/member.php?u=5782200"]chijure[/URL]: research, patch and hardware validation on the D625
+[*]Wiko Wax community ([URL="https://forum.frandroid.com/topic/203892-recovery-twrp-2800-02/"]frandroid[/URL]): APX/nvflash workflow and RAM server for Tegra 4i
+[*]NVIDIA: [URL="https://download.nvidia.com/tegra-public-appnotes/flashing-tools.html"]Tegra flashing tools documentation[/URL]
+[/LIST]
