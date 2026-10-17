@@ -1,0 +1,155 @@
+[CENTER][SIZE="5"][B][RECOVERY][UNOFFICIAL] TWRP 3.1.1-1 for LG G2 Mini LTE D625[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost IMEI,
+ * or any other damage. Make a backup and verify your exact model before
+ * flashing. YOU are choosing to make these modifications.
+ */[/CODE]
+
+[SIZE="4"][B]About[/B][/SIZE]
+
+This is an unofficial TWRP 3.1.1-1 build for the [B]LG G2 Mini LTE D625[/B] (codename [B]g2mv[/B], NVIDIA Tegra 4i). It uses the unmodified stock LG kernel from firmware D62510c and is built from the Android 4.4 OmniROM/TWRP tree.
+
+[COLOR="Red"][B]Only for the Tegra 4i D625. It will not boot on the Snapdragon G2 Mini models (D620, D618...).[/B][/COLOR]
+
+[COLOR="Red"][B]Requires the patched bootloader.[/B][/COLOR] The stock D625 bootloader refuses unsigned recovery images. Unlock it first:
+[URL="PUT_BOOTLOADER_GUIDE_URL_HERE"][GUIDE] How To Unlock the Bootloader LG G2 Mini LTE D625 (Tegra 4i)[/URL]
+
+[SIZE="4"][B]Current status[/B][/SIZE]
+
+Tested on real hardware, D625 on firmware D62510c:
+
+[LIST]
+[*]Display, touchscreen, brightness and battery level
+[*]ADB in recovery
+[*]Internal storage and external microSD (vfat)
+[*]Backup of System, Data and Boot, including split archives, with MD5 verification
+[*]Restore of Boot, System and Data; Android boots afterwards
+[*]Backup of the LG/Icera partitions (Modem, Cust, MPT, PST, SNS, RCT, DRM, SEP), byte-identical to raw dumps
+[*]Entering recovery with the hardware keys [B]without wiping anything[/B]
+[*]Display without USB connected (see the fixes below)
+[/LIST]
+
+[B]Not included:[/B] MTP, exFAT and decryption of an encrypted /data. With an encrypted phone, Data cannot be backed up.
+
+[SIZE="4"][B]Device-specific fixes[/B][/SIZE]
+
+[LIST]
+[*][B]Backups no longer hang.[/B] Stock TWRP 3.1.1 froze on every /system backup when the archive was split, because the tar child processes called GUI functions after fork(). A patch removes those calls from all backup and restore children.
+[*][B]No white lines without USB.[/B] With the cable unplugged, memory (EMC) dropped to 25.5 MHz and the display controller could not keep up. This build keeps a 102 MHz floor.
+[*][B]Safe hardware-key entry.[/B] The only key path goes through LG's "Factory Reset" screen, which tells recovery to wipe /data. This build ignores that request (TW_IGNORE_MISC_WIPE_DATA).
+[*][B]Correct partition sizes.[/B] Recovery and boot are 12 MiB (checked against the kernel, the raw GPT and an nvflash readback). The /data crypto footer is taken from MDA, as in the stock fstab.
+[/LIST]
+
+[SIZE="4"][B]Installation[/B][/SIZE]
+
+[B]Before starting:[/B] the bootloader must be unlocked, and ADB must be authorized in Android.
+
+[B]1. Test without installing:[/B]
+[CODE]adb reboot bootloader
+fastboot boot twrp-3.1.1-1-g2mv.img[/CODE]
+
+Check that the display, touch and ADB work.
+
+[B]2. From that temporary TWRP, back up the stock recovery and install TWRP:[/B]
+[CODE]adb shell dd if=/dev/block/platform/sdhci-tegra.3/by-name/SOS of=/sdcard/SOS-stock.img
+adb pull /sdcard/SOS-stock.img
+adb push twrp-3.1.1-1-g2mv.img /tmp/twrp.img
+adb shell dd if=/tmp/twrp.img of=/dev/block/platform/sdhci-tegra.3/by-name/SOS bs=4096
+adb reboot recovery[/CODE]
+
+The dd method above is the tested one. fastboot flash recovery and TWRP's "Install Image" were not used in testing.
+
+Stock Android does not overwrite TWRP on this firmware: [I]/system/etc/install-recovery.sh[/I] does not exist.
+
+[SIZE="4"][B]Do this first: back up the LG partitions[/B][/SIZE]
+
+Go to [B]Backup[/B], select [B]Modem (MDM), Cust (CST), LG MPT, LG PST, LG SNS, LG RCT, LG DRM and LG SEP[/B], and copy the result to your PC. These hold modem, calibration and carrier data that is unique to your phone and that a ROM flash can destroy.
+
+[COLOR="Red"][B]Never share these backups or the MSC (misc) partition. They contain your IMEI.[/B][/COLOR]
+
+[SIZE="4"][B]Entering recovery[/B][/SIZE]
+
+From Android or TWRP:
+[CODE]adb reboot recovery[/CODE]
+
+[B]With the keys, phone off.[/B] The usual LG combo does [B]not[/B] work on the D625. This is the sequence the bootloader actually expects:
+
+[LIST=1]
+[*][B]Unplug the USB cable.[/B] The combo is ignored while USB is connected.
+[*]Hold [B]Volume Down[/B] and keep it held until TWRP appears.
+[*]Hold [B]Power[/B] until the LG logo appears, then [B]release Power[/B].
+[*]Immediately [B]tap Power 2-3 times[/B]: about 0.3 s pressed and 0.3 s released each time. Quick taps are not counted.
+[*]The "Factory Reset" screen is confirmed by the held Volume Down, and TWRP starts.
+[/LIST]
+
+[COLOR="Red"][B]The screen says "Factory Reset", but this TWRP does not wipe anything. Do NOT use this key combo with the stock recovery or with another TWRP build: they WILL wipe /data.[/B][/COLOR]
+
+Volume Up with USB connected enters LG download (LAF) mode instead.
+
+[SPOILER="Why this key sequence (technical)"]
+Reverse-engineered from the D62510c bootloader (LgeBootMain) and the D625 kernel key table. The power key is the MAX77660 PMIC EN0 input; its GLBINT1 register clears on read: press = EN0_F (0x40), release = EN0_R (0x80), held 1 s = EN0_1SEC (0x20). The bootloader polls it every 150 ms:
+
+[LIST]
+[*]Power held for at least 1 s to power on.
+[*]Volume Down held and no USB cable at the boot-mode check.
+[*]Any new Power event (the release) within 0.75 s.
+[*]A clean release within 2.25 s, then another clean release within 2.25 s with Volume Down still held.
+[*]The Factory Reset screen: Volume Down confirms, Volume Up cancels.
+[/LIST]
+
+A press and release inside the same 150 ms poll read as 0xc0 and are ignored, so the taps must be slow. Full details are in the device tree README.
+[/SPOILER]
+
+[SIZE="4"][B]Download[/B][/SIZE]
+
+[LIST]
+[*][URL="PUT_TWRP_AFH_URL_HERE"]twrp-3.1.1-1-g2mv.zip[/URL] - 9.2 MB | MD5: bb738e70367ee74fcaf56b5a4db02293
+[*]Mirror: [URL="PUT_TWRP_DRIVE_URL_HERE"]Google Drive[/URL] (same file, same MD5)
+[/LIST]
+
+[COLOR="Red"][B]This zip is not flashable.[/B][/COLOR] Extract it on your PC: it contains [I]twrp-3.1.1-1-g2mv.img[/I] (the image used in the commands above) and its SHA-256 file. Check the image before using it:
+[CODE]e9bea91e0ce8724d0d404d73c78192c41ba15d93fa6f7851e1b3a0042cd8937b  twrp-3.1.1-1-g2mv.img[/CODE]
+
+[SIZE="4"][B]Screenshots[/B][/SIZE]
+
+[IMG]PUT_MAIN_MENU_SCREENSHOT_URL_HERE[/IMG] [IMG]PUT_BACKUP_SCREENSHOT_URL_HERE[/IMG] [IMG]PUT_RESTORE_SCREENSHOT_URL_HERE[/IMG] [IMG]PUT_MOUNT_SCREENSHOT_URL_HERE[/IMG]
+
+[SIZE="4"][B]Source code[/B][/SIZE]
+
+[LIST]
+[*][URL="https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni/tree/twrp-4.4-deprecated"]Omni/TWRP 4.4 deprecated manifest[/URL]
+[*][URL="https://github.com/chijure-android-system-development/android_device_lge_g2mv"]LG D625 (g2mv) device tree[/URL], including the twrpTar patch
+[*][URL="https://github.com/chijure-android-system-development/android_kernel_lge_d625"]LG D625 kernel source[/URL] (the stock kernel is used unmodified)
+[*][URL="https://github.com/chijure-android-system-development/lg-d625-tegra-bootloader-patch"]D625 bootloader patch[/URL]
+[/LIST]
+
+[SIZE="4"][B]Device information[/B][/SIZE]
+
+[LIST]
+[*]Device: LG G2 Mini LTE (LG-D625)
+[*]Codename: g2mv
+[*]SoC: NVIDIA Tegra 4i (T148)
+[*]CPU: quad-core ARM Cortex-A9
+[*]Display: 4.7 inch, 540x960
+[*]PMIC: Maxim MAX77660
+[*]Modem: NVIDIA Icera
+[*]Stock Android: 4.4.2 KitKat (D62510c)
+[/LIST]
+
+[SIZE="4"][B]Bug reports[/B][/SIZE]
+
+Include your firmware version, how you entered recovery, what you did, and [I]/tmp/recovery.log[/I] (adb pull /tmp/recovery.log). Do not report issues from Snapdragon G2 Mini models.
+
+[SIZE="4"][B]Credits[/B][/SIZE]
+
+[LIST]
+[*]TeamWin
+[*]OmniROM
+[*]NVIDIA and LG for the original device software
+[*]Wiko Wax community for the Tegra 4i APX/nvflash groundwork
+[*][URL="https://xdaforums.com/member.php?u=5782200"]chijure[/URL]: bootloader patch, device tree, fixes and hardware testing
+[/LIST]
