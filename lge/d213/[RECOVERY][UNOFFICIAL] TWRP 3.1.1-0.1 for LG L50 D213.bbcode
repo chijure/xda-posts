@@ -1,0 +1,114 @@
+[CENTER][SIZE="5"][B][RECOVERY][UNOFFICIAL] TWRP 3.1.1-0.1 for LG L50 D213[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost IMEI,
+ * or any other damage. Make a backup and verify your exact model before
+ * flashing. YOU are choosing to make these modifications.
+ */[/CODE]
+
+[SIZE="4"][B]About[/B][/SIZE]
+
+This is an unofficial TWRP 3.1.1-0.1 build for the [B]LG L50 D213[/B] (codename [B]luv50ss[/B], MediaTek [B]MT6572[/B]). It uses the unmodified stock LG kernel from firmware D21310c and is built from the Android 4.4 OmniROM/TWRP tree, with the native 480x800 theme (no scaling).
+
+[COLOR="Red"][B]Only for the LG L50 D213. Do not flash it on the D210, D221, D227 or any other L50 variant.[/B][/COLOR]
+
+[COLOR="Red"][B]Requires root and the patched LK.[/B][/COLOR] The stock D213 bootloader refuses unsigned recovery images and shows [I]"ERROR: Boot cerification verify <-1>"[/I]. Follow this guide first:
+[URL=""][GUIDE] How To Root and Unlock the Bootloader LG L50 D213 (MT6572)[/URL]
+
+[SIZE="4"][B]Current status[/B][/SIZE]
+
+Tested on real hardware, D213 on firmware D21310c with the patched LK:
+
+[LIST]
+[*]Boot to recovery, display and touchscreen
+[*]ADB in recovery
+[*]MTP (copy files from the PC while in recovery)
+[*]Mount /system, /data and /cache
+[*]External microSD (vfat), mounted and readable
+[*]Install ZIP packages (used to install the LineageOS 11 ROM for this phone)
+[*]Wipe Cache and Dalvik cache
+[*]Settings are saved (stored in /data/media/0/TWRP)
+[*]Reboot to System returns to Android (no recovery loop)
+[/LIST]
+
+[B]Not tested yet:[/B] a full backup-to-restore cycle. Do not rely on a TWRP backup as your only copy until someone confirms a restore.
+
+[B]Not included:[/B] exFAT and decryption of an encrypted /data.
+
+[SIZE="4"][B]Important notes[/B][/SIZE]
+
+[LIST]
+[*][B]Internal storage lives in /data/media.[/B] "Wipe > Factory Reset" and "Wipe Data" keep your internal storage (photos, downloads) by design. "Format Data" erases it.
+[*][B]Do not rely on the NVRAM, Uboot and Sec_RO backup entries yet.[/B] They use MTK character devices and have not been verified. Back up your IMEI, NVRAM and calibration partitions with the [I]dd[/I] commands from Step 2 of the root guide instead, and keep them on your PC.
+[*][B]Never format /protect_f or /protect_s[/B] (mmcblk0p2 and mmcblk0p3). They hold RF calibration and modem data; without them the phone loses the network.
+[/LIST]
+
+[SIZE="4"][B]Installation[/B][/SIZE]
+
+[B]Before starting:[/B] the phone must be rooted and running the patched LK (see the guide above), with USB debugging enabled.
+
+[B]1. Back up the current recovery:[/B]
+[CODE]adb shell "su -c 'dd if=/dev/recovery of=/sdcard/recovery-stock.img bs=512 count=20480'"
+adb pull /sdcard/recovery-stock.img[/CODE]
+
+[B]2. Flash TWRP:[/B]
+[CODE]adb push twrp-3.1.1-0.1-luv50ss.img /sdcard/twrp.img
+adb shell "su -c 'dd if=/sdcard/twrp.img of=/dev/recovery bs=512; sync'"[/CODE]
+
+[B]3. Verify the readback before rebooting:[/B]
+[CODE]adb shell "su -c 'dd if=/dev/recovery bs=512 count=16096 | md5sum'"[/CODE]
+It must print [B]9a01f28ce1cb7a7e56f9c07653da85ec[/B]. [COLOR="Red"][B]If it does not match, do NOT reboot:[/B][/COLOR] repeat Step 2.
+
+[I]/dev/recovery[/I] is an MTK character device: always read it with [I]bs=512[/I] and an explicit [I]count[/I].
+
+[SIZE="4"][B]Entering recovery[/B][/SIZE]
+
+From Android or from TWRP:
+[CODE]adb reboot recovery[/CODE]
+
+On LineageOS 11 you can also enable [I]Settings > Developer options > Advanced reboot[/I] and choose Recovery from the power menu. The hardware key path on this phone goes through LG's factory reset screen, so it is not recommended.
+
+[SIZE="4"][B]Download[/B][/SIZE]
+
+[LIST]
+[*][URL=""]twrp-3.1.1-0.1-luv50ss.img[/URL] - 7.9 MB | MD5: 9a01f28ce1cb7a7e56f9c07653da85ec
+[/LIST]
+
+[SIZE="4"][B]Screenshots[/B][/SIZE]
+
+[IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-twrp/01-main.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-twrp/02-install.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-twrp/03-wipe.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-twrp/04-backup.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-twrp/05-mount.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-twrp/06-reboot.png[/IMG]
+
+[SIZE="4"][B]Source code[/B][/SIZE]
+
+[LIST]
+[*][URL="https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni/tree/twrp-4.4-deprecated"]Omni/TWRP 4.4 deprecated manifest[/URL]
+[*][URL="https://github.com/chijure-android-system-development/android_device_lge_luv50ss"]LG L50 D213 TWRP device tree[/URL]. Its README explains the bring-up, including why the first builds rebooted (a KitKat kernel with SELinux needs /sepolicy in the recovery ramdisk).
+[/LIST]
+
+[SIZE="4"][B]Device information[/B][/SIZE]
+
+[LIST]
+[*]Device: LG L50 (LG-D213), codename luv50ss
+[*]SoC: MediaTek MT6572, Cortex-A7
+[*]Display: 480x800
+[*]Storage: eMMC (system mmcblk0p8, cache mmcblk0p9, data mmcblk0p10)
+[*]Stock Android: 4.4.2 KitKat, firmware D21310c
+[*]Kernel: stock LG Linux 3.4.67
+[/LIST]
+
+[SIZE="4"][B]Bug reports[/B][/SIZE]
+
+Include your exact model and stock firmware, what you did, what happened, and [I]/tmp/recovery.log[/I] ([I]adb pull /tmp/recovery.log[/I]). Do not report issues from other L50 variants.
+
+[SIZE="4"][B]Credits[/B][/SIZE]
+
+[LIST]
+[*]TeamWin: TWRP
+[*]OmniROM: Android 4.4 recovery tree
+[*]alekcacko (4pda): TWRP 2.8.1.0 for the L50, used as a reference while bringing up this build
+[*]MediaTek and LG: original device software and kernel
+[*][URL="https://xdaforums.com/member.php?u=5782200"]chijure[/URL]: device tree, bring-up and hardware testing
+[/LIST]

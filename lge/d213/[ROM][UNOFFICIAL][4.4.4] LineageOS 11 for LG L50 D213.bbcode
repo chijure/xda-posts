@@ -1,0 +1,143 @@
+[CENTER][SIZE="5"][B][ROM][UNOFFICIAL][4.4.4] LineageOS 11 for LG L50 D213[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost IMEI,
+ * or you missing a call because the modem lost the network.
+ * Back up everything before flashing. YOU are choosing to make these
+ * modifications.
+ */[/CODE]
+
+[SIZE="4"][B]About[/B][/SIZE]
+
+This is an unofficial [B]LineageOS 11 (Android 4.4.4 KitKat)[/B] build for the [B]LG L50 D213[/B] (codename [B]luv50ss[/B], MediaTek [B]MT6572[/B]).
+
+It uses the stock LG kernel and proprietary files from firmware D21310c. The changes to LineageOS itself are kept to a minimum: MediaTek compatibility lives in the device tree, and the few framework patches (camera, audio input, video encoder) are guarded by board flags. Every result listed below was checked on real hardware.
+
+[COLOR="Red"][B]Only for the LG L50 D213. Do not flash it on the D210, D221, D227 or any other L50 variant.[/B][/COLOR]
+
+[COLOR="Red"][B]Requires root, the patched LK and TWRP:[/B][/COLOR]
+[LIST=1]
+[*][URL=""][GUIDE] How To Root and Unlock the Bootloader LG L50 D213 (MT6572)[/URL]
+[*][URL=""][RECOVERY][UNOFFICIAL] TWRP 3.1.1-0.1 for LG L50 D213[/URL]
+[/LIST]
+
+[SIZE="4"][B]Device specs[/B][/SIZE]
+[LIST]
+[*]Device: LG L50 (LG-D213), codename luv50ss
+[*]Android version: 4.4.4 KitKat (LineageOS 11, cm-11.0)
+[*]Kernel: stock LG Linux 3.4.67 (firmware D21310c)
+[*]SoC: MediaTek MT6572, ARM Cortex-A7 with NEON
+[*]GPU: ARM Mali-400 MP (OpenGL ES 2.0)
+[*]RAM: 512 MB
+[*]Display: 480x800, 240 dpi
+[*]Modem: MediaTek (2G/3G HSPA)
+[*]Base firmware: D21310c (Android 4.4.2)
+[/LIST]
+
+[SIZE="4"][B]Current status: Beta[/B][/SIZE]
+
+[COLOR="Red"][B]Read the known issues before flashing.[/B][/COLOR] This is a first public build.
+
+[SIZE="4"][B]What's working:[/B][/SIZE]
+[LIST]
+[*][B]Display and HW acceleration:[/B] Mali-400 GLES driver, hwcomposer and HWUI.
+[*][B]Touch and keys:[/B] multitouch and hardware keys. Home wakes the phone.
+[*][B]KnockON (double tap to wake):[/B] toggle in Settings > Display.
+[*][B]Calls, SMS and SIM:[/B] network registration, outgoing calls, SMS and HSPA data (tested on Claro Peru). The IMEI is read from LG's protected partition as on stock.
+[*][B]Wi-Fi:[/B] MediaTek integrated Wi-Fi, WPA2.
+[*][B]Bluetooth:[/B] scan, pairing and file transfer.
+[*][B]Audio:[/B] speaker and microphone, using the stock MediaTek audio HAL. Recording works at any sample rate (the HAL only captures at 48 kHz; the ROM converts it).
+[*][B]Camera:[/B] back camera photos (2560x1920, correct orientation) and front camera. Video recording (H.264 + AAC, tested at 640x480).
+[*][B]Video playback:[/B] MP4/H.264, MPEG-4, H.263 and VP8, smooth and with sound (software decoders).
+[*][B]Torch:[/B] Torch app included, uses the camera flash LED.
+[*][B]Sensors:[/B] accelerometer, proximity, vibration. The compass daemon runs.
+[*][B]Offline charging:[/B] stock LG charging animation when the phone is off; a long Power press boots Android.
+[*][B]microSD:[/B] mounted as external storage; internal storage is emulated on /data.
+[*][B]Root:[/B] built-in superuser (Settings > Developer options > Root access).
+[/LIST]
+
+[SIZE="4"][B]Known issues:[/B][/SIZE]
+[LIST]
+[*][B]FM radio:[/B] not available. LineageOS 11 has no FM app for MediaTek. The driver and libraries are included, but there is no app yet.
+[*][B]GPS:[/B] the GPS and AGPS services run, but an outdoor satellite fix is not confirmed yet. Please report.
+[*][B]Not tested yet:[/B] in-call audio through earpiece and wired headset, Bluetooth audio (A2DP), compass apps. Please report.
+[*][B]adb root[/B] hangs adbd until you toggle USB debugging off and on. Use [I]adb shell su[/I] instead (enable Settings > Developer options > Root access > Apps and ADB).
+[*][B]Video recording[/B] was tested at 640x480; higher resolutions are not confirmed.
+[*][B]Screen recording[/B] ([I]screenrecord[/I]) does not work.
+[*][B]SMS date:[/B] some received SMS may show a wrong date (around 2009) taken from the modem clock.
+[*]The sound recorder app records AMR at 8 kHz, so it sounds like a phone call. That is the app's format, not a microphone problem; the camcorder records AAC audio.
+[/LIST]
+
+[SIZE="4"][B]Download:[/B][/SIZE]
+[LIST]
+[*][URL=""]lineage-11-XXXXXXXX-UNOFFICIAL-luv50ss.zip[/URL] - XXX MB | MD5: XXXXXXXX
+[*]Google Apps (optional): any [B]Android 4.4 (KitKat)[/B] ARM GApps package. GApps were not tested with this build yet; /system has about 1.1 GB free. With 512 MB of RAM, a minimal package (pico) is recommended.
+[/LIST]
+
+[SIZE="4"][B]Install instructions:[/B][/SIZE]
+[LIST=1]
+[*]Root the phone, install the patched LK and TWRP (links above). The phone must be on firmware [B]D21310c[/B].
+[*]Back up your IMEI, NVRAM and calibration partitions with the [I]dd[/I] commands from Step 2 of the root guide, and keep the files on your PC. Do not skip this.
+[*]In TWRP, make a backup of System, Data and Boot and copy it to your PC.
+[*]Wipe [B]Data, Cache and Dalvik cache[/B] (Wipe > Factory Reset). Coming from the LG stock ROM, a wipe is required. Internal storage is kept.
+[*]Flash the ROM zip.
+[*](Optional) Flash a KitKat GApps package.
+[*]Reboot. The first boot takes longer while Android prepares the apps.
+[/LIST]
+
+[B]Going back to stock:[/B] restore your TWRP backup, or flash the D21310c KDZ with LG's tools.
+
+[COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download links without permission.[/CENTER][/SIZE][/COLOR]
+
+Screenshots:
+
+[IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-lineage11/01-home.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-lineage11/02-settings.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-lineage11/03-about-phone.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-lineage11/04-about-phone-kernel.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-lineage11/05-display-knockon.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-lineage11/06-app-drawer.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-lineage11/07-quick-settings.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-lineage11/08-lockscreen.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/d213/screenshots/luv50ss-lineage11/09-camera.png[/IMG]
+
+[SIZE="4"][B]Source code:[/B][/SIZE]
+[LIST]
+[*][URL=""]Device tree[/URL] (branch cm-11.0). PORTING-NOTES.md documents every fix and the known issues in detail; patches/ holds the framework patches.
+[*][URL=""]Vendor blobs[/URL] (branch cm-11.0)
+[*][URL="https://github.com/chijure-android-system-development/lg-e450g-lk-patch"]LK patch[/URL] (folder d213)
+[/LIST]
+
+[SIZE="4"][B]Bug reports:[/B][/SIZE]
+Please include:
+[LIST]
+[*]Clean or dirty flash, and whether GApps are installed
+[*]Your carrier and the signal quality, for call or data issues
+[*]What you did, and what happened
+[*]A logcat ([I]adb logcat -v threadtime[/I]) and, for crashes, [I]adb shell su -c dmesg[/I]. Do not post huge logs unless asked.
+[/LIST]
+Do not report issues from other L50 variants.
+
+[SIZE="4"][B]Thanks to:[/B][/SIZE]
+[LIST]
+[*]LineageOS team: LineageOS 11 (cm-11.0) base, and the CyanogenMod team before it
+[*]MediaTek and LG: original device software and the GPL kernel source
+[*]autoprime, iomonster/thecubed and jcase: PurpleDrake (root)
+[*]alekcacko (4pda): TWRP 2.8.1.0 for the L50, used as a reference
+[*]TeamWin: TWRP
+[*][URL="https://xdaforums.com/member.php?u=5782200"]chijure[/URL]: port, MediaTek fixes, debugging and hardware testing
+[/LIST]
+
+[B][U][SIZE="4"][PLAIN]XDA:DevDB Information[/PLAIN][/SIZE][/U][/B]
+[SIZE=3][B][ROM][UNOFFICIAL][4.4.4] LineageOS 11 for LG L50 D213, ROM for the LG L50[/B][/SIZE]
+
+[B][U]Contributors[/U][/B]
+[B]chijure[/B]
+[B]ROM OS Version:[/B] 4.4.4 KitKat
+[B]ROM Kernel:[/B] Linux 3.4.67
+[B]ROM Firmware Required:[/B] Root, patched LK, TWRP, firmware D21310c
+[B]Based On:[/B] LineageOS 11
+
+[B][U]Version Information[/U][/B]
+[B]Status:[/B] Beta
+[B]Current Stable Version:[/B] N/A
+[B]Current Beta Version:[/B] lineage-11-XXXXXXXX-UNOFFICIAL-luv50ss
+[B]Build Date:[/B] XXXX-XX-XX
+
+[B]Created[/B] XXXX-XX-XX
+[B]Last Updated[/B] XXXX-XX-XX

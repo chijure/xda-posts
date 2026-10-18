@@ -1,0 +1,181 @@
+[CENTER][SIZE="5"][B][GUIDE] How To Root and Unlock the Bootloader LG L50 D213 (MT6572)[/B][/SIZE]
+
+[B][SIZE="4"][COLOR="Red"]WARNING: THIS MODIFIES THE BOOTLOADER — READ EVERYTHING BEFORE STARTING[/COLOR][/SIZE][/B][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost IMEI,
+ * or any other damage. Back up everything and verify every hash before
+ * flashing. YOU are choosing to make these modifications.
+ */[/CODE]
+
+[SIZE="4"][B]About[/B][/SIZE]
+
+The LG L50 [B]D213[/B] (codename [B]luv50ss[/B], MediaTek [B]MT6572[/B]) has a locked bootloader. Its LK checks the signature of the boot and recovery images, and any unsigned recovery stops at:
+[CODE]ERROR: Boot cerification verify <-1>[/CODE]
+
+This guide does two things:
+[LIST=1]
+[*][B]Root[/B] with PurpleDrake, which abuses LG's backup/restore recovery mode. It writes su to /system and flashes nothing, so it works with the locked bootloader.
+[*][B]Install a patched LK[/B]: [B]two patches of 4 bytes[/B] that skip the boot/recovery certificate check. It is written from Android with dd, using the root from step 1.
+[/LIST]
+
+[B]What you get:[/B]
+[LIST]
+[*]Unsigned recovery images boot, for example [URL=""]TWRP 3.1.1-0.1 for the LG L50 D213[/URL].
+[*][B]No data wipe:[/B] nothing in this guide erases userdata.
+[*]Fully reversible: the stock LK is included in the kit and goes back the same way.
+[*]Android keeps booting normally with the stock boot image.
+[/LIST]
+
+[SIZE="4"][B]Supported firmware[/B][/SIZE]
+
+[LIST]
+[*][B]D213 - D21310c[/B] (V10c, Android 4.4.2): tested.
+[*]The same LK binary ships in V10f, but that firmware was not tested on hardware.
+[/LIST]
+
+[COLOR="Red"][B]Do not use this kit on any other model or firmware.[/B][/COLOR] Step 3 compares your LK's SHA-256 with the stock D21310c one before anything is written; if it differs, stop. Tested on one D213.
+
+[SIZE="4"][B]Download[/B][/SIZE]
+
+[LIST]
+[*][URL=""]LG-D213-Bootloader-Unlock.zip[/URL] - 328 KB | MD5: b8d3102022be39655cbf3f04e377c88c
+[/LIST]
+
+The kit contains the [B]patched LK[/B] ([I]lk/lk-patched-D213.bin[/I]), the [B]stock D21310c LK[/B] to go back ([I]lk/lk-stock-D213.bin[/I]), SHA256SUMS and a README.txt with the same steps. Unzip it and run every command below from its folder.
+
+[CODE]d5f9c078bab3ea3c0561c9153151132b886b422ced718e762979f7b5a4653045  lk/lk-stock-D213.bin
+c6b7b8b327373462d6ec0b401f6c197b9b366411d5c8fbb542e3c199614607d6  lk/lk-patched-D213.bin[/CODE]
+
+[SIZE="4"][B]Requirements[/B][/SIZE]
+
+[LIST]
+[*]LG D213 on firmware [B]D21310c[/B], battery at 50% or more.
+[*]A PC with [B]adb[/B] ([URL="https://developer.android.com/tools/releases/platform-tools"]Android SDK Platform-Tools[/URL]) and the LG USB driver (Windows).
+[*]On the phone: Developer options enabled (tap Build number 7 times), [B]USB debugging ON[/B], and USB connection mode set to [B]Media sync (MTP)[/B].
+[*][B]PurpleDrake Lite R03[/B] (by autoprime, iomonster/thecubed and jcase) for the root step.
+[/LIST]
+
+[SIZE="4"][B]Step 1 — Root with PurpleDrake[/B][/SIZE]
+
+Check that adb sees the phone and that it is the right model and firmware:
+[CODE]adb devices
+adb shell getprop ro.product.model          (LG-D213)
+adb shell getprop ro.lge.swversion_short    (V10c)[/CODE]
+
+Run the launcher for your OS ([I]purpledrake_windows.bat[/I], [I]purpledrake_linux.sh[/I] or [I]purpledrake_osx.command[/I]) and follow the prompts: temporary root, then permanent root, then reboot.
+
+[B]Linux only:[/B] the adb bundled with PurpleDrake (2014) needs OpenSSL 1.0.0 and, on a modern distro, waits for the device forever without an error. Make it use your system adb:
+[CODE]sed -i 's|$ADBPATH/adb|adb|g' assets/purpledrake_main.sh[/CODE]
+
+Verify the root:
+[CODE]adb shell "su -c id"        (uid=0(root) gid=0(root))[/CODE]
+
+PurpleDrake installs su 2.00 but no manager app. Installing the SuperSU 2.82 APK and choosing "Normal install" updates the binary.
+
+[SIZE="4"][B]Step 2 — Back up the partitions unique to your phone (do not skip)[/B][/SIZE]
+
+These hold your [B]IMEI, RF calibration, Bluetooth/Wi-Fi addresses and the modem NVRAM[/B]. A ROM install or a full wipe cannot recreate them. Back them up now, while everything works:
+[CODE]adb shell "su -c 'dd if=/dev/block/mmcblk0 of=/sdcard/misc2.bin bs=4096 skip=256 count=2048'"
+adb shell "su -c 'dd if=/dev/block/mmcblk0 of=/sdcard/proinfo.bin bs=4096 skip=4480 count=768'"
+adb shell "su -c 'dd if=/dev/block/mmcblk0 of=/sdcard/nvram.bin bs=4096 skip=5248 count=1280'"
+adb shell "su -c 'dd if=/dev/block/mmcblk0p2 of=/sdcard/protect_f.img bs=4096'"
+adb shell "su -c 'dd if=/dev/block/mmcblk0p3 of=/sdcard/protect_s.img bs=4096'"
+adb pull /sdcard/misc2.bin
+adb pull /sdcard/proinfo.bin
+adb pull /sdcard/nvram.bin
+adb pull /sdcard/protect_f.img
+adb pull /sdcard/protect_s.img[/CODE]
+
+Expected sizes: misc2 8 MB, proinfo 3 MB, nvram 5 MB, protect_f and protect_s 10 MB each.
+
+[COLOR="Red"][B]Two traps on this phone:[/B][/COLOR]
+[LIST]
+[*]Read them from [I]/dev/block/mmcblk0[/I] with the exact [I]skip/count[/I] above (taken from /proc/dumchar_info). [I]dd if=/dev/nvram[/I] does [B]not[/B] stop at the end of the partition and fills your storage.
+[*]Always use [I]adb pull[/I]. Redirecting [I]adb shell dd[/I] output to a file on the PC corrupts binary data.
+[/LIST]
+
+[COLOR="Red"][B]Never share these files. They contain your IMEI.[/B][/COLOR]
+
+[SIZE="4"][B]Step 3 — Back up your LK and check it (do not skip)[/B][/SIZE]
+
+[CODE]adb shell "su -c 'dd if=/dev/uboot of=/sdcard/lk-backup.bin bs=512 count=1024; chmod 644 /sdcard/lk-backup.bin'"
+adb pull /sdcard/lk-backup.bin
+sha256sum lk-backup.bin
+(Windows: certutil -hashfile lk-backup.bin SHA256)[/CODE]
+
+[LIST]
+[*][B]d5f9c078bab3ea3c0561c9153151132b886b422ced718e762979f7b5a4653045[/B]: stock D21310c LK. Continue with Step 4.
+[*][B]c6b7b8b327373462d6ec0b401f6c197b9b366411d5c8fbb542e3c199614607d6[/B]: already patched. You are done.
+[*][COLOR="Red"][B]Anything else: STOP.[/B][/COLOR] Your LK is different and this patch is not for it. Do not flash anything.
+[/LIST]
+
+[I]/dev/uboot[/I] is an MTK character device: read it with [I]bs=512 count=1024[/I]. Large block sizes (bs=1M) return only a few bytes.
+
+[SIZE="4"][B]Step 4 — Flash the patched LK[/B][/SIZE]
+
+[CODE]adb push lk/lk-patched-D213.bin /sdcard/lk-patched.bin
+adb shell "su -c 'dd if=/sdcard/lk-patched.bin of=/dev/uboot; sync'"[/CODE]
+
+[SIZE="4"][B]Step 5 — Verify the readback before rebooting[/B][/SIZE]
+
+[CODE]adb shell "su -c 'dd if=/dev/uboot of=/sdcard/lk-readback.bin bs=512 count=1024; chmod 644 /sdcard/lk-readback.bin'"
+adb pull /sdcard/lk-readback.bin
+sha256sum lk-readback.bin[/CODE]
+
+It must be [B]c6b7b8b327373462d6ec0b401f6c197b9b366411d5c8fbb542e3c199614607d6[/B]. [COLOR="Red"][B]If it does not match, do NOT reboot:[/B][/COLOR] repeat Step 4 and check again.
+
+Then reboot. Android must boot normally:
+[CODE]adb reboot[/CODE]
+
+[SIZE="4"][B]Restore the stock LK[/B][/SIZE]
+
+From Android with root:
+[CODE]adb push lk/lk-stock-D213.bin /sdcard/lk-stock.bin
+adb shell "su -c 'dd if=/sdcard/lk-stock.bin of=/dev/uboot; sync'"[/CODE]
+Verify the readback as in Step 5 (it must be d5f9c078…), then reboot.
+
+[SIZE="4"][B]Next step: TWRP[/B][/SIZE]
+
+Install a custom recovery: [URL=""][RECOVERY][UNOFFICIAL] TWRP 3.1.1-0.1 for LG L50 D213[/URL]. Then, if you want a custom ROM: [URL=""][ROM][UNOFFICIAL][4.4.4] LineageOS 11 for LG L50 D213[/URL].
+
+[SIZE="4"][B]FAQ[/B][/SIZE]
+
+[B]Does this wipe my data?[/B]
+No. Root and the LK patch do not erase anything.
+
+[B]Does it work on the D210, D221, D227 or other L50 variants?[/B]
+Not tested. Step 3 will refuse any LK that is not byte-identical to the D21310c one. Do not force it.
+
+[B]How do I enter recovery?[/B]
+Use [I]adb reboot recovery[/I] from Android or from TWRP. The hardware key combination did not work reliably on the test unit.
+
+[B]A recovery shows "ERROR: Boot cerification verify <-1>".[/B]
+The patched LK is not installed. Boot Android and repeat Steps 4 and 5.
+
+[B]Can I use Magisk?[/B]
+Modern Magisk needs Android 6+. This guide uses SuperSU.
+
+[SIZE="4"][B]Technical details[/B][/SIZE]
+
+The LK verifies a "Boot Certificate" for boot and recovery. Two call sites are patched so the check always reports success:
+
+[TABLE]
+[TR][TD][B]Offset[/B][/TD][TD][B]Original[/B][/TD][TD][B]Patched[/B][/TD][TD][B]Effect[/B][/TD][/TR]
+[TR][TD]0x19B5A[/TD][TD]BLT.W (to the error path)[/TD][TD]MOVS R0,#0 ×2[/TD][TD]Certificate result treated as valid[/TD][/TR]
+[TR][TD]0x2CFBC[/TD][TD]MOV R4,R0; CBNZ R0,error[/TD][TD]MOVS R4,#0; MOVS R0,#0[/TD][TD]Image verification returns 0 (OK)[/TD][/TR]
+[/TABLE]
+
+seccfg is all zeros on this phone (MTK secure boot is not configured); LG's own certificate check is the only one, and it is what the patch skips. The offline patch script, which only accepts the stock D21310c LK and checks the output hash, is in the repository: [URL="https://github.com/chijure-android-system-development/lg-e450g-lk-patch"]lg-e450g-lk-patch[/URL] (folder d213).
+
+[SIZE="4"][B]Credits[/B][/SIZE]
+
+[LIST]
+[*]autoprime, iomonster/thecubed and jcase: PurpleDrake
+[*]Chainfire: SuperSU
+[*]alekcacko (4pda): TWRP 2.8.1.0 for the L50, used as a reference while bringing up recovery
+[*][URL="https://xdaforums.com/member.php?u=5782200"]chijure[/URL]: LK analysis, patch and hardware validation on the D213
+[/LIST]
