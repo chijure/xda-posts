@@ -1,3 +1,5 @@
+[CENTER][SIZE="5"][B][ROM][UNOFFICIAL] CyanogenMod 7 for Huawei Y210[/B][/SIZE][/CENTER]
+
 [CODE]#include <std_disclaimer.h>
 /*
 * Your warranty is now void.
@@ -11,41 +13,51 @@
 * finger at me for messing up your device, I will laugh at you.
 */[/CODE]
 
-[B]ROM:[/B] CyanogenMod 7
-[B]Device:[/B] Huawei Y210
-[B]Android version:[/B] 2.3.7 Gingerbread
-[B]Status:[/B] Stable
-[B]Build:[/B] cm-7-20260712-UNOFFICIAL-y210.zip
-[B]MD5:[/B] 0e6cf6cf3e4afbc18d0b05c4ffc39b32
+[B]About[/B]
 
 This is an unofficial CyanogenMod 7 port for the Huawei Y210, based on the legacy Qualcomm MSM7x27A/MSM7K-era stack. The current focus is real device stability and compatibility with the stock Y210 behaviour, especially graphics, gralloc/copybit/framebuffer, audio, radio, Wi-Fi, Bluetooth and camera bring-up.
 
+[B]Device specs[/B]
+[LIST]
+[*]Device: Huawei Y210
+[*]Android version: 2.3.7 Gingerbread (CyanogenMod 7)
+[*]SoC family: Qualcomm MSM7x27A / MSM7K-era
+[*]GPU: Adreno 200
+[*]Framebuffer: 320x480, ARGB8888 (32 bpp)
+[*]HAL style: legacy Qualcomm/Android 2.3 stack
+[*]FM chip: WCN2243 (I2S digital output to MSM7x27A codec)
+[/LIST]
+
+[B]Current status — Stable[/B]
+
+Build: [B]cm-7-20261018-UNOFFICIAL-y210.zip[/B] | MD5: dde725fa84e864286e3d10e82c2ee839
+
 [COLOR="Red"][B]Read before flashing:[/B][/COLOR] please read the known issues before flashing.
 
-[SIZE="4"][B]What works:[/B][/SIZE]
+[SIZE="4"][B]What's working:[/B][/SIZE]
 [LIST]
 [*][B]Boot & system:[/B] boots to launcher after a clean flash/wipe
 [*][B]SurfaceFlinger / mediaserver:[/B] stay alive in the current graphics path
-[*][B]Display / framebuffer:[/B] gralloc.y210 and copybit.y210 load without crashing the UI; 320x480 ARGB8888 framebuffer
+[*][B]Display / framebuffer:[/B] gralloc.y210 and copybit.y210 load without crashing the UI; 320x480 ARGB8888 framebuffer; asynchronous framebuffer posting like stock (eglSwapBuffers ~29.5 ms -> ~3 ms)
 [*][B]HW acceleration:[/B] Adreno 200 path active; SurfaceFlinger reports Adreno renderer; stride bug corrected (no horizontal repetition)
 [*][B]UI / launcher:[/B] usable on-device; status bar renders correctly (ghost/duplication fixed)
 [*][B]Touchscreen:[/B] single-touch and multitouch input; physical and capacitive buttons
 [*][B]Backlight / LED / vibrator:[/B] screen backlight, notification LED and vibrator work
-[*][B]Wi-Fi:[/B] enables, scans, associates and obtains DHCP; hotspot/tethering validated with two clients; validated on a clean flash from scratch
-[*][B]Bluetooth:[/B] pairing, file transfer (Object Push) and A2DP audio validated with real hardware
-[*][B]Telephony / RIL:[/B] baseband, operator registration, signal, IMEI, calls (downlink + uplink/mic confirmed on a real call), SMS and HSPA mobile data
+[*][B]Wi-Fi:[/B] enables, scans, associates and obtains DHCP; on/off cycles; [B]keeps working after deep sleep[/B] (the stock ROM loses the data path after sleeping until Wi-Fi is toggled; fixed in the kernel); hotspot/tethering validated with two clients
+[*][B]Bluetooth:[/B] pairing, file transfer (Object Push) and A2DP audio validated with real hardware (2026-07 build)
+[*][B]Telephony / RIL:[/B] baseband, operator registration, signal, IMEI, calls (incoming/outgoing, earpiece and speaker, mute), SMS and HSPA mobile data; [B]SIM is now detected as READY[/B]: IMSI, operator numeric and SPN read from the SIM, APN list works in Settings
 [*][B]Sensors / rotation:[/B] accelerometer, gravity and linear-accel sensors work with stock sensors.default.so; /dev/accel permissions corrected
 [*][B]ADB / logs:[/B] adb logcat and runtime logging are usable
 [*][B]Audio playback:[/B] AudioFlinger -> libaudio output works
 [*][B]Audio recording:[/B] SoundRecorder / voice recorder works
-[*][B]FM radio:[/B] real tuning (genuine RSSI, real tune events) and real audio of the station, confirmed stable
+[*][B]FM radio:[/B] real tuning and real audio of the station through headphones and speaker, manual tuning and seek up
 [*][B]Camera app:[/B] opens consistently with the current libcamera wrapper
 [*][B]Camera:[/B] 640x480 colour portrait preview, JPEG photo capture at full 2MP (1600x1200), close -> reopen, photo/video switch (fixed preview freeze), H.263 352x288 15 fps video recording (MP4 in gallery)
 [*][B]Video playback:[/B] compatible files play; H.264 Baseline was tested
 [*][B]Storage / USB:[/B] /data, SD card and USB mass storage
-[*][B]Suspend / screen off / deep sleep:[/B] screen off/on cycle and continuous deep sleep validated (WiFi WoW mode, only the normal modem wakelock remains)
+[*][B]Suspend / screen off / deep sleep:[/B] continuous deep sleep validated with Wi-Fi associated (Wi-Fi stays in normal 802.11 power save and is still connected on wake; only the normal modem wakeup remains)
 [*][B]GPS:[/B] real satellite fix validated outdoors (up to 9 satellites, stable coordinates)
-[*][B]Performance profile:[/B] interactive CPU governor, noop I/O scheduler on NAND and tuned lowmemorykiller profile applied at runtime
+[*][B]Performance profile:[/B] interactive CPU governor, noop I/O scheduler on NAND, tuned lowmemorykiller profile, 48 MB zram swap (no lowmemorykiller kills under heavy multitasking) and preoptimized (dexpreopt) framework and apps
 [/LIST]
 
 [SIZE="4"][B]Known issues:[/B][/SIZE]
@@ -53,9 +65,96 @@ This is an unofficial CyanogenMod 7 port for the Huawei Y210, based on the legac
 [*][B]HD video (640x480 H.264):[/B] not supported — this Y210 revision has no hardware video encoder for that resolution
 [*][B]GPS raw NMEA sentences:[/B] arrive empty (only "$"); does not affect LocationManager/normal apps, only apps that read raw NMEA directly
 [*][B]First boot warning:[/B] com.android.provision may log a non-blocking WindowManager InflateException while creating the starting window after wipe
+[*][B]FM seek down:[/B] seeking down does not complete (the FM chip reports an error, same on stock); seek up wraps around the band, and manual tuning works
+[*][B]Not re-tested on this build yet:[/B] Bluetooth A2DP and Wi-Fi hotspot (both worked on the 2026-07 build)
+[/LIST]
+
+[SIZE="4"][B]Download:[/B][/SIZE]
+[LIST]
+[*][URL="https://androidfilehost.com/?fid=17900174959292981892"]cm-7-20261018-UNOFFICIAL-y210.zip (AndroidFileHost)[/URL] - 83 MB | MD5: dde725fa84e864286e3d10e82c2ee839
+[*][URL="https://drive.google.com/file/d/1q3HhHCb_EwVm0LKVr3XQ_lhPr6QqNTC1/view?usp=sharing"]cm-7-20261018-UNOFFICIAL-y210.zip (Google Drive)[/URL] - mirror
+[*][URL="https://xdaforums.com/t/recovery-unofficial-twrp-3-1-1-for-huawei-y210.4792355/"]TWRP 3.1.1 for Huawei Y210 (unofficial)[/URL]
+[/LIST]
+
+[SIZE="4"][B]Install instructions:[/B][/SIZE]
+[LIST=1]
+[*]Make a full nandroid backup from recovery.
+[*]Wipe data / factory reset.
+[*]Wipe cache and dalvik cache.
+[*]Flash the ROM zip from recovery.
+[*]Reboot.
+[*]First boot is quick: framework and apps are already preoptimized, so there is no long dexopt pass.
+[/LIST]
+
+[B]Update from a previous build:[/B]
+[LIST=1]
+[*]Wipe cache and dalvik cache.
+[*]Flash the new build.
+[*]Reboot.
+[/LIST]
+
+[COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download links without permission.[/CENTER][/SIZE][/COLOR]
+
+Screenshots:
+
+[IMG]PUT_SCREENSHOT_URL_HERE[/IMG] [IMG]PUT_SCREENSHOT_URL_HERE[/IMG] [IMG]PUT_SCREENSHOT_URL_HERE[/IMG] [IMG]PUT_SCREENSHOT_URL_HERE[/IMG] [IMG]PUT_SCREENSHOT_URL_HERE[/IMG]
+
+[SIZE="4"][B]Source code:[/B][/SIZE]
+[LIST]
+[*][URL="https://github.com/chijure-android-system-development/android_device_huawei_y210"]Device tree / Y210-specific changes[/URL]
+[*][URL="https://github.com/chijure-android-system-development/android_vendor_huawei_y210"]Vendor blobs / proprietary files[/URL]
+[*][URL="https://github.com/chijure/android_kernel_huawei_y210"]Kernel[/URL] (branch android-msm-2.6.38, y210_defconfig)
+[/LIST]
+
+[SIZE="4"][B]Useful validation commands:[/B][/SIZE]
+[CODE]adb logcat
+adb shell dumpsys SurfaceFlinger | grep -i renderer
+adb shell dumpsys wifi | sed -n '1,80p'
+adb shell getprop wlan.driver.status
+adb shell getprop init.svc.wpa_supplicant
+adb shell getprop gsm.version.baseband
+adb shell getprop gsm.sim.state
+adb shell cat /proc/swaps
+adb shell getprop init.svc.mediaserver
+adb shell getprop init.svc.surfaceflinger[/CODE]
+
+Expected Wi-Fi basics when connected:
+[CODE]wlan.driver.status = ok
+init.svc.wpa_supplicant = running   (the service runs the stock ath_supplicant)
+wifi.interface = eth0[/CODE]
+
+[SIZE="4"][B]Bug reports:[/B][/SIZE]
+Please include:
+[LIST]
+[*]Exact Y210 model variant
+[*]Clean flash or dirty flash
+[*]Recovery used
+[*]Short description of the bug
+[*]Relevant logcat; avoid posting huge full logs unless requested
 [/LIST]
 
 [SIZE="4"][B]Changelog:[/B][/SIZE]
+
+[B]2026-10-18[/B]
+[LIST]
+[*][B]Kernel:[/B] the ROM now ships a kernel built from source ([URL="https://github.com/chijure/android_kernel_huawei_y210"]android_kernel_huawei_y210[/URL]) instead of the stock Huawei binary. Same errors and behaviour as stock, plus:
+[LIST]
+[*]Kernel boot time 6.6 s -> 3.5 s: it no longer probes ten camera sensors and several chips the Y210 does not have (only the real mt9d113 camera sensor is built)
+[*]Fixed Wi-Fi losing its data path after deep sleep (also present on stock): the Wi-Fi SDIO slot is no longer re-initialized on resume
+[*]zram and swap support
+[*]About 150 fewer error lines in dmesg at boot (I2C NACKs from probing absent chips are now debug-level)
+[/LIST]
+[*][B]RIL:[/B] the SIM was always reported as UNKNOWN because the stock RIL library speaks the newer v6 RIL API; a small translation layer now converts SIM status, IMSI, SIM I/O and data-call replies. SIM state, IMSI, operator and SPN now come from the SIM, and the APN list in Settings works without workarounds
+[*][B]Memory:[/B] 48 MB zram swap: under heavy multitasking no apps or services are killed by lowmemorykiller (3 kills before) and more file cache is kept
+[*][B]Dexpreopt:[/B] framework and apps are preoptimized at build time: 28 MB more free space on /data and a quick first boot after flashing or wiping dalvik
+[*][B]Graphics:[/B] asynchronous framebuffer posting like stock (eglSwapBuffers ~29.5 ms -> ~3 ms); several copybit fixes (video and camera preview blits, preview chroma)
+[*][B]Performance:[/B] CheckJNI disabled like on stock (faster app launch)
+[*][B]FM:[/B] seek now uses the standard V4L2 seek call; seek up works
+[*][B]Media:[/B] camera videos (.m4v) are now indexed by the media scanner; fixed thumbnails failing for about half of the PNG images
+[*][B]Wi-Fi:[/B] uses the standard CM7 Wi-Fi HAL; driver load waits for the firmware before starting the supplicant
+[*][B]Claro Peru APNs[/B] included
+[*]Internal: almost all Y210-specific changes now live in the device tree instead of patches over the CM7 source (21 -> 11 patches)
+[/LIST]
 
 [B]2026-07-12[/B]
 [LIST]
@@ -133,74 +232,7 @@ This is an unofficial CyanogenMod 7 port for the Huawei Y210, based on the legac
 [*]Fixed page-flip detection in gralloc framebuffer: yres_virtual check corrected; refresh rate guard changed from == 0 to < 1 Hz to correctly detect the Y210 pixel clock
 [/LIST]
 
-[SIZE="4"][B]Hardware notes:[/B][/SIZE]
-[LIST]
-[*]SoC family: Qualcomm MSM7x27A / MSM7K-era
-[*]GPU: Adreno 200
-[*]Framebuffer: 320x480, ARGB8888 (32 bpp)
-[*]Android base: Gingerbread / CyanogenMod 7
-[*]HAL style: legacy Qualcomm/Android 2.3 stack
-[*]FM chip: WCN2243 (I2S digital output to MSM7x27A codec)
-[/LIST]
-
-[SIZE="4"][B]Installation:[/B][/SIZE]
-[LIST=1]
-[*]Make a full nandroid backup from recovery.
-[*]Wipe data / factory reset.
-[*]Wipe cache and dalvik cache.
-[*]Flash the ROM zip from recovery.
-[*]Reboot.
-[*]First boot can take a while while PackageManager rebuilds state and dexopts apps.
-[/LIST]
-
-[B]Update from a previous build:[/B]
-[LIST=1]
-[*]Wipe cache and dalvik cache.
-[*]Flash the new build.
-[*]Reboot.
-[/LIST]
-
-[SIZE="4"][B]Downloads:[/B][/SIZE]
-[LIST]
-[*][URL="https://drive.google.com/file/d/1qXAHCLQn5EQlevBcixN4gP0JK94IWu27/view?usp=sharing"]cm-7-20260712-UNOFFICIAL-y210.zip[/URL] - 83 MB | MD5: 0e6cf6cf3e4afbc18d0b05c4ffc39b32
-[*][URL="https://xdaforums.com/t/recovery-unofficial-twrp-3-1-1-for-huawei-y210.4792355/"]TWRP 3.1.1 for Huawei Y210 (unofficial)[/URL]
-[/LIST]
-
-[COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download links without permission.[/CENTER][/SIZE][/COLOR]
-
-[SIZE="4"][B]Source code:[/B][/SIZE]
-[LIST]
-[*][URL="https://github.com/chijure-android-system-development/android_device_huawei_y210"]Device tree / Y210-specific changes[/URL]
-[*][URL="https://github.com/chijure-android-system-development/android_vendor_huawei_y210"]Vendor blobs / proprietary files[/URL]
-[*]Kernel: prebuilt zImage shipped by the device tree
-[/LIST]
-
-[SIZE="4"][B]Useful validation commands:[/B][/SIZE]
-[CODE]adb logcat
-adb shell dumpsys SurfaceFlinger | grep -i renderer
-adb shell dumpsys wifi | sed -n '1,80p'
-adb shell getprop wlan.driver.status
-adb shell getprop init.svc.ath_supplicant
-adb shell getprop gsm.version.baseband
-adb shell getprop init.svc.mediaserver
-adb shell getprop init.svc.surfaceflinger[/CODE]
-
-Expected Wi-Fi basics when connected:
-[CODE]wlan.driver.status = ok
-init.svc.ath_supplicant = running
-wifi.interface = eth0[/CODE]
-
-[SIZE="4"][B]Bug reports:[/B][/SIZE]
-Please include:
-[LIST]
-[*]Exact Y210 model variant
-[*]Clean flash or dirty flash
-[*]Recovery used
-[*]Short description of the bug
-[*]Relevant logcat; avoid posting huge full logs unless requested
-[/LIST]
-
-[SIZE="4"][B]Credits:[/B][/SIZE]
+[SIZE="4"][B]Thanks to:[/B][/SIZE]
 [LIST]
 [*]CyanogenMod team - CM7 base
 [*]Qualcomm / CAF - legacy MSM/QCOM hardware references
@@ -215,15 +247,15 @@ Please include:
 [B][U]Contributors[/U][/B]
 [B]chijure[/B]
 [B]ROM OS Version:[/B] 2.3.7 Gingerbread
-[B]ROM Kernel:[/B] Linux 2.6.32
+[B]ROM Kernel:[/B] Linux 2.6.38.6
 [B]ROM Firmware Required:[/B] Custom recovery
 [B]Based On:[/B] CyanogenMod 7
 
 [B][U]Version Information[/U][/B]
 [B]Status:[/B] Stable
-[B]Current Stable Version:[/B] cm-7-20260712-UNOFFICIAL-y210
+[B]Current Stable Version:[/B] cm-7-20261018-UNOFFICIAL-y210
 [B]Current Beta Version:[/B] N/A
-[B]Build Date:[/B] 2026-07-12
+[B]Build Date:[/B] 2026-10-18
 
 [B]Created[/B] 2026-06-12
-[B]Last Updated[/B] 2026-07-12
+[B]Last Updated[/B] 2026-10-18
