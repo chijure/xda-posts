@@ -30,7 +30,7 @@ This is an unofficial CyanogenMod 7 port for the Huawei Y210, based on the legac
 
 [B]Current status — Stable[/B]
 
-Build: [B]cm-7-20261018-UNOFFICIAL-y210.zip[/B] | MD5: dde725fa84e864286e3d10e82c2ee839
+Build: [B]cm-7-20261020-UNOFFICIAL-y210.zip[/B] | MD5: 9c4d21e5846796d4a511fc3707a6551b
 
 [COLOR="Red"][B]Read before flashing:[/B][/COLOR] please read the known issues before flashing.
 
@@ -43,36 +43,36 @@ Build: [B]cm-7-20261018-UNOFFICIAL-y210.zip[/B] | MD5: dde725fa84e864286e3d10e82
 [*][B]UI / launcher:[/B] usable on-device; status bar renders correctly (ghost/duplication fixed)
 [*][B]Touchscreen:[/B] single-touch and multitouch input; physical and capacitive buttons
 [*][B]Backlight / LED / vibrator:[/B] screen backlight, notification LED and vibrator work
-[*][B]Wi-Fi:[/B] enables, scans, associates and obtains DHCP; on/off cycles; [B]keeps working after deep sleep[/B] (the stock ROM loses the data path after sleeping until Wi-Fi is toggled; fixed in the kernel); hotspot/tethering validated with two clients
+[*][B]Wi-Fi:[/B] enables, scans, associates and obtains DHCP; on/off cycles; [B]keeps working after deep sleep[/B] (the stock ROM loses the data path after sleeping until Wi-Fi is toggled; fixed in the kernel). The Atheros AR6003 driver is now built from source and applies Huawei's per-unit TX power calibration like stock
+[*][B]Wi-Fi hotspot:[/B] clients connect, get an address and browse over mobile data; Wi-Fi reconnects on its own when the hotspot is turned off
 [*][B]Bluetooth:[/B] pairing, file transfer (Object Push) and A2DP audio validated with real hardware (2026-07 build)
-[*][B]Telephony / RIL:[/B] baseband, operator registration, signal, IMEI, calls (incoming/outgoing, earpiece and speaker, mute), SMS and HSPA mobile data; [B]SIM is now detected as READY[/B]: IMSI, operator numeric and SPN read from the SIM, APN list works in Settings
+[*][B]Telephony / RIL:[/B] baseband, operator registration, signal, IMEI, calls (incoming/outgoing, earpiece and speaker, mute), SMS and HSPA mobile data; [B]SIM is now detected as READY[/B]: IMSI, operator numeric and SPN read from the SIM, APN list works in Settings; [B]SIM PIN lock[/B]: PIN prompt at boot, enabling/disabling the lock and changing the PIN
 [*][B]Sensors / rotation:[/B] accelerometer, gravity and linear-accel sensors work with stock sensors.default.so; /dev/accel permissions corrected
 [*][B]ADB / logs:[/B] adb logcat and runtime logging are usable
 [*][B]Audio playback:[/B] AudioFlinger -> libaudio output works
 [*][B]Audio recording:[/B] SoundRecorder / voice recorder works
-[*][B]FM radio:[/B] real tuning and real audio of the station through headphones and speaker, manual tuning and seek up
+[*][B]FM radio:[/B] real tuning and real audio of the station through headphones and speaker, manual tuning, [B]seek up and seek down[/B]
 [*][B]Camera app:[/B] opens consistently with the current libcamera wrapper
 [*][B]Camera:[/B] 640x480 colour portrait preview, JPEG photo capture at full 2MP (1600x1200), close -> reopen, photo/video switch (fixed preview freeze), H.263 352x288 15 fps video recording (MP4 in gallery)
 [*][B]Video playback:[/B] compatible files play; H.264 Baseline was tested
 [*][B]Storage / USB:[/B] /data, SD card and USB mass storage
 [*][B]Suspend / screen off / deep sleep:[/B] continuous deep sleep validated with Wi-Fi associated (Wi-Fi stays in normal 802.11 power save and is still connected on wake; only the normal modem wakeup remains)
-[*][B]GPS:[/B] real satellite fix validated outdoors (up to 9 satellites, stable coordinates)
+[*][B]GPS:[/B] real satellite fix validated outdoors (up to 9 satellites, stable coordinates); raw NMEA sentences for apps that read them; correct location dates
 [*][B]Performance profile:[/B] interactive CPU governor, noop I/O scheduler on NAND, tuned lowmemorykiller profile, 48 MB zram swap (no lowmemorykiller kills under heavy multitasking) and preoptimized (dexpreopt) framework and apps
 [/LIST]
 
 [SIZE="4"][B]Known issues:[/B][/SIZE]
 [LIST]
 [*][B]HD video (640x480 H.264):[/B] not supported — this Y210 revision has no hardware video encoder for that resolution
-[*][B]GPS raw NMEA sentences:[/B] arrive empty (only "$"); does not affect LocationManager/normal apps, only apps that read raw NMEA directly
 [*][B]First boot warning:[/B] com.android.provision may log a non-blocking WindowManager InflateException while creating the starting window after wipe
-[*][B]FM seek down:[/B] seeking down does not complete (the FM chip reports an error, same on stock); seek up wraps around the band, and manual tuning works
-[*][B]Not re-tested on this build yet:[/B] Bluetooth A2DP and Wi-Fi hotspot (both worked on the 2026-07 build)
+[*][B]FM seek:[/B] stops only on stations the FM chip can detect; across a stretch of band with none it takes as long as a full sweep (about 70 ms per 100 kHz), and reception depends on the headphone cable (it is the antenna)
+[*][B]Not re-tested on this build yet:[/B] Bluetooth A2DP (worked on the 2026-07 build)
 [/LIST]
 
 [SIZE="4"][B]Download:[/B][/SIZE]
 [LIST]
-[*][URL="https://androidfilehost.com/?fid=17900174959292981892"]cm-7-20261018-UNOFFICIAL-y210.zip (AndroidFileHost)[/URL] - 83 MB | MD5: dde725fa84e864286e3d10e82c2ee839
-[*][URL="https://drive.google.com/file/d/1q3HhHCb_EwVm0LKVr3XQ_lhPr6QqNTC1/view?usp=sharing"]cm-7-20261018-UNOFFICIAL-y210.zip (Google Drive)[/URL] - mirror
+[*][URL="https://androidfilehost.com/?fid=17900174959292981959"]cm-7-20261020-UNOFFICIAL-y210.zip (AndroidFileHost)[/URL] - 83 MB | MD5: 9c4d21e5846796d4a511fc3707a6551b
+[*][URL="https://drive.google.com/file/d/1sZjgSNZqRTo5B5XAk0tGuxAZ0Zt_FZFq/view?usp=sharing"]cm-7-20261020-UNOFFICIAL-y210.zip (Google Drive)[/URL] - mirror
 [*][URL="https://xdaforums.com/t/recovery-unofficial-twrp-3-1-1-for-huawei-y210.4792355/"]TWRP 3.1.1 for Huawei Y210 (unofficial)[/URL]
 [/LIST]
 
@@ -134,6 +134,18 @@ Please include:
 [/LIST]
 
 [SIZE="4"][B]Changelog:[/B][/SIZE]
+
+[B]2026-10-20[/B]
+[LIST]
+[*][B]Wi-Fi hotspot fixed:[/B] it did not start on the 2026-10-18 build. The Wi-Fi client library refused to talk to the hotspot daemon while the normal Wi-Fi service was stopped (which it always is in hotspot mode), and a leftover control socket from a previous run made the next start fail. Turning the hotspot off now brings normal Wi-Fi back on its own
+[*][B]Wi-Fi driver built from source:[/B] the Atheros AR6003 driver now comes from the AR6kSDK 3.1 sources instead of Huawei's binary, and includes Huawei's per-unit TX power calibration (read from the phone's own calibration file, as stock does)
+[*][B]SIM PIN:[/B] entering the PIN at boot always said "wrong PIN" (the request never reached the SIM, so no attempts were used); fixed. The "SIM network unlock PIN" screen that briefly appeared after a correct PIN is gone. Enabling/disabling the lock and changing the PIN work
+[*][B]GPS:[/B] raw NMEA sentences ($GPGGA, $GPRMC, $GPGSV...) now reach apps; the modem firmware predates the 2019 GPS week rollover and dated everything 1024 weeks in the past (2007), now corrected in location times and in the NMEA dates
+[*][B]FM seek down works:[/B] the FM chip firmware sweeps the band without stopping when seeking down (Huawei's own FM software sends the same command); the kernel driver now emulates it with upward seeks
+[*][B]FM seek is much faster:[/B] the signal threshold was being sent as an out-of-range value, so the chip only stopped on very strong stations and the app gave up after 5 s; seeks now take about 0.5-3 s when there are stations nearby
+[*][B]FM without headphones:[/B] opening the radio without headphones no longer crashes the app or leaves the radio stuck after plugging them in; it now just asks for headphones
+[*][B]Kernel:[/B] updated to commit 8efe2f16 (FM seek down)
+[/LIST]
 
 [B]2026-10-18[/B]
 [LIST]
@@ -253,9 +265,9 @@ Please include:
 
 [B][U]Version Information[/U][/B]
 [B]Status:[/B] Stable
-[B]Current Stable Version:[/B] cm-7-20261018-UNOFFICIAL-y210
+[B]Current Stable Version:[/B] cm-7-20261020-UNOFFICIAL-y210
 [B]Current Beta Version:[/B] N/A
-[B]Build Date:[/B] 2026-10-18
+[B]Build Date:[/B] 2026-10-20
 
 [B]Created[/B] 2026-06-12
-[B]Last Updated[/B] 2026-10-18
+[B]Last Updated[/B] 2026-10-20
