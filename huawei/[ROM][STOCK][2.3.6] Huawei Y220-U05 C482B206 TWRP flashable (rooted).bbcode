@@ -1,0 +1,79 @@
+[CENTER][SIZE="5"][B][ROM][STOCK][2.3.6] Huawei Y220-U05 C482B206 — TWRP flashable (rooted)[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost NVRAM,
+ * or any other damage. Make a backup before flashing.
+ * YOU are choosing to make these modifications.
+ */[/CODE]
+
+[B]About[/B]
+
+This is the stock firmware of the [B]Huawei Y220-U05[/B] packed as a ZIP that installs from TWRP. Use it to go back to stock from a custom ROM (for example CyanogenMod 7) without SP Flash Tool.
+
+[LIST]
+[*]Build: [B]Y220-U05V100R001C482B206[/B]
+[*]Android 2.3.6 Gingerbread, build date 2014-01-12
+[*]Stock kernel and stock boot image
+[*][B]Rooted[/B]: su and Superuser are included, as in the original backup
+[/LIST]
+
+The ZIP was made from a TWRP backup of a stock phone. Every file, owner, permission (setuid included) and symlink comes from that backup; the 881 system files are byte-identical to it.
+
+[COLOR="Red"][B]Only for Huawei Y220-U05. It is not compatible with Huawei Y210 or other MT6572 phones.[/B][/COLOR]
+
+[SIZE="4"][B]What it does[/B][/SIZE]
+
+[LIST]
+[*]Empties the existing /system UBIFS volume and copies the stock system
+[*]Writes the stock boot image (kernel and ramdisk)
+[*]Does [B]not[/B] touch data, cache, recovery (TWRP stays), NVRAM, IMEI or the modem partitions
+[/LIST]
+
+[SIZE="4"][B]Tested[/B][/SIZE]
+
+On a real Y220-U05 with TWRP 3.1.1-0.1 (2026-10-21): installs in about 46 seconds with no errors, boots to the stock launcher, and the SIM registers on the network. Going back to CyanogenMod 7 afterwards with a TWRP restore also worked.
+
+[SIZE="4"][B]Requirements[/B][/SIZE]
+
+[LIST]
+[*][URL="PUT_TWRP_THREAD_URL_HERE"]TWRP 3.1.1-0.1 for Huawei Y220-U05[/URL] (use the 2026-10-21 build or newer)
+[*]A microSD card with at least 200 MB free
+[/LIST]
+
+[SIZE="4"][B]Installation[/B][/SIZE]
+
+[COLOR="Red"][B]Make a full TWRP backup to the microSD first.[/B][/COLOR]
+
+[LIST=1]
+[*]Copy the ZIP to the external microSD and check its MD5.
+[*]Boot into TWRP.
+[*][B]Wipe → Data and Cache.[/B] This is required when coming from a custom ROM; its data does not work on stock.
+[*]Install the ZIP.
+[*]Reboot to system. The first boot takes a few minutes.
+[/LIST]
+
+USB debugging is off after a clean install. Turn it on in [B]Settings → Applications → Development[/B] if you need ADB.
+
+[SIZE="4"][B]Download[/B][/SIZE]
+
+[LIST]
+[*][URL="PUT_STOCK_ZIP_DOWNLOAD_URL_HERE"]Y220-U05V100R001C482B206-stock-twrp.zip[/URL] — 149984714 bytes (about 143 MiB)
+[*]MD5: [CODE]38380ae0dad675d9fd0d01828d02670f[/CODE]
+[/LIST]
+
+[COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download without permission.[/CENTER][/SIZE][/COLOR]
+
+[SIZE="4"][B]How it was made[/B][/SIZE]
+
+The ZIP is generated from the TWRP backup by [URL="https://github.com/chijure-android-system-development/android_device_huawei_y220"]tools/make-stock-zip.py[/URL] in the Y220 device tree. It reads the backup tar directly, so owners, modes and symlinks are taken as they are, and uses the same installer as the CyanogenMod 7 ZIP for this phone (UBIFS-aware, boot written with TWRP's flash_image).
+
+[SIZE="4"][B]Credits[/B][/SIZE]
+
+[LIST]
+[*]Huawei and MediaTek for the original firmware
+[*]TeamWin
+[*]chijure — packaging and testing
+[/LIST]

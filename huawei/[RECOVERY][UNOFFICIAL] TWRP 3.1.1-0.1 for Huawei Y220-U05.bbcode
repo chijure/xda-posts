@@ -1,0 +1,154 @@
+[CENTER][SIZE="5"][B][RECOVERY][UNOFFICIAL] TWRP 3.1.1-0.1 for Huawei Y220-U05[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost NVRAM,
+ * or any other damage. Make a backup and verify your exact model before
+ * flashing. YOU are choosing to make these modifications.
+ */[/CODE]
+
+[B]About[/B]
+
+This is an unofficial TWRP 3.1.1-0.1 build for the [B]Huawei Y220-U05[/B]. It is made for the MediaTek MT6572 NAND layout used by stock firmware C482B206SP05. System, data and cache are UBIFS volumes; this is not an eMMC device and it is not the Huawei Y210.
+
+[COLOR="Red"][B]Only flash this on Huawei Y220-U05. This device does not provide standard fastboot.[/B][/COLOR]
+
+[SIZE="4"][B]Current status — Stable[/B][/SIZE]
+
+Build: [B]recovery-twrp-3.1.1-0.1-y220-u05-20261021.img[/B]
+
+Tested on real hardware with kernel #92:
+
+[LIST]
+[*]Boot to recovery, touchscreen and 320x480 display
+[*]Capacitive Back and Home keys
+[*]ADB in recovery, reported as [B]Y220-U05[/B]
+[*]Mount /system, /data and /cache (UBIFS) and the external microSD
+[*][B]Backup[/B] of system, data, cache, boot and recovery to the microSD, from the GUI and from the command line, with valid MD5 files
+[*][B]Restore[/B] of system, data, cache and boot in a single run (191 MB in 48 s), followed by a normal Android boot
+[*]Wipe cache, Dalvik cache and factory reset
+[*][B]Install ZIP[/B] from the microSD (CyanogenMod 7 and the stock ROM ZIP)
+[*]TWRP settings stored on the external microSD
+[/LIST]
+
+[SIZE="4"][B]Important NAND / UBIFS notes[/B][/SIZE]
+
+[LIST]
+[*]The recovery partition is NAND MTD8 and is exactly 6 MiB (6291456 bytes).
+[*]Backups of system, data and cache are file-based UBIFS archives; boot and recovery are raw MTD images.
+[*]Keep backups on the external microSD. The phone has no emulated internal storage, and /data is too small.
+[*]Do not flash an ext4 or YAFFS system image to MTD14. Install compatible ROM ZIPs through TWRP.
+[*]Never use [B]Format All[/B] in SP Flash Tool. It can erase NVRAM, IMEI and calibration data.
+[*]If SP Flash Tool is required, use a compatible [B]v5[/B] release and select only the recovery partition.
+[*]Tip: in [B]Settings[/B], enable the digest (MD5) verification of backup files, so TWRP checks a backup before restoring it.
+[/LIST]
+
+[SIZE="4"][B]Installation[/B][/SIZE]
+
+[B]Before starting:[/B] back up NVRAM/pro_info/protect partitions and copy the backup away from the phone.
+
+[B]Method 1 — updating from an older TWRP on the phone:[/B]
+
+Copy the image to the microSD, boot to TWRP and run:
+
+[CODE]adb shell
+flash_image recovery /external_sd/recovery-twrp-3.1.1-0.1-y220-u05-20261021.img
+dd if=/dev/mtd/mtd8 bs=2048 count=3072 | md5sum
+reboot recovery[/CODE]
+
+The md5sum must match the one below before you reboot.
+
+[B]Method 2 — from an already rooted system with a working flash_image:[/B]
+
+[CODE]adb push recovery-twrp-3.1.1-0.1-y220-u05-20261021.img /data/local/tmp/recovery.img
+adb shell
+su
+flash_image recovery /data/local/tmp/recovery.img
+sync
+reboot recovery[/CODE]
+
+[B]Method 3 — SP Flash Tool v5:[/B]
+
+[LIST=1]
+[*]Load the correct scatter file for your exact Y220-U05 firmware.
+[*]Choose [B]Download Only[/B].
+[*]Uncheck every partition except [B]RECOVERY[/B].
+[*]Select the downloaded recovery image for RECOVERY.
+[*]Flash it, then boot directly to recovery.
+[/LIST]
+
+[COLOR="Red"][B]Do not select Format All and do not flash preloader, boot or NVRAM from another phone.[/B][/COLOR]
+
+[SIZE="4"][B]Entering recovery[/B][/SIZE]
+
+From Android:
+
+[CODE]adb reboot recovery[/CODE]
+
+You can also use the hardware recovery key combination while the phone is powered off.
+
+[SIZE="4"][B]Download[/B][/SIZE]
+
+[LIST]
+[*][URL="PUT_TWRP_DOWNLOAD_URL_HERE"]recovery-twrp-3.1.1-0.1-y220-u05-20261021.img[/URL] — 6 MiB (6291456 bytes)
+[*]MD5: [CODE]e666e09dba7cd63a2d0c84fe1f51704d[/CODE]
+[*][URL="PUT_STOCK_ROM_THREAD_URL_HERE"]Stock ROM C482B206 as a TWRP ZIP[/URL], to go back to stock
+[/LIST]
+
+[SIZE="4"][B]Screenshots[/B][/SIZE]
+
+[IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/y220-twrp/01-main-menu.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/y220-twrp/02-install.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/y220-twrp/03-backup.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/y220-twrp/04-mount.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/y220-twrp/05-settings.png[/IMG]
+
+[SIZE="4"][B]Source code[/B][/SIZE]
+
+[LIST]
+[*][URL="https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni/tree/twrp-4.4-deprecated"]Omni/TWRP 4.4 deprecated manifest[/URL]
+[*][URL="https://github.com/chijure-android-system-development/android_device_huawei_y220"]Huawei Y220 device tree[/URL]
+[*][URL="https://github.com/chijure-android-system-development/android_kernel_huawei_y220-u05"]Huawei Y220-U05 kernel[/URL]
+[/LIST]
+
+[SIZE="4"][B]Device information[/B][/SIZE]
+
+[LIST]
+[*]Device: Huawei Y220-U05
+[*]Codename: y220
+[*]SoC: MediaTek MT6572
+[*]CPU: dual-core ARM Cortex-A7
+[*]Display: 3.5 inch, 320x480
+[*]Storage: 512 MB NAND/MTD
+[*]Filesystems: UBIFS for system, data and cache
+[*]Stock Android: 2.3.6 Gingerbread
+[*]Kernel: Linux 3.4.5
+[/LIST]
+
+[SIZE="4"][B]Bug reports[/B][/SIZE]
+
+Include the exact model and stock firmware, the installation method, a description of the problem, and /tmp/recovery.log. Do not report issues from a Y210 or another MT6572 device.
+
+[SIZE="4"][B]Changelog[/B][/SIZE]
+
+[B]2026-10-21[/B]
+
+[LIST]
+[*]Fixed restore failing with "Failed to mount '/system' (Out of memory)". UBIFS needs a large contiguous memory block on every mount, and after a big backup or restore the page cache left none, so a full restore stopped before writing System. A small service now keeps the page cache low; a full backup plus a full restore in one run works.
+[*]ADB now reports the device as Y220-U05 instead of 0123456789ABCDEF.
+[*]Same kernel and TWRP binary as the previous build; only the recovery init changed.
+[/LIST]
+
+[B]2026-10-12[/B]
+
+[LIST]
+[*]First build with kernel #92: touchscreen, capacitive keys, UBIFS mounts, backup and ZIP install.
+[/LIST]
+
+[SIZE="4"][B]Credits[/B][/SIZE]
+
+[LIST]
+[*]TeamWin
+[*]OmniROM
+[*]MediaTek and Huawei for the original device software
+[*]chijure — device tree, kernel port and hardware testing
+[*]All testers and contributors
+[/LIST]
