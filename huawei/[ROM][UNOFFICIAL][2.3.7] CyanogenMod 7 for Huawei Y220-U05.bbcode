@@ -1,0 +1,172 @@
+[CENTER][SIZE="5"][B][ROM][UNOFFICIAL][2.3.7] CyanogenMod 7 for Huawei Y220-U05[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost NVRAM,
+ * missed calls, alarms that fail, or any other damage. Make a full backup
+ * before flashing. YOU are choosing to make these modifications.
+ */[/CODE]
+
+[B]About[/B]
+
+This is an unofficial CyanogenMod 7 port for the [B]Huawei Y220-U05[/B] (MediaTek MT6572), based on Android 2.3.7. The phone ships with Huawei's Android 2.3.6, so this is the same Gingerbread generation with a ported Linux 3.4.5 kernel built from source and the stock proprietary components from firmware C482B206SP05. Y220-specific compatibility code lives in the device tree whenever possible.
+
+[COLOR="Red"][B]This ROM is only for Huawei Y220-U05. It is not compatible with Huawei Y210.[/B][/COLOR]
+
+[SIZE="4"][B]Current status — Beta 1[/B][/SIZE]
+
+Build: [B]cm-7-20261022-UNOFFICIAL-y220.zip[/B] (userdebug)
+Kernel: Linux 3.4.5 #95
+Size: 96550445 bytes (about 92 MiB)
+MD5: [B]083b261442476c923a776953860ff22b[/B]
+
+Tested with a clean flash on real hardware: calls, SMS (send and receive), FM radio, USB tethering and the Wi-Fi hotspot were checked on this exact ZIP. The device test script reports no failures and no crashes or tombstones appeared.
+
+[SIZE="4"][B]What's working[/B][/SIZE]
+
+[LIST]
+[*][B]Phone:[/B] calls (mute and keypad buttons included), SMS, operator registration, mobile data (EDGE)
+[*][B]Wi-Fi:[/B] scan, connect, DHCP
+[*][B]Bluetooth:[/B] pairing in both directions, send and receive files, music to headphones and speakers (A2DP); paired devices survive a reboot
+[*][B]USB tethering[/B] and [B]portable Wi-Fi hotspot[/B] (WPA2)
+[*][B]FM radio[/B] with headphones, speaker output selectable
+[*][B]Audio:[/B] speaker, earpiece, wired headset with microphone and button
+[*][B]Camera:[/B] preview, photos, video recording
+[*][B]Video playback[/B] with the MediaTek hardware decoders
+[*][B]Display / GPU:[/B] Mali-400 MP, 320x480
+[*][B]Sensors:[/B] accelerometer (rotation)
+[*][B]Storage:[/B] UBIFS system/data/cache, microSD, USB mass storage
+[*][B]Charging with the phone off:[/B] stock charging animation; the power key boots Android and unplugging powers off
+[*][B]Thermal policy[/B] from stock, deep sleep, zram swap
+[/LIST]
+
+[SIZE="4"][B]Known issues[/B][/SIZE]
+
+[LIST]
+[*][B]Bluetooth hands-free (HFP):[/B] not available, calls cannot use Bluetooth headsets. Music over Bluetooth works.
+[*][B]Bluetooth headset buttons (AVRCP):[/B] not working.
+[*][B]MMS:[/B] not verified.
+[*][B]3G:[/B] with Claro Peru the network denied 3G registration and the phone stays on EDGE. It may work on other carriers or plans.
+[*][B]Video recording[/B] uses the software encoder, not the MediaTek one.
+[*][B]Wi-Fi hotspot:[/B] 802.11g only, channel 6.
+[*][B]USB tethering:[/B] tested on Linux; Windows may need an RNDIS driver.
+[*][B]Battery life:[/B] overnight drain is still being measured.
+[*]The phone has no GPS, compass, proximity or light sensor, same as stock.
+[/LIST]
+
+[SIZE="4"][B]Download[/B][/SIZE]
+
+[LIST]
+[*][URL="https://github.com/chijure-android-system-development/android_device_huawei_y220/releases/download/cm7-beta1/cm-7-20261022-UNOFFICIAL-y220.zip"]cm-7-20261022-UNOFFICIAL-y220.zip[/URL] — 96550445 bytes
+[*]MD5: [CODE]083b261442476c923a776953860ff22b[/CODE]
+[*][URL="https://github.com/chijure-android-system-development/android_device_huawei_y220/releases/download/cm7-beta1/recovery-twrp-3.1.1-0.1-y220-u05-20261021.img"]TWRP 3.1.1-0.1 for Huawei Y220-U05[/URL] (see the TWRP thread for flashing instructions)
+[*][URL="https://github.com/chijure-android-system-development/android_device_huawei_y220/releases/tag/cm7-beta1"]Release page[/URL]
+[/LIST]
+
+[SIZE="4"][B]Installation[/B][/SIZE]
+
+[COLOR="Red"][B]Back up NVRAM (IMEI, Wi-Fi and Bluetooth addresses) and your complete stock system before flashing. Do not use Format All in SP Flash Tool, and do not use SP Flash Tool v6.[/B][/COLOR]
+
+[LIST=1]
+[*]Install the Y220-U05 TWRP linked above.
+[*]Copy the ROM ZIP to the external microSD.
+[*]Boot into TWRP and make a complete backup to the external microSD.
+[*]Wipe data/factory reset, cache and Dalvik cache.
+[*]Install cm-7-20261022-UNOFFICIAL-y220.zip.
+[*]Reboot. The first boot takes a few minutes.
+[*]Optional: flash Gingerbread (2.3) gapps.
+[/LIST]
+
+[B]Updating from an earlier CM7 build:[/B] make a backup, wipe cache and Dalvik cache, install the new ZIP and reboot. A clean flash is recommended when coming from the 2026-10-13 build.
+
+[B]UBIFS warning:[/B] install the ZIP from TWRP. Do not write the loose system.img directly to MTD14. The installer safely empties the existing system UBIFS volume, copies the ROM, and writes the MTK-formatted boot image. It does not replace TWRP.
+
+[B]Charging with the phone off:[/B] power off, unplug, wait until the screen is black, then plug in the charger. If you power off with the charger already connected, the bootloader restarts into Android.
+
+[COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download without permission.[/CENTER][/SIZE][/COLOR]
+
+[SIZE="4"][B]Screenshots[/B][/SIZE]
+
+[IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/y220-cm7/06-apps.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/y220-cm7/02-about.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/y220-cm7/03-cmsettings.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/y220-cm7/04-tether.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/y220-cm7/05-fmradio.png[/IMG]
+
+[SIZE="4"][B]Source code[/B][/SIZE]
+
+[LIST]
+[*][URL="https://github.com/chijure-android-system-development/android_device_huawei_y220"]Huawei Y220 device tree[/URL] (branch gingerbread; build notes in README.md)
+[*][URL="https://github.com/chijure-android-system-development/android_kernel_huawei_y220-u05"]Huawei Y220-U05 kernel[/URL]
+[*][URL="https://github.com/chijure-android-system-development/android_vendor_huawei_y220"]Huawei Y220 vendor[/URL] (proprietary MediaTek/Huawei components from stock C482B206SP05)
+[*]Changes to the common CM7 tree are kept as patches in device/huawei/y220/patches. The hotspot also needs CyanogenMod's external/wpa_supplicant_8 and external/libnl-headers (branch ics).
+[/LIST]
+
+[SIZE="4"][B]Bug reports[/B][/SIZE]
+
+Please include:
+
+[LIST]
+[*]Exact phone model and original firmware version
+[*]Clean flash or update from an older build
+[*]Recovery version used
+[*]Steps required to reproduce the problem
+[*]Relevant logcat and, for kernel issues, dmesg (or /proc/last_kmsg after a hang)
+[*]Whether the problem also happens after a clean flash
+[/LIST]
+
+[SIZE="4"][B]Changelog[/B][/SIZE]
+
+[B]2026-10-22 — Beta 1[/B]
+
+[LIST]
+[*]Bluetooth: send and receive files, music to headphones (A2DP), device class and paired devices kept across reboots, unpair
+[*]USB tethering and portable Wi-Fi hotspot (kernel netfilter, hostapd 0.8 over nl80211)
+[*]Charging with the phone off: fixed a kernel hang; the power key now boots Android
+[*]Hardware video decoding with the MediaTek decoders
+[*]In-call mute and keypad buttons, call audio, headset button
+[*]Stock thermal policy, 24 MB Dalvik heap
+[*]FM radio app signed correctly in userdebug builds
+[*]Touch firmware update interface removed (any app could reflash the touch controller)
+[*]userdebug build
+[/LIST]
+
+[B]2026-10-13 — first public beta candidate[/B]
+
+[LIST]
+[*]Complete TWRP-installable build tested on real Y220-U05 hardware
+[*]Ported Linux 3.4.5 kernel with working modem, NAND partition layout, zram and reduced debug logging
+[*]UBIFS-aware boot and installation path
+[*]MediaTek RIL integration with calls, SMS and EDGE data
+[*]Y220 audio HAL for speaker output and microphone input
+[*]MediaTek Wi-Fi loader and private WEXT compatibility moved into the device tree
+[*]MediaTek Bluetooth power, discovery and pairing bridge
+[*]Stock camera stack integrated through device-owned compatibility layers
+[*]Fixed YV12 camera preview and MediaTek I420 video recording
+[/LIST]
+
+[SIZE="4"][B]Credits[/B][/SIZE]
+
+[LIST]
+[*]CyanogenMod team
+[*]MediaTek and Huawei for the original device software
+[*]The Android and Linux communities
+[*]chijure — kernel port, device tree, compatibility work and testing
+[*]All testers and contributors
+[/LIST]
+
+[B][U][SIZE="4"][PLAIN]XDA:DevDB Information[/PLAIN][/SIZE][/U][/B]
+[SIZE=3][B]CyanogenMod 7 for Huawei Y220-U05[/B][/SIZE]
+
+[B][U]Contributors[/U][/B]
+[B]chijure[/B]
+[B]ROM OS Version:[/B] 2.3.7 Gingerbread
+[B]ROM Kernel:[/B] Linux 3.4.5
+[B]ROM Firmware Required:[/B] TWRP for Y220-U05
+[B]Based On:[/B] CyanogenMod 7
+
+[B][U]Version Information[/U][/B]
+[B]Status:[/B] Beta
+[B]Current Beta Version:[/B] cm-7-20261022-UNOFFICIAL-y220
+[B]Build Date:[/B] 2026-10-22
+
+[B]Created[/B] 2026-10-13
+[B]Last Updated[/B] 2026-10-22
