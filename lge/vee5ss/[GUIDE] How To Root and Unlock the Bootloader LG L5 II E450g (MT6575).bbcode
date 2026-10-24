@@ -1,0 +1,184 @@
+[CENTER][SIZE="5"][B][GUIDE] How To Root and Unlock the Bootloader LG L5 II E450g (MT6575)[/B][/SIZE]
+
+[B][SIZE="4"][COLOR="Red"]WARNING: THIS MODIFIES THE BOOTLOADER — READ EVERYTHING BEFORE STARTING[/COLOR][/SIZE][/B][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost IMEI,
+ * or any other damage. Back up everything and verify every hash before
+ * flashing. YOU are choosing to make these modifications.
+ */[/CODE]
+
+[SIZE="4"][B]About[/B][/SIZE]
+
+The LG L5 II [B]E450g[/B] (codename [B]vee5ss[/B], MediaTek [B]MT6575[/B]) has a locked bootloader. Its LK checks the signature of the boot and recovery images, so an unsigned recovery (TWRP, CWM) stops with a [I]Security Error[/I].
+
+This guide does two things:
+[LIST=1]
+[*][B]Root[/B] the stock ROM with KingRoot. It flashes nothing, so it works with the locked bootloader.
+[*][B]Install a patched LK[/B]: [B]9 small patches[/B] that skip the signature checks on the boot and recovery paths. It is written from Android with dd, using the root from step 1.
+[/LIST]
+
+[B]What you get:[/B]
+[LIST]
+[*]Unsigned recovery images boot, for example [URL=""]TWRP 3.1.1-0.1 for the LG L5 II E450g[/URL].
+[*][B]No data wipe:[/B] nothing in this guide erases userdata.
+[*]Fully reversible: the stock LK is included in the kit and goes back the same way.
+[*]Android keeps booting normally with the stock boot image.
+[/LIST]
+
+[SIZE="4"][B]Tested only on the E450g[/B][/SIZE]
+
+[LIST]
+[*][B]LG-E450g, firmware E450g04a[/B] (V04a, Android 4.1.2 JZO54K): tested on real hardware.
+[*][B]E450, E455, E460, E451g and every other L5 II variant: NOT tested.[/B] They ship different LK binaries.
+[/LIST]
+
+[COLOR="Red"][B]Do not use this kit on any other model or firmware.[/B][/COLOR] Step 3 compares your LK's SHA-256 with the stock E450g one before anything is written; if it differs, stop. A wrong LK flash can hard-brick the phone.
+
+[B]Not the L4 II method.[/B] The LG L4 II E440g has its own patched LK (same technique, different offsets): [URL=""][GUIDE] How To Root and Unlock the Bootloader LG L4 II E440g (MT6575)[/URL]. Never flash one phone's LK on the other.
+
+[SIZE="4"][B]Download[/B][/SIZE]
+
+[LIST]
+[*][URL=""]LG-E450g-Bootloader-Unlock.zip[/URL] - 348 KB | MD5: fa62f72951a74ef5747b4e74514ef448
+[/LIST]
+
+The kit contains the [B]patched LK[/B] ([I]lk/lk-patched-E450g.bin[/I]), the [B]stock E450g04a LK[/B] to go back ([I]lk/lk-stock-E450g.bin[/I]), SHA256SUMS and a README.txt with the same steps. Unzip it and run every command below from its folder.
+
+[CODE]d35f0bbf245298a0bcc5d4427b73c293273be2de1777fb3bc669d6a4d963215a  lk/lk-stock-E450g.bin
+973e0ed498917d3ec86dc10d3e1c53357980dfd4df43ced09aa51c644df7e99a  lk/lk-patched-E450g.bin[/CODE]
+
+[SIZE="4"][B]Requirements[/B][/SIZE]
+
+[LIST]
+[*]LG E450g on firmware [B]E450g04a[/B], battery at 50% or more.
+[*]A PC with [B]adb[/B] ([URL="https://developer.android.com/tools/releases/platform-tools"]Android SDK Platform-Tools[/URL]) and the LG USB driver (Windows).
+[*]On the phone: Developer options enabled (tap Build number 7 times) and [B]USB debugging ON[/B].
+[*][B]KingRoot[/B] for the root step.
+[/LIST]
+
+[SIZE="4"][B]Step 1 — Root with KingRoot[/B][/SIZE]
+
+Check that adb sees the phone and that it is the right model:
+[CODE]adb devices
+adb shell getprop ro.product.model          (LG-E450g)
+adb shell getprop ro.product.device         (vee5ss)[/CODE]
+
+Install KingRoot on the phone, run it and let it finish. Then verify the root from the PC:
+[CODE]adb shell "su -c id"        (uid=0(root) gid=0(root))[/CODE]
+
+The first time, KingUser asks on the phone screen whether to allow root for the ADB shell. Allow it, or every [I]su -c[/I] below fails.
+
+[SIZE="4"][B]Step 2 — Back up the partitions unique to your phone (do not skip)[/B][/SIZE]
+
+These hold your [B]IMEI, RF calibration, Bluetooth/Wi-Fi addresses and the modem NVRAM[/B]. A ROM install, a KDZ or a full wipe cannot recreate them. Back them up now, while everything works:
+[CODE]adb shell "su -c 'dd if=/dev/block/mmcblk0 of=/sdcard/nvram.bin bs=4096 skip=3584 count=768'"
+adb shell "su -c 'dd if=/dev/block/mmcblk0p2 of=/sdcard/sec_ro.img bs=4096'"
+adb shell "su -c 'dd if=/dev/block/mmcblk0p3 of=/sdcard/persist_lg.img bs=4096'"
+adb shell "su -c 'dd if=/dev/block/mmcblk0p4 of=/sdcard/persist.img bs=4096'"
+adb pull /sdcard/nvram.bin
+adb pull /sdcard/sec_ro.img
+adb pull /sdcard/persist_lg.img
+adb pull /sdcard/persist.img[/CODE]
+
+Expected sizes: nvram 3 MB, sec_ro 5 MB, persist_lg 8 MB, persist 6 MB.
+
+[COLOR="Red"][B]Two traps on this phone:[/B][/COLOR]
+[LIST]
+[*]Read nvram from [I]/dev/block/mmcblk0[/I] with the exact [I]skip/count[/I] above (taken from /proc/dumchar_info). [I]dd if=/dev/nvram[/I] without a count does [B]not[/B] stop at the end of the partition and fills your storage.
+[*]Always use [I]adb pull[/I]. Redirecting [I]adb shell dd[/I] output to a file on the PC corrupts binary data.
+[/LIST]
+
+[COLOR="Red"][B]Never share these files. They contain your IMEI.[/B][/COLOR]
+
+[SIZE="4"][B]Step 3 — Back up your LK and check it (do not skip)[/B][/SIZE]
+
+[CODE]adb shell "su -c 'dd if=/dev/uboot of=/sdcard/lk-backup.bin bs=512 count=1024; chmod 644 /sdcard/lk-backup.bin'"
+adb pull /sdcard/lk-backup.bin
+sha256sum lk-backup.bin
+(Windows: certutil -hashfile lk-backup.bin SHA256)[/CODE]
+
+[LIST]
+[*][B]d35f0bbf245298a0bcc5d4427b73c293273be2de1777fb3bc669d6a4d963215a[/B]: stock E450g04a LK. Continue with Step 4.
+[*][B]973e0ed498917d3ec86dc10d3e1c53357980dfd4df43ced09aa51c644df7e99a[/B]: already patched. You are done.
+[*][COLOR="Red"][B]Anything else: STOP.[/B][/COLOR] Your LK is different and this patch is not for it. Do not flash anything.
+[/LIST]
+
+[I]/dev/uboot[/I] is an MTK character device: read it with [I]bs=512 count=1024[/I] (524288 bytes). Without a count it does not stop at the end of the partition.
+
+[SIZE="4"][B]Step 4 — Flash the patched LK[/B][/SIZE]
+
+[CODE]adb push lk/lk-patched-E450g.bin /sdcard/lk-patched.bin
+adb shell "su -c 'dd if=/sdcard/lk-patched.bin of=/dev/uboot; sync'"[/CODE]
+
+[SIZE="4"][B]Step 5 — Verify the readback before rebooting[/B][/SIZE]
+
+[CODE]adb shell "su -c 'dd if=/dev/uboot of=/sdcard/lk-readback.bin bs=512 count=1024; chmod 644 /sdcard/lk-readback.bin'"
+adb pull /sdcard/lk-readback.bin
+sha256sum lk-readback.bin[/CODE]
+
+It must be [B]973e0ed498917d3ec86dc10d3e1c53357980dfd4df43ced09aa51c644df7e99a[/B]. [COLOR="Red"][B]If it does not match, do NOT reboot:[/B][/COLOR] repeat Step 4 and check again.
+
+Then reboot. Android must boot normally:
+[CODE]adb reboot[/CODE]
+
+[SIZE="4"][B]Restore the stock LK[/B][/SIZE]
+
+From Android with root:
+[CODE]adb push lk/lk-stock-E450g.bin /sdcard/lk-stock.bin
+adb shell "su -c 'dd if=/sdcard/lk-stock.bin of=/dev/uboot; sync'"[/CODE]
+Verify the readback as in Step 5 (it must be d35f0bbf…), then reboot.
+
+If you flash a KDZ later, check your LK again with Step 3 before installing a custom recovery.
+
+[SIZE="4"][B]Next step: TWRP[/B][/SIZE]
+
+Install a custom recovery: [URL=""][RECOVERY][UNOFFICIAL] TWRP 3.1.1-0.1 for LG L5 II E450g[/URL]. Then, if you want a custom ROM: [URL=""][L5 II][E450g][ROM][UNOFFICIAL][4.1.2] CyanogenMod 10[/URL].
+
+[SIZE="4"][B]FAQ[/B][/SIZE]
+
+[B]Does this wipe my data?[/B]
+No. Root and the LK patch do not erase anything.
+
+[B]Does it work on the E450, E455, E460, E451g or the L4 II?[/B]
+Not tested. Only the E450g was tested, and the other variants ship different LK binaries. Step 3 stops on any LK that is not byte-identical to the E450g04a one. Do not force it.
+
+[B]Is there fastboot?[/B]
+No. This MTK phone has no fastboot; boot and recovery images are written with dd from a root shell.
+
+[B]How do I enter recovery?[/B]
+Use [I]adb reboot recovery[/I] from Android or from TWRP.
+
+[B]A recovery shows "Security Error".[/B]
+The patched LK is not installed. Boot Android and repeat Steps 4 and 5.
+
+[SIZE="4"][B]Technical details[/B][/SIZE]
+
+The LK verifies the boot and recovery images on four paths (boot, two alternate boot paths and recovery) plus a check after the image is read. The 9 patches make every one of those checks report success. The full analysis is in [URL="https://xdaforums.com/t/dev-lg-e450g-lk-uboot-patch-to-boot-unsigned-recovery-images.4791303/"][DEV][LG E450g] LK/uboot patch to boot unsigned recovery images[/URL].
+
+[TABLE]
+[TR][TD][B]Patch[/B][/TD][TD][B]Offset[/B][/TD][TD][B]Original[/B][/TD][TD][B]Patched[/B][/TD][TD][B]Effect[/B][/TD][/TR]
+[TR][TD]P1[/TD][TD]0x181EC[/TD][TD]C0 F2 EC 81[/TD][TD]00 BF 00 BF[/TD][TD]NOP BLT.W, boot path, first check[/TD][/TR]
+[TR][TD]P2[/TD][TD]0x18204[/TD][TD]C0 F2 E5 81[/TD][TD]00 BF 00 BF[/TD][TD]NOP BLT.W, boot path, second check[/TD][/TR]
+[TR][TD]P3[/TD][TD]0x18342[/TD][TD]C0 F2 3C 81[/TD][TD]00 BF 00 BF[/TD][TD]NOP BLT.W, path A, first check[/TD][/TR]
+[TR][TD]P4[/TD][TD]0x18358[/TD][TD]C0 F2 2C 81[/TD][TD]00 BF 00 BF[/TD][TD]NOP BLT.W, path A, second check[/TD][/TR]
+[TR][TD]P5[/TD][TD]0x18382[/TD][TD]C0 F2 DB 80[/TD][TD]00 BF 00 BF[/TD][TD]NOP BLT.W, path B, first check[/TD][/TR]
+[TR][TD]P6[/TD][TD]0x18396[/TD][TD]C0 F2 21 81[/TD][TD]00 BF 00 BF[/TD][TD]NOP BLT.W, path B, second check[/TD][/TR]
+[TR][TD]P7[/TD][TD]0x18556[/TD][TD]46 DB[/TD][TD]00 BF[/TD][TD]NOP BLT.N, recovery path[/TD][/TR]
+[TR][TD]P8[/TD][TD]0x1856A[/TD][TD]BF F6 16 AF[/TD][TD]FF F7 16 BF[/TD][TD]BGE.W to B.W, recovery path always succeeds[/TD][/TR]
+[TR][TD]P9[/TD][TD]0x184E2[/TD][TD]06 F0 E5 FD[/TD][TD]00 20 00 BF[/TD][TD]Post-read verification returns 0 (OK)[/TD][/TR]
+[/TABLE]
+
+seccfg is all zeros on this phone (MTK secure boot is not configured); LG's own signature check is the only one, and it is what the patch skips. The offline patch script, which only accepts the stock E450g04a LK and checks the output hash, is in the repository: [URL="https://github.com/chijure-android-system-development/lg-e450g-lk-patch"]lg-e450g-lk-patch[/URL].
+
+[SIZE="4"][B]Credits[/B][/SIZE]
+
+[LIST]
+[*]KingRoot: root for the stock ROM
+[*]slipsystem / Optima Team: the original L5 II unlock that started this work
+[*]4pda community: prior art and research on the MT6575 LK
+[*][URL="https://xdaforums.com/member.php?u=5782200"]chijure[/URL]: LK analysis, patch and hardware validation on the E450g
+[/LIST]

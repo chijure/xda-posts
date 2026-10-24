@@ -1,0 +1,116 @@
+[CENTER][SIZE="5"][B][RECOVERY][UNOFFICIAL] TWRP 3.1.1-0.1 for LG L5 II E450g[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost IMEI,
+ * or any other damage. Make a backup and verify your exact model before
+ * flashing. YOU are choosing to make these modifications.
+ */[/CODE]
+
+[SIZE="4"][B]About[/B][/SIZE]
+
+This is an unofficial TWRP 3.1.1-0.1 build for the [B]LG L5 II E450g[/B] (codename [B]vee5ss[/B], MediaTek [B]MT6575[/B]). It uses a kernel built from LG's E450g source and is built from the Android 4.4 OmniROM/TWRP tree with the native 480x800 theme (portrait_hdpi, no scaling).
+
+[COLOR="Red"][B]Only for the LG L5 II E450g. Do not flash it on the E450, E455, E460, E451g or the L4 II.[/B][/COLOR]
+
+[COLOR="Red"][B]Requires root and the patched LK.[/B][/COLOR] The stock E450g bootloader refuses unsigned recovery images with a [I]Security Error[/I]. Follow this guide first:
+[URL=""][GUIDE] How To Root and Unlock the Bootloader LG L5 II E450g (MT6575)[/URL]
+
+[SIZE="4"][B]Current status[/B][/SIZE]
+
+Tested on real hardware, E450g with the patched LK:
+
+[LIST]
+[*]Boot to recovery, display and touchscreen
+[*]ADB in recovery
+[*]MTP (copy files from the PC while in recovery)
+[*]Mount /system, /data and /cache
+[*]External microSD (vfat), mounted and readable
+[*]Install ZIP packages (used to install the CyanogenMod 10 ROM for this phone)
+[*]Backup: Boot, System, Data, Cache, NVRAM, Logo, Uboot and Sec_RO, into a folder named after the model (TWRP/BACKUPS/LG-E450g)
+[*]Reboot to System returns to Android (no recovery loop)
+[/LIST]
+
+[B]Not tested yet:[/B] a full backup-to-restore cycle. Do not rely on a TWRP backup as your only copy until someone confirms a restore.
+
+[B]Not included:[/B] exFAT and decryption of an encrypted /data.
+
+[SIZE="4"][B]Important notes[/B][/SIZE]
+
+[LIST]
+[*][B]Internal storage lives in /data/media.[/B] "Wipe > Factory Reset" and "Wipe Data" keep your internal storage (photos, downloads) by design. "Format Data" erases it.
+[*][B]Do not rely on the NVRAM, Uboot and Sec_RO backup entries alone.[/B] They use MTK character devices and have not been verified with a restore. Back up your IMEI, NVRAM and calibration partitions with the [I]dd[/I] commands from Step 2 of the unlock guide as well, and keep them on your PC.
+[*][B]Never format /persist_lg or /persist[/B] (mmcblk0p3 and mmcblk0p4). They hold LG factory and calibration data.
+[*]There is no fastboot on this phone and "Reboot > Bootloader" is not offered: the LK has no fastboot mode.
+[/LIST]
+
+[SIZE="4"][B]Installation[/B][/SIZE]
+
+[B]Before starting:[/B] the phone must be rooted and running the patched LK (see the guide above), with USB debugging enabled.
+
+[B]1. Back up the current recovery:[/B]
+[CODE]adb shell "su -c 'dd if=/dev/recovery of=/sdcard/recovery-stock.img bs=512 count=14336; chmod 644 /sdcard/recovery-stock.img'"
+adb pull /sdcard/recovery-stock.img[/CODE]
+
+[B]2. Flash TWRP:[/B]
+[CODE]adb push twrp-3.1.1-0.1-vee5ss.img /sdcard/twrp.img
+adb shell "su -c 'dd if=/sdcard/twrp.img of=/dev/recovery bs=512; sync'"[/CODE]
+
+[B]3. Verify the readback before rebooting:[/B]
+[CODE]adb shell "su -c 'dd if=/dev/recovery of=/sdcard/twrp-readback.img bs=512 count=13816; chmod 644 /sdcard/twrp-readback.img'"
+adb pull /sdcard/twrp-readback.img
+md5sum twrp-readback.img
+(Windows: certutil -hashfile twrp-readback.img MD5)[/CODE]
+It must print [B]dfdc9a5e039081dae451da19d4829411[/B]. [COLOR="Red"][B]If it does not match, do NOT reboot:[/B][/COLOR] repeat Step 2.
+
+[I]/dev/recovery[/I] is an MTK character device: always read it with [I]bs=512[/I] and an explicit [I]count[/I].
+
+[SIZE="4"][B]Entering recovery[/B][/SIZE]
+
+From Android or from TWRP:
+[CODE]adb reboot recovery[/CODE]
+
+With the phone off: press and hold [B]Vol+[/B], [B]Vol−[/B], the [B]center (Action) key[/B] and [B]Power[/B] together. When the LG logo appears, release Power and keep the other three held until TWRP loads.
+
+[SIZE="4"][B]Download[/B][/SIZE]
+
+[LIST]
+[*][URL=""]twrp-3.1.1-0.1-vee5ss.img[/URL] - 6.7 MB | MD5: dfdc9a5e039081dae451da19d4829411
+[/LIST]
+
+[SIZE="4"][B]Screenshots[/B][/SIZE]
+
+[IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/vee5ss/screenshots/twrp/01-main.png[/IMG]
+
+[SIZE="4"][B]Source code[/B][/SIZE]
+
+[LIST]
+[*][URL="https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni/tree/twrp-4.4-deprecated"]Omni/TWRP 4.4 deprecated manifest[/URL]
+[*][URL="https://github.com/chijure-android-system-development/android_device_lge_vee5ss/tree/main"]LG L5 II E450g TWRP device tree[/URL] (branch main). Its README explains the bring-up, including the LED fix (the kernel leaves the key backlight blinking in recovery).
+[/LIST]
+
+[SIZE="4"][B]Device information[/B][/SIZE]
+
+[LIST]
+[*]Device: LG L5 II (LG-E450g), codename vee5ss
+[*]SoC: MediaTek MT6575, Cortex-A9
+[*]Display: 480x800 WVGA, video-mode DSI panel
+[*]Storage: eMMC (system mmcblk0p8, cache mmcblk0p9, data mmcblk0p10)
+[*]Stock Android: 4.1.2 Jelly Bean, firmware E450g04a
+[*]Kernel: Linux 3.4.0 built from LG's E450g kernel source
+[/LIST]
+
+[SIZE="4"][B]Bug reports[/B][/SIZE]
+
+Include your exact model and stock firmware, what you did, what happened, and [I]/tmp/recovery.log[/I] ([I]adb pull /tmp/recovery.log[/I]). Do not report issues from other L5 II variants.
+
+[SIZE="4"][B]Credits[/B][/SIZE]
+
+[LIST]
+[*]TeamWin: TWRP
+[*]OmniROM: Android 4.4 recovery tree
+[*]MediaTek and LG: original device software and kernel
+[*][URL="https://xdaforums.com/member.php?u=5782200"]chijure[/URL]: device tree, bring-up and hardware testing
+[/LIST]
