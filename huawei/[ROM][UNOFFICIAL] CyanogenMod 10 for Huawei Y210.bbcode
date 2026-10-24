@@ -1,0 +1,162 @@
+[CENTER][SIZE="5"][B][ROM][UNOFFICIAL] CyanogenMod 10 for Huawei Y210[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+* Your warranty is now void.
+*
+* I am not responsible for bricked devices, dead SD cards,
+* thermonuclear war, or you getting fired because the alarm app failed.
+* Please do some research if you have any concerns about features included
+* in this ROM before flashing it!
+*
+* YOU are choosing to make these modifications, and if you point your
+* finger at me for messing up your device, I will laugh at you.
+*/[/CODE]
+
+[B]About[/B]
+
+This is an unofficial CyanogenMod 10 (Android 4.1.2 Jelly Bean) port for the Huawei Y210. It is built on top of my CyanogenMod 9 port for this device: the same device tree work (RIL translation, Wi-Fi driver built from source, GPS, camera, hotspot) brought over to Jelly Bean, on a clean CyanogenMod 10 platform with only two small patches. The kernel is built from source.
+
+[B]Device specs[/B]
+[LIST]
+[*]Device: Huawei Y210 (HUAWEI Y210-0151)
+[*]Android version: 4.1.2 Jelly Bean (CyanogenMod 10)
+[*]Kernel: Linux 2.6.38.6, built from source
+[*]SoC: Qualcomm MSM7225A (the ARM9 modem runs separately and reserves part of the RAM)
+[*]RAM: 256 MB physical, ~173 MB usable by Android
+[*]GPU: Adreno 200
+[*]Screen: 320x480 HVGA
+[*]Wi-Fi: Atheros AR6003 (driver built from the AR6kSDK 3.1 sources)
+[*]Bluetooth: Qualcomm Bahama (BlueZ)
+[/LIST]
+
+[B]Current status — Beta[/B]
+
+Build: [B]PUT_ZIP_FILENAME_HERE[/B] | MD5: PUT_MD5_HERE
+
+[COLOR="Red"][B]Read before flashing:[/B][/COLOR] please read the known issues. This is Jelly Bean on 256 MB of RAM: it works, but it is tighter than CM7 and CM9. [B]There is no FM radio and no GApps in this ROM.[/B]
+
+[SIZE="4"][B]What's working:[/B][/SIZE]
+[LIST]
+[*][B]Boot & system:[/B] boots to the launcher after a clean flash; SurfaceFlinger, mediaserver and system_server stable
+[*][B]Graphics:[/B] Adreno 200 for SurfaceFlinger and OpenGL ES 2.0 apps; GPU-accelerated UI drawing (hwui) is on and dialogs draw correctly
+[*][B]Telephony:[/B] SIM, operator registration, signal and HSPA mobile data
+[*][B]Wi-Fi:[/B] scan, connect (WPA2), DHCP; reconnects on its own after using the hotspot
+[*][B]Wi-Fi hotspot:[/B] tested with two clients at the same time, browsing over mobile data
+[*][B]Bluetooth:[/B] turns on and discovers nearby devices
+[*][B]Audio:[/B] speaker and microphone (sound recording)
+[*][B]Camera:[/B] preview and photo capture (1600x1200)
+[*][B]Video:[/B] hardware H.264 decoder
+[*][B]Accelerometer[/B] (the Y210 has no proximity or light sensor)
+[*][B]GPS:[/B] the location engine connects to the modem and A-GPS runs over mobile data
+[*][B]Storage:[/B] /data and SD card
+[*][B]Memory:[/B] zram swap and Jelly Bean's own low-memory killer tuning
+[/LIST]
+
+[SIZE="4"][B]Known issues:[/B][/SIZE]
+[LIST]
+[*][B]USB tethering:[/B] turning it on closes Settings. Use the Wi-Fi hotspot instead.
+[*][B]No FM radio:[/B] same as CM9. Use the CM7 ROM if you need the radio.
+[*][B]No GApps:[/B] a full GApps package does not fit in the ~186 MB system partition.
+[*][B]Not tested yet on this build:[/B] voice calls and SMS (they work on CM9), SIM PIN, GPS outdoor fix, Bluetooth pairing/file transfer/audio, video recording. Reports are welcome.
+[*][B]Powering on with the charger connected:[/B] a fix is included but not confirmed yet. If the phone stays on the boot logo, turn it on with the USB cable disconnected.
+[*][B]RAM is tight:[/B] Email, the updater, DSP Manager and Voice Dialer can be disabled to free memory
+[/LIST]
+
+[SIZE="4"][B]Download:[/B][/SIZE]
+[LIST]
+[*][URL="PUT_AFH_URL_HERE"]PUT_ZIP_FILENAME_HERE (AndroidFileHost)[/URL] - PUT_SIZE_HERE | MD5: PUT_MD5_HERE
+[*][URL="PUT_DRIVE_URL_HERE"]PUT_ZIP_FILENAME_HERE (Google Drive)[/URL] - mirror
+[*][URL="https://xdaforums.com/t/recovery-unofficial-twrp-3-1-1-for-huawei-y210.4792355/"]TWRP 3.1.1 for Huawei Y210 (unofficial)[/URL]
+[/LIST]
+
+[SIZE="4"][B]Install instructions:[/B][/SIZE]
+[LIST=1]
+[*]Make a full nandroid backup from recovery.
+[*]Wipe data / factory reset (required when coming from CM7, CM9 or stock).
+[*]Wipe cache and dalvik cache.
+[*]Flash the ROM zip from recovery.
+[*]Reboot. The first boot takes a few minutes.
+[/LIST]
+
+[B]Update from a previous CM10 build:[/B]
+[LIST=1]
+[*]Wipe cache and dalvik cache.
+[*]Flash the new build.
+[*]Reboot.
+[/LIST]
+
+[COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download links without permission.[/CENTER][/SIZE][/COLOR]
+
+Screenshots:
+
+[IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/cm10-lockscreen.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/cm10-home.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/cm10-settings.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/cm10-about.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/huawei/screenshots/cm10-tether.png[/IMG]
+
+[SIZE="4"][B]Source code:[/B][/SIZE]
+[LIST]
+[*][URL="https://github.com/chijure-android-system-development/android_device_huawei_y210/tree/jellybean"]Device tree[/URL] (branch jellybean; platform patches in [I]patches/[/I], applied with [I]patches/apply.sh[/I])
+[*][URL="https://github.com/chijure-android-system-development/android_vendor_huawei_y210"]Vendor blobs / proprietary files[/URL]
+[*][URL="https://github.com/chijure-android-system-development/android_kernel_huawei_y210/tree/jellybean"]Kernel[/URL] (branch jellybean)
+[*][URL="https://github.com/CyanogenMod/android_hardware_atheros_wlan/tree/jellybean"]hardware/atheros/wlan[/URL] (branch jellybean, add it with a local manifest)
+[/LIST]
+
+[SIZE="4"][B]Useful validation commands:[/B][/SIZE]
+[CODE]adb logcat
+adb shell getprop gsm.sim.state
+adb shell getprop gsm.version.baseband
+adb shell getprop wlan.driver.status
+adb shell ls /sys/class/bluetooth
+adb shell dumpsys connectivity | grep -A3 "Tether state"
+adb shell cat /proc/meminfo[/CODE]
+
+[SIZE="4"][B]Bug reports:[/B][/SIZE]
+Please include:
+[LIST]
+[*]Exact Y210 model variant
+[*]Clean flash or dirty flash
+[*]Recovery used
+[*]Short description of the bug
+[*]Relevant logcat; avoid posting huge full logs unless requested
+[/LIST]
+
+[SIZE="4"][B]Changelog:[/B][/SIZE]
+
+[B]PUT_BUILD_DATE_HERE[/B]
+[LIST]
+[*]First CM10 build, with all the CM9 work ported: RIL translation, Wi-Fi driver built from source, GPS, software JPEG camera, Wi-Fi hotspot, zram, Claro Peru APNs
+[*][B]Bluetooth fixed:[/B] the chip is now started with the right (Qualcomm) firmware loader
+[*][B]Microphone fixed:[/B] recordings in 3GP/AMR were rejected by the Jelly Bean audio policy
+[*][B]Camera fixed:[/B] photos are taken at the largest size the camera really delivers (1600x1200); bigger sizes produced empty or striped images
+[*][B]Wi-Fi hotspot fixed for Jelly Bean[/B]
+[*][B]GPS:[/B] fixed a crash loading the location module that caused a bootloop
+[*][B]Space:[/B] unused keyboard dictionaries (all except English and Spanish), tablet wallpapers, theme engine and Exchange removed so the system fits in the partition
+[/LIST]
+
+[SIZE="4"][B]Thanks to:[/B][/SIZE]
+[LIST]
+[*]CyanogenMod team - CM10 base
+[*]Qualcomm / CAF - legacy MSM/QCOM hardware references
+[*]dazjo - Huawei G300 (U8815) Jelly Bean device tree, used as a reference (same SoC)
+[*]LG Optimus L3 (e400) CM9 - Adreno 200 libgsl.so
+[*]Huawei Y210 stock ROM - reference behaviour and proprietary components
+[*]XDA community - legacy bring-up references
+[*]chijure - port, debugging and device tree
+[/LIST]
+
+[B][U][SIZE="4"][PLAIN]XDA:DevDB Information[/PLAIN][/SIZE][/U][/B]
+[SIZE=3][B][ROM][UNOFFICIAL] CyanogenMod 10 for Huawei Y210, ROM for the Huawei Y210[/B][/SIZE]
+
+[B][U]Contributors[/U][/B]
+[B]chijure[/B]
+[B]ROM OS Version:[/B] 4.1.2 Jelly Bean
+[B]ROM Kernel:[/B] Linux 2.6.38.6
+[B]ROM Firmware Required:[/B] Custom recovery
+[B]Based On:[/B] CyanogenMod 10
+
+[B][U]Version Information[/U][/B]
+[B]Status:[/B] Beta
+[B]Current Beta Version:[/B] PUT_ZIP_FILENAME_HERE
+[B]Build Date:[/B] PUT_BUILD_DATE_HERE
+
+[B]Created[/B] PUT_BUILD_DATE_HERE
+[B]Last Updated[/B] PUT_BUILD_DATE_HERE

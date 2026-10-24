@@ -1,0 +1,189 @@
+[CENTER][SIZE="5"][B][ROM][UNOFFICIAL][ALPHA][4.1.2] CyanogenMod 10 for LG L4 II / LG-E440g (vee4ss)[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, broken NVRAM,
+ * lost IMEI, failed alarms, or any other damage caused by flashing this ROM.
+ * Please make a full Nandroid backup before installing.
+ * You are choosing to make these modifications, and you are responsible
+ * for your device.
+ *
+ * This is an ALPHA build. Telephony (calls/SMS/mobile data) does NOT work
+ * yet. Do not flash this as your daily driver.
+ */[/CODE]
+
+[B]About[/B]
+
+Unofficial CyanogenMod 10 (Android 4.1.2 Jelly Bean) port for the LG L4 II E440g, codename [B]vee4ss[/B], SoC MediaTek MT6575 — the same platform family as the already-more-mature [B]vee5ss[/B] (LG L5 II) port, and based directly on that device tree.
+
+This build uses the stock prebuilt kernel and a MediaTek-format boot image generated with [B]mtkbootimg[/B]. The OTA zip updates [B]/system only[/B] — you must flash [B]boot.img separately[/B] via dd (see install instructions).
+
+[B]Device specs[/B]
+[LIST]
+[*]Device: LG L4 II / LG-E440g
+[*]Codename: vee4ss
+[*]SoC: MediaTek MT6575, ARMv7-A Cortex-A9
+[*]Display: 3.2" 320×480 HVGA mdpi, command-mode DSI panel (ili9486)
+[*]Android: 4.1.2 Jelly Bean (JZO54K)
+[/LIST]
+
+[B]Current status (2026-07-30)[/B]
+
+Early alpha. Core system, display, and Bluetooth are confirmed working. Audio (playback and recording) was completely broken until this build and is now confirmed working, including in-app video recording — though recording still has a known stability bug (see below). Telephony is NOT yet functional.
+
+[SIZE="4"][B]What's working:[/B][/SIZE]
+[LIST]
+[*]Boots to Android (sys.boot_completed=1), consistent/reproducible boot
+[*]Display + touchscreen — required a custom MTK HWC/GraphicBuffer ABI compatibility shim (this device's proprietary graphics blobs use MediaTek extensions to the stock JB HWC ABI)
+[*]Boot animation (320×320)
+[*]SurfaceFlinger, Launcher, Settings, core apps
+[*]Bluetooth (MT6620, MediaTek BlueAngel stack, not stock BlueZ) — confirmed STATE_OFF→ON→OFF cycle, correct controller address, classic discovery finds real devices with SDP UUIDs
+[*]WiFi (MT6620) — confirmed working
+[*]ADB reliable across reboots
+[*]Internal storage + external microSD
+[*]Torch / flashlight (via Camera interface)
+[*]Audio output AND input — [B]both were completely non-functional until this build[/B] (see Known bugs history); now load and work correctly
+[*]Camera preview
+[*]Video recording with audio — starts, records, produces a playable file for several seconds (see known bug below for the current limit)
+[/LIST]
+
+[B]Not tested / pending[/B]
+[LIST]
+[*]SMS
+[*]Mobile data
+[*]GPS
+[*]Camera still-photo capture (preview and video recording confirmed; stills not explicitly tested yet)
+[*]FM Radio
+[*]Bluetooth pairing / A2DP audio / file transfer (basic on/off + discovery confirmed; full pairing flow not yet tested end-to-end)
+[/LIST]
+
+[B]Known bugs[/B]
+[LIST]
+[*][B]Calls do not work — rild crash loop[/B] — [I]requestRadioPower[/I] NULL pointer dereference in mtk-ril.so, confirmed via tombstone. Telephony is not usable on this build yet.
+[*][B]Video recording stops itself after a few seconds[/B] — an AudioFlinger RecordThread buffer overflow triggers a MediaRecorder error mid-recording; the in-progress file gets discarded. Recording genuinely works up to that point (real audio + video captured), it just doesn't run indefinitely yet. Likely a scheduling/priority issue between the audio capture thread and the encoder on this modest single/dual-core SoC while also driving camera preview + video encode simultaneously.
+[*][B]No on-device shell scripting[/B] — mksh and busybox's ash both segfault on ANY invocation on this build, even a trivial "echo hi". Does not affect normal use (nothing in the shipped ROM depends on shell scripts), but rules out on-device init.d scripts and most command-line debugging tricks.
+[*][B]Cosmetic: TWRP dmesg shows "init: cannot expand '${ro.serialno}'"[/B] — harmless; the bootloader doesn't pass a serial number to the minimal recovery ramdisk, so `adb devices` shows a placeholder serial in recovery only.
+[*][B]Cosmetic: missing spinner animation frame[/B] in TWRP's portrait_mdpi theme ("indeterminate013" not found).
+[*][B]Rare one-time ADB drop shortly after boot[/B] — not fully explained, doesn't recur once past it, doesn't affect normal use.
+[/LIST]
+
+[B]Important notes[/B]
+[LIST]
+[*]This ROM is for [B]LG-E440g / vee4ss ONLY[/B]. Do not flash on any other L4 II variant.
+[*][B]This is an alpha build — no calls, SMS, or mobile data yet.[/B] Only flash this if you're testing/developing, not as a daily driver.
+[*]TWRP recovery required — standard CWM does not support the MTK EMMC partition layout on this device.
+[*][B]The OTA zip updates /system only.[/B] You must flash boot.img separately via dd (see Install instructions).
+[*]Make a full Nandroid backup before flashing.
+[*]Back up your NVRAM partition to protect your IMEI and calibration data before testing any MTK ROM.
+[*]This device has no standard fastboot (MTK) — flashing recovery/boot images is done via dd from a rooted Android/TWRP shell, not fastboot.
+[*][B]After first boot, go to Settings → Bluetooth → Rename this device once[/B] (even to the same name). Android doesn't push your device name to the Bluetooth chip until you do this explicitly — until then, other devices scanning for you will see a generic "MTK MT6620 #N" instead of your real device name. This is normal Android behavior, not specific to this ROM.
+[*]GApps: use a Jelly Bean compatible package.
+[/LIST]
+
+[B]Requirements[/B]
+[LIST]
+[*]LG-E440g (vee4ss) — tested hardware only
+[*]TWRP recovery (MTK-compatible build for this device)
+[*]At least 30% battery charge
+[*]Full Nandroid backup (strongly recommended)
+[/LIST]
+
+[SIZE="4"][B]Download:[/B][/SIZE]
+
+[URL="PUT_DOWNLOAD_LINK_HERE"]cm-10-20260730-UNOFFICIAL-vee4ss.zip[/URL]
+[URL="PUT_DOWNLOAD_LINK_HERE"]boot-20260730-vee4ss.img[/URL]
+
+[CODE]MD5: (see release attachment)[/CODE]
+
+[B]Install — clean flash[/B]
+[LIST=1]
+[*]Copy the ROM zip AND boot.img to your SD card.
+[*]Boot into TWRP recovery.
+[*]Make a full Nandroid backup.
+[*]Wipe: Data / Factory Reset, Cache, Dalvik Cache.
+[*]Flash the ROM zip (this updates /system only).
+[*]Optional: flash a Jelly Bean compatible GApps package.
+[*]Flash boot.img from the TWRP shell:
+[CODE]dd if=/sdcard/boot.img of=/dev/bootimg bs=4096[/CODE]
+[*]Reboot System.
+[/LIST]
+
+[B]Install — dirty flash / update from older build[/B]
+[LIST=1]
+[*]Boot into TWRP.
+[*]Make a backup.
+[*]Flash the new ROM zip.
+[*]Flash the new boot.img from the TWRP shell:
+[CODE]dd if=/sdcard/boot.img of=/dev/bootimg bs=4096[/CODE]
+[*]Wipe Cache and Dalvik Cache.
+[*]Reboot System.
+[/LIST]
+
+[B]Troubleshooting[/B]
+[LIST]
+[*][B]Kernel panic / VFS: Unable to mount root fs on unknown-block(1,0)[/B] — boot.img was not flashed or the flash failed. Reboot to TWRP and run:
+[CODE]dd if=/sdcard/boot.img of=/dev/bootimg bs=4096[/CODE]
+[*][B]Bootloop after first flash[/B] — wipe Dalvik cache and cache in TWRP, then reboot.
+[*][B]No sound / can't record audio[/B] — should not occur on this build; if it does, you may be on an older boot.img — reflash both the zip and boot.img together.
+[*][B]Video recording stops after a few seconds[/B] — known bug, see above. Not fixed yet.
+[*][B]No calls / phone app doesn't work[/B] — expected on this build, rild crashes on radio power requests. Not fixed yet.
+[/LIST]
+
+[COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download links without permission.[/CENTER][/SIZE][/COLOR]
+
+[B]Source / build[/B]
+[LIST]
+[*]Android base: CyanogenMod 10 / Android 4.1.2
+[*]Device tree: device/lge/vee4ss (branch jellybean)
+[*]Vendor blobs: extracted from stock LG-E440g firmware (JZO54K)
+[*]Kernel: stock prebuilt (MT6575, Linux 3.4.x), MTK header re-added at build time via mtkbootimg
+[*]Boot image: generated with mtkbootimg
+[*]Build date: 2026-07-30
+[/LIST]
+
+[B]Changelog[/B]
+
+[B]2026-07-30 — Build 2[/B]
+[LIST]
+[*][B]Camera recording crash fixed[/B] — `CameraSource::getColorFormat()` crashed on a NULL `video-frame-format` HAL parameter (this HAL never sets that key); now defaults safely to the HAL's actual YUV420 semi-planar preview format.
+[*][B]Second recording crash fixed[/B] — `AudioSource`'s destructor could `delete` an uninitialized pointer when the audio config negotiation failed partway through construction; now safely initialized to NULL.
+[*][B]Fixed broken default video-quality profile[/B] — the Camera app was requesting a 720p profile this device's `media_profiles.xml` never defined; tuned the "high" profile's audio codec settings (sample rate / channel count) to match what this device's audio HAL actually supports.
+[*][B]MAJOR: fixed total audio failure (input AND output)[/B] — the stock audio HAL blob's internal module identifier was baked in as "libaudio" instead of the expected "audio", so the audio framework silently refused to load it on every single boot. Audio never worked on this device before this fix. Disabled the (now-inapplicable) strict module-id check for this device only.
+[*]Video recording now genuinely starts and captures real audio + video (known remaining bug: stops itself after a few seconds, see Known bugs).
+[/LIST]
+
+[B]2026-07-29 — Build 1 (initial public test)[/B]
+[LIST]
+[*]First build with a working display on this device. Root cause of the long-standing black-screen issue: this device's proprietary MTK graphics blobs use MediaTek's own extensions to the stock Jelly Bean HWC/GraphicBuffer ABI, absent from plain AOSP/CM10. Added a compatibility shim (scoped to this device only) restoring the extra fields and the private presentation flag the blob expects, plus the decisive fix in SurfaceFlinger's `HWComposer.cpp` (setting the vendor HWC's private `LAYERS_SWAP_REQUIRED` list bit before `set()`).
+[*]Bluetooth (MT6620 BlueAngel stack) brought up — MediaTek's proprietary Bluetooth integration added to the framework, `servicemanager` updated to allow the Bluetooth UID to register its profile services. Confirmed full on/off cycle and classic discovery.
+[*]Based on the already hardware-verified vee5ss device tree (same MT6575 SoC family, same LG generation) — most fixes transferred cleanly; the remaining differences are this device's smaller HVGA command-mode panel vs. vee5ss's WVGA video-mode panel, and per-device audio/USB IDs.
+[/LIST]
+
+[SIZE="4"][B]Thanks to:[/B][/SIZE]
+[LIST]
+[*]CyanogenMod team and contributors
+[*]MediaTek / LG — binary blobs from stock firmware
+[*]XDA community — LG L-series threads and guides
+[*]chijure — port, device tree, HAL fixes, display/audio bring-up
+[/LIST]
+
+[B][U][SIZE="4"]XDA:DevDB Information[/SIZE][/U][/B]
+
+[SIZE=3][B][ROM][UNOFFICIAL][ALPHA][4.1.2] CyanogenMod 10 for LG L4 II E440g[/B][/SIZE]
+
+[B][U]Contributors[/U][/B]
+[URL="https://xdaforums.com/member.php?u=5782200"]chijure[/URL]
+
+[B]ROM OS Version:[/B] 4.1.x Jelly Bean
+[B]ROM Kernel:[/B] Linux 3.4.x, stock prebuilt MT6575
+[B]ROM Firmware Required:[/B] LG-E440g (vee4ss), TWRP recovery
+[B]Based On:[/B] CyanogenMod 10
+
+[B][U]Version Information[/U][/B]
+[B]Status:[/B] Alpha
+[B]Current Alpha Version:[/B] 20260730
+
+[B]Created:[/B] 2026-07-29
+[B]Last Updated:[/B] 2026-07-30

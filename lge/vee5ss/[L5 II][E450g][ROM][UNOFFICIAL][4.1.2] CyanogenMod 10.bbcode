@@ -32,7 +32,7 @@ This build uses the stock prebuilt kernel and a MediaTek-format boot image gener
 
 Functional beta. Core system, GPU, radio stack, IMEI, SIM PIN unlock, and calls are all confirmed working.
 
-[B]Working / verified[/B]
+[SIZE="4"][B]What's working:[/B][/SIZE]
 [LIST]
 [*]Boots to Android (sys.boot_completed=1)
 [*]Display + touchscreen
@@ -93,6 +93,13 @@ Functional beta. Core system, GPU, radio stack, IMEI, SIM PIN unlock, and calls 
 [*]Full Nandroid backup (strongly recommended)
 [/LIST]
 
+[SIZE="4"][B]Download:[/B][/SIZE]
+
+[URL="PUT_DOWNLOAD_LINK_HERE"]cm-10-20260629-UNOFFICIAL-vee5ss.zip[/URL]
+[URL="PUT_DOWNLOAD_LINK_HERE"]boot-20260629-vee5ss.img[/URL]
+
+[CODE]MD5: (see release attachment)[/CODE]
+
 [B]Install — clean flash[/B]
 [LIST=1]
 [*]Copy the ROM zip AND boot.img to your SD card.
@@ -127,12 +134,17 @@ Functional beta. Core system, GPU, radio stack, IMEI, SIM PIN unlock, and calls 
 [*][B]No signal after SIM insert[/B] — reboot the device after inserting the SIM; hot-swap is not supported on MT6575.
 [/LIST]
 
-[B]Download[/B]
+[COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download links without permission.[/CENTER][/SIZE][/COLOR]
 
-[URL="PUT_DOWNLOAD_LINK_HERE"]cm-10-20260629-UNOFFICIAL-vee5ss.zip[/URL]
-[URL="PUT_DOWNLOAD_LINK_HERE"]boot-20260629-vee5ss.img[/URL]
-
-[CODE]MD5: (see release attachment)[/CODE]
+[B]Source / build[/B]
+[LIST]
+[*]Android base: CyanogenMod 10 / Android 4.1.2
+[*]Device tree: [URL="https://github.com/chijure-android-system-development/android_device_lge_vee5ss"]github.com/chijure-android-system-development/android_device_lge_vee5ss[/URL]
+[*]Vendor blobs: extracted from stock LG-E450g firmware (JZO54K / E450g10b)
+[*]Kernel: stock prebuilt (MT6575, Linux 3.4.x)
+[*]Boot image: generated with mtkbootimg
+[*]Build date: 2026-06-29
+[/LIST]
 
 [B]Changelog[/B]
 
@@ -161,17 +173,7 @@ Functional beta. Core system, GPU, radio stack, IMEI, SIM PIN unlock, and calls 
 [*]External microSD via vold + storage_list.xml overlay.
 [/LIST]
 
-[B]Source / build[/B]
-[LIST]
-[*]Android base: CyanogenMod 10 / Android 4.1.2
-[*]Device tree: [URL="https://github.com/chijure-android-system-development/android_device_lge_vee5ss"]github.com/chijure-android-system-development/android_device_lge_vee5ss[/URL]
-[*]Vendor blobs: extracted from stock LG-E450g firmware (JZO54K / E450g10b)
-[*]Kernel: stock prebuilt (MT6575, Linux 3.4.x)
-[*]Boot image: generated with mtkbootimg
-[*]Build date: 2026-06-29
-[/LIST]
-
-[B]Credits[/B]
+[SIZE="4"][B]Thanks to:[/B][/SIZE]
 [LIST]
 [*]CyanogenMod team and contributors
 [*]MediaTek / LG — binary blobs from stock firmware
