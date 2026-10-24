@@ -1,12 +1,12 @@
 # XDA Posts
 
-Colección de 37 publicaciones exportadas o preparadas para el foro XDA Developers en formato BBCode. Incluye kernels, ROMs, recoveries y guías para dispositivos Huawei, LG y Alcatel.
+Colección de 38 publicaciones exportadas o preparadas para el foro XDA Developers en formato BBCode. Incluye kernels, ROMs, recoveries y guías para dispositivos Huawei, LG y Alcatel.
 
 ## Estructura
 - `alcatel/`: 1 post (Phoenix Kernel V1 para POP C1/C2/C3).
-- `huawei/`: 8 posts para Huawei Y210 y Y220-U05 (CM7, CM9, CM10, CM10.1, TWRP y stock).
+- `huawei/`: 9 posts para Huawei Y210 y Y220-U05 (CM7, CM9, CM10, CM10.1, TWRP, Carliv Touch Recovery y stock).
   - `huawei/y210/`: TWRP 3.1.1 y CyanogenMod 7, 9 y 10 para Huawei Y210, con capturas en `screenshots/{cm7,cm9,cm10}`.
-  - `huawei/y220/`: TWRP 3.1.1-0.1, ROM stock C482B206 para TWRP y CyanogenMod 7 y 10.1 para Huawei Y220-U05, con capturas en `screenshots/{twrp,cm7,cm101}`.
+  - `huawei/y220/`: TWRP 3.1.1-0.1, Carliv Touch Recovery v2.1, ROM stock C482B206 para TWRP y CyanogenMod 7 y 10.1 para Huawei Y220-U05, con capturas en `screenshots/{twrp,cm7,cm101}`.
 - `lge/`: 28 posts de la línea Optimus, G2 Mini y L50 (L1 II, L3, L4 II, L5 II, L7 II, G3 Stylus, D625, D213, etc.).
   - `lge/e410/`: ROMs y recoveries para LG L1 II (CWM, TWRP, CM10/11, guías de root/bootloader).
   - `lge/d625/`: desbloqueo del bootloader, TWRP 3.1.1-1 y CyanogenMod 11 para LG G2 Mini LTE D625 (Tegra 4i).
