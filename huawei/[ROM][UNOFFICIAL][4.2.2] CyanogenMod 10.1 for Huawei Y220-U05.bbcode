@@ -1,0 +1,182 @@
+[CENTER][SIZE="5"][B][ROM][UNOFFICIAL][4.2.2] CyanogenMod 10.1 for Huawei Y220-U05[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost NVRAM,
+ * missed calls, alarms that fail, or any other damage. Make a full backup
+ * before flashing. YOU are choosing to make these modifications.
+ */[/CODE]
+
+[B]About[/B]
+
+This is an unofficial CyanogenMod 10.1 port for the [B]Huawei Y220-U05[/B] (MediaTek MT6572), based on Android 4.2.2 Jelly Bean. The phone ships with Android 2.3.6, but the MT6572 is a Jelly Bean-era chip: other phones built on it shipped with 4.2. So instead of forcing the Gingerbread blobs into Jelly Bean, this ROM uses the Android 4.2.2 MediaTek userspace of another MT6572 Huawei, the [B]Ascend Y330-U01[/B] (same SoC, same Mali-400 r3p2 driver, kernel modules with the same version as the Y220's). The modem, the Wi-Fi/Bluetooth firmware and the camera tuning stay the Y220's own.
+
+The CyanogenMod 10.1 platform is untouched: no framework or system patches. Everything Y220-specific lives in the device tree. The kernel is the same Linux 3.4.5 built from source as in my CM7 port.
+
+[COLOR="Red"][B]This ROM is only for Huawei Y220-U05. It is not compatible with Huawei Y210 or Y330.[/B][/COLOR]
+
+[SIZE="4"][B]Current status — Beta 1[/B][/SIZE]
+
+Build: [B]cm-10.1-20261024-UNOFFICIAL-y220-beta1.zip[/B] (userdebug)
+Kernel: Linux 3.4.5 #98
+MD5: [B]ce0c5c2bd2bcbcdbd71b5c090b979c8d[/B]
+
+Everything listed below was checked on real hardware. Please report anything that does not work.
+
+[SIZE="4"][B]What's working[/B][/SIZE]
+
+[LIST]
+[*][B]Phone:[/B] voice calls (outgoing, incoming, hold, also with mobile data on), USSD codes, SIM, operator registration, signal bars, SMS (send and receive), mobile data (EDGE; it also registers on HSPA)
+[*][B]Wi-Fi:[/B] scan, connect (WPA/WPA2), DHCP, internet
+[*][B]Bluetooth:[/B] pairing, music to headphones (A2DP), calls through a Bluetooth headset, factory address
+[*][B]Audio:[/B] speaker, microphone and recording
+[*][B]Camera:[/B] preview, photos and video recording (640x480; 0.3 MP rear camera, the phone has no front camera and no flash)
+[*][B]Display / GPU:[/B] Mali-400 MP, OpenGL ES 2.0, 320x480
+[*][B]Input:[/B] touchscreen, capacitive back/home/menu keys, volume and power keys
+[*][B]Sensors:[/B] accelerometer (rotation), vibration
+[*][B]Storage:[/B] UBIFS system/data/cache, microSD, USB (adb, mass storage)
+[*][B]Tethering:[/B] USB tethering and Wi-Fi hotspot
+[*][B]Charging with the phone off[/B], with the original Huawei charging animation
+[*][B]zram swap[/B] (about 190 MB, same as stock), deep sleep
+[/LIST]
+
+[SIZE="4"][B]Known issues[/B][/SIZE]
+
+[LIST]
+[*][B]Video recording[/B] is 640x480 at up to 15 fps (software encoder), fewer in low light.
+[*][B]Video playback[/B] uses the software decoders. The MediaTek hardware decoders would need a CyanogenMod framework patch.
+[*][B]MMS:[/B] not tested yet.
+[*][B]FM radio:[/B] not included.
+[*]Jelly Bean on 256 MB of RAM is tighter than CM7. zram helps, but heavy apps will be closed in the background.
+[*]The phone has no GPS, compass, proximity or light sensor, same as stock.
+[/LIST]
+
+[SIZE="4"][B]Download[/B][/SIZE]
+
+[LIST]
+[*][URL="PUT_ZIP_URL_HERE"]cm-10.1-20261024-UNOFFICIAL-y220-beta1.zip[/URL]
+[*]MD5: [CODE]ce0c5c2bd2bcbcdbd71b5c090b979c8d[/CODE]
+[*][URL="https://xdaforums.com/t/recovery-unofficial-twrp-3-1-1-0-1-for-huawei-y220-u05.4805984/"]TWRP 3.1.1-0.1 for Huawei Y220-U05[/URL] (thread with download and flashing instructions)
+[/LIST]
+
+[SIZE="4"][B]Installation[/B][/SIZE]
+
+[COLOR="Red"][B]Back up NVRAM (IMEI, Wi-Fi and Bluetooth addresses) and your complete current system before flashing. Do not use Format All in SP Flash Tool, and do not use SP Flash Tool v6.[/B][/COLOR]
+
+[LIST=1]
+[*]Install [URL="https://xdaforums.com/t/recovery-unofficial-twrp-3-1-1-0-1-for-huawei-y220-u05.4805984/"]TWRP 3.1.1-0.1 for Huawei Y220-U05[/URL].
+[*]Copy the ROM ZIP to the external microSD (it needs about 140 MB free; if the card is full, push it with adb to /data after the wipe in step 4 and delete it after installing).
+[*]Boot into TWRP and make a complete backup to the external microSD, including the NVRAM partitions (nvram, protect_f, protect_s).
+[*]Wipe cache and Dalvik cache, and wipe data [B]keeping /data/nvram[/B] (see below).
+[*]Install the ROM ZIP.
+[*]Reboot. The first boot takes a few minutes.
+[/LIST]
+
+After a clean install the phone shows up on USB as mass storage with adb on (userdebug build). The first time you connect it, accept the computer's key on the phone ("Allow USB debugging?").
+
+[B]Wiping data without losing NVRAM:[/B] /data/nvram holds the IMEI and the Wi-Fi/Bluetooth calibration files. From TWRP, with adb:
+[CODE]adb shell
+mount /data
+cd /data && for e in * .[!.]*; do [ "$e" = nvram ] || rm -rf "$e"; done
+rm -rf /cache/*[/CODE]
+
+[B]Coming from CM7 or stock:[/B] a data wipe is required (Gingerbread to Jelly Bean).
+
+[B]UBIFS warning:[/B] install the ZIP from TWRP. Do not write the loose system.img directly to MTD14. The installer empties the existing system UBIFS volume, copies the ROM, and writes the MTK-formatted boot image. It does not replace TWRP.
+
+[COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download without permission.[/CENTER][/SIZE][/COLOR]
+
+[SIZE="4"][B]Source code[/B][/SIZE]
+
+[LIST]
+[*][URL="https://github.com/chijure-android-system-development/android_device_huawei_y220/tree/cm-10.1"]Huawei Y220 device tree[/URL] (branch cm-10.1; README.md explains every piece)
+[*][URL="https://github.com/chijure-android-system-development/android_kernel_huawei_y220-u05"]Huawei Y220-U05 kernel[/URL]
+[*][URL="https://github.com/chijure-android-system-development/android_vendor_huawei_y220/tree/cm-10.1"]Huawei Y220 vendor[/URL] (branch cm-10.1; 4.2.2 components from the Y330-U01 B121 firmware, modem and firmware from the Y220 C482B206SP05)
+[*]CyanogenMod cm-10.1, unmodified
+[/LIST]
+
+[SPOILER="Technical notes"]
+[LIST]
+[*][B]UBIFS:[/B] a small static helper attaches system, userdata and cache before init mounts them. CyanogenMod's generic init.rc mounts mtd@system, mtd@cache and mtd@userdata as yaffs2, which erases UBI partitions on this NAND, so the device tree ships its own init.rc without those lines.
+[*][B]MediaTek blobs:[/B] the symbols they expect from MediaTek's own liblog, libcutils, libjpeg, libmedia, libui and libcamera_client come from a shim library loaded through LD_PRELOAD.
+[*][B]NVRAM:[/B] the Y330 and Y220 NVRAM tables number the audio files differently, so the application side of NVRAM comes from the Y330 and the modem side (IMEI) from the Y220.
+[*][B]Audio:[/B] a wrapper loads the stock MediaTek HAL (its module id is not the one CyanogenMod expects) and converts the 48 kHz stereo microphone input to what AudioFlinger asks for. The audio policy is CyanogenMod's.
+[*][B]Calls:[/B] the Y330 audio HAL sends the modem two speech settings the older Y220 modem does not accept, and the modem crashed at the start of every call. The wrapper drops one (the Enh1 downlink gain) and keeps the voice volume above zero for the other.
+[*][B]Camera:[/B] a wrapper hides the analog TV pseudo camera, removes HDR, limits picture sizes to the sensor's 640x480 and passes on the JPEG that MediaTek sends in its own message. For video it translates MediaTek's name for its frame format so Android's recorder accepts it. The camera tuning library is the Y220's own (gc0329 sensor).
+[*][B]Wi-Fi:[/B] wpa_supplicant 8 over nl80211; the wlan_mt6582 module carries a kernel fix (set_default_key) so WPA works.
+[*][B]Hotspot:[/B] the kernel switches the MediaTek driver to AP mode when Android asks for it and registers the AP as wlan0, where hostapd and the tethering expect it. IPv6 is now on in the kernel, which Android 4.2 needs for tethering.
+[*][B]Modem recovery:[/B] MediaTek restarts a crashed modem from user space, but the process that asks for it cannot do so under CyanogenMod's init permissions. A small service in the device tree watches the modem state and asks for the restart itself.
+[*][B]RIL:[/B] MediaTekRIL turns the radio on the way MediaTek's framework does (the plain Android request lost a race with the SIM check at boot), and handles the MediaTek URC numbering, incoming call indication, GPRS attach and the MediaTek signal strength format.
+[*][B]Bluetooth:[/B] Bluedroid with a vendor library over the stock MediaTek driver library.
+[/LIST]
+[/SPOILER]
+
+[SIZE="4"][B]Bug reports[/B][/SIZE]
+
+Please include:
+
+[LIST]
+[*]Exact phone model and original firmware version
+[*]Clean flash or update from an older build
+[*]Recovery version used
+[*]Steps required to reproduce the problem
+[*]Relevant logcat (with -b radio for phone problems) and, for kernel issues, dmesg
+[*]Whether the problem also happens after a clean flash
+[/LIST]
+
+[SIZE="4"][B]Changelog[/B][/SIZE]
+
+[B]2026-10-24 — Beta 1[/B]
+
+[LIST]
+[*]Voice calls work: the modem no longer crashes at call start (two speech settings from the Y330 audio HAL are adapted for the Y220 modem)
+[*]Video recording (640x480 MPEG-4 with AMR-WB audio)
+[*]Wi-Fi hotspot (kernel #98) and USB tethering (IPv6 enabled in the kernel)
+[*]Original Huawei charging animation with the phone off
+[*]Bluetooth pairing, A2DP and headset calls tested; factory Bluetooth address
+[*]Camera: no more hang when leaving the app right after taking a picture
+[*]Network after boot: fixed a race in the MediaTek RIL that left the radio off in about half of the boots (10 of 10 boots registered in testing)
+[*]USB: after a clean install the phone shows up as mass storage with adb (before, it could be left with USB off)
+[*]Tested from a clean install following the steps in this post
+[*]Modem recovery: if the modem crashes, it is restarted automatically and the phone is back on the network in about 40 seconds, no reboot needed
+[/LIST]
+
+[B]2026-10-23 — Alpha 1 (not released)[/B]
+
+[LIST]
+[*]First CyanogenMod 10.1 build, tested on real Y220-U05 hardware
+[*]Android 4.2.2 MediaTek userspace from the Y330-U01: Mali GPU, RIL, audio, camera, Bluetooth
+[*]Wi-Fi WPA fix in the wlan_mt6582 kernel module
+[*]Microphone, camera capture, signal strength, APNs, zram and touch keys fixed during bring-up
+[/LIST]
+
+[SIZE="4"][B]Credits[/B][/SIZE]
+
+[LIST]
+[*]CyanogenMod team
+[*]MediaTek and Huawei for the original device software (Y220 and Y330-U01 firmware)
+[*]android_device_alps_m706 (CyanogenMod 11 for an MT6572 tablet), a reference for the Bluetooth vendor library, the audio HAL wrapper and the MediaTek RIL
+[*]The Android and Linux communities
+[*]chijure — kernel port, device tree, compatibility work and testing
+[*]All testers and contributors
+[/LIST]
+
+[B][U][SIZE="4"][PLAIN]XDA:DevDB Information[/PLAIN][/SIZE][/U][/B]
+[SIZE=3][B]CyanogenMod 10.1 for Huawei Y220-U05[/B][/SIZE]
+
+[B][U]Contributors[/U][/B]
+[B]chijure[/B]
+[B]ROM OS Version:[/B] 4.2.2 Jelly Bean
+[B]ROM Kernel:[/B] Linux 3.4.5
+[B]ROM Firmware Required:[/B] TWRP for Y220-U05
+[B]Based On:[/B] CyanogenMod 10.1
+
+[B][U]Version Information[/U][/B]
+[B]Status:[/B] Beta
+[B]Current Beta Version:[/B] cm-10.1-20261024-UNOFFICIAL-y220-beta1.zip
+[B]Build Date:[/B] 2026-10-24
+
+[B]Created[/B] 2026-10-23
+[B]Last Updated[/B] 2026-10-24
