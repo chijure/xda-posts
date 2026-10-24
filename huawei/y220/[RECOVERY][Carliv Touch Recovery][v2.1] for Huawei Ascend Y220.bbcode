@@ -1,69 +1,99 @@
-Carliv Touch Recovery v2.1 - For Huawei Ascend Y220
-
-
+[CENTER][SIZE="5"][B][RECOVERY][Carliv Touch Recovery][v2.1] for Huawei Ascend Y220 (Y220-U05)[/B][/SIZE][/CENTER]
 
 [CODE]#include <std_disclaimer.h>
 
 /*
-
-* Your warranty is now void.
-
-*
-
-* I am not responsible for bricked devices, dead SD cards,
-
-* thermonuclear war, or you getting fired because the alarm app failed. Please
-
-* do some research if you have any concerns about features included in this RECOVERY
-
-* before flashing it! YOU are choosing to make these modifications, and if
-
-* you point the finger at me for messing up your device, I will laugh at you.[/CODE]
-
-
-
-Hi Carliv Touch Recovery v2.1 compile from source to ascend Huawey Y220 and everything works great both partitions and tactile buttons
-
-:)
-
-
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards,
+ * thermonuclear war, or you getting fired because the alarm app failed. Please
+ * do some research if you have any concerns about features included in this RECOVERY
+ * before flashing it! YOU are choosing to make these modifications, and if
+ * you point the finger at me for messing up your device, I will laugh at you.
+ */[/CODE]
 
 [IMG="Huawei Ascend Y220"]http://cdn2.gsmarena.com/vv/pics/huawei/huawei-ascend-y220-1.jpg[/IMG]
 
+[B]About[/B]
 
+Hi! This is Carliv Touch Recovery v2.1 compiled from source for the [B]Huawei Ascend Y220[/B] (Y220-U05, MediaTek MT6572). Everything works: all the partitions and the touch buttons. :)
 
-Bugs:
+Carliv Touch Recovery is a ClockworkMod-based recovery for MediaTek phones (ClockworkMod 6.0.4.4 base) with full touch control. This build runs on the Y220's own stock kernel (Linux 3.4.5, firmware C482B206SP05), so the screen, touch panel and keys behave as on the stock ROM.
 
-* You tell me :angel:
+[COLOR="Red"][B]Only for Huawei Ascend Y220-U05. It is not compatible with Huawei Y210 or other models.[/B][/COLOR]
 
+[SIZE="4"][B]Features[/B][/SIZE]
 
+[LIST]
+[*][B]Full touch control:[/B] tap a menu button to select it. Swipe left to go back; in long menus swipe right for page down and left for page up. Touch can be turned off from the Carliv menu, and the volume/power keys always work.
+[*][B]Install ZIP[/B] from the microSD, with optional signature check
+[*][B]ADB sideload[/B]
+[*][B]Backup and restore[/B] of boot, recovery, system, data and cache to the microSD, with MD5 check on restore
+[*][B]Advanced backup and restore:[/B] choose which partitions to back up or restore
+[*]Backup formats: tar or dedupe
+[*][B]Wipe:[/B] data / factory reset, cache, Dalvik cache
+[*][B]Mounts and storage:[/B] mount and unmount every partition, format partitions
+[*][B]Aroma File Manager[/B] support (Carliv menu; version 1.80 recommended, it has full touch support)
+[*][B]Root shell over adb[/B] while in recovery
+[/LIST]
 
-Installation:
+[SIZE="4"][B]Partitions[/B][/SIZE]
 
-Flash In Mobile Uncle Tools
+The Y220 stores system, data and cache on NAND as UBIFS. This recovery knows the layout:
 
+[CODE]/boot      mtd    boot
+/recovery  mtd    recovery
+/misc      mtd    misc
+/system    ubifs  system
+/data      ubifs  userdata
+/cache     ubifs  cache
+/sdcard    vfat   /dev/block/mmcblk0p1 (external microSD)[/CODE]
 
+[SIZE="4"][B]Installation[/B][/SIZE]
 
-Download:
+[COLOR="Red"][B]Back up your NVRAM (IMEI, Wi-Fi and Bluetooth addresses) before flashing anything on this phone.[/B][/COLOR]
 
-[URL="https://androidfilehost.com/?fid=1395089523397925641"]recovery.img[/URL] - 6.00 MB
+[LIST=1]
+[*]Root the phone.
+[*]Copy recovery.img to the phone.
+[*]Flash it to the recovery partition with [B]Mobile Uncle Tools[/B] (Recovery Update).
+[*]Reboot into recovery.
+[/LIST]
 
+[SIZE="4"][B]How to enter recovery[/B][/SIZE]
 
+With the phone off, press [B]Volume Up + Power[/B] together.
 
-FAQ
+[SIZE="4"][B]Notes[/B][/SIZE]
 
-how to enter recovery menu
+[LIST]
+[*]Backups go to [B]/sdcard/clockworkmod/backup[/B] on the microSD.
+[*]For my CyanogenMod 7 and CyanogenMod 10.1 ROMs for this phone use [URL="https://xdaforums.com/t/recovery-unofficial-twrp-3-1-1-0-1-for-huawei-y220-u05.4805984/"]TWRP 3.1.1-0.1 for Huawei Y220-U05[/URL]: their installers were tested with TWRP.
+[/LIST]
 
-pressing the vol + and power buttons together with the terminal off
+[SIZE="4"][B]Bugs[/B][/SIZE]
 
+[LIST]
+[*]You tell me :angel:
+[/LIST]
 
+[SIZE="4"][B]Download[/B][/SIZE]
 
-Source:
+[LIST]
+[*][URL="https://androidfilehost.com/?fid=1395089523397925641"]recovery.img[/URL] — 6.00 MB (6291456 bytes)
+[*]MD5: [CODE]642157958d7049aaf28dd021bb14d5e5[/CODE]
+[/LIST]
 
-https://github.com/carliv-mtk/android_bootable_recovery
+[SIZE="4"][B]Source[/B][/SIZE]
 
+[LIST]
+[*][URL="https://github.com/carliv-mtk/android_bootable_recovery"]carliv-mtk/android_bootable_recovery[/URL]
+[/LIST]
 
+[SIZE="4"][B]Thanks to[/B][/SIZE]
 
-Thanks to:
-
-[MENTION=5186178]carliv[/MENTION] for sources :laugh:
+[LIST]
+[*][MENTION=5186178]carliv[/MENTION] for the sources :laugh:
+[*]Koushik Dutta (koush) for ClockworkMod Recovery
+[*]amarullz for Aroma File Manager
+[/LIST]
