@@ -17,7 +17,7 @@ Unofficial CyanogenMod 10 (Android 4.1.2 Jelly Bean) port for the LG L5 II E450g
 
 It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RIL, video codecs) are loaded through small wrappers in the device tree instead of patching CyanogenMod, and the code shared with the LG L4 II now lives in a common tree, [B]mt6575-common[/B].
 
-[B]Build 3 news:[/B] the zip now flashes the boot image by itself (no more dd), Bluetooth uses LG's stock MediaTek app, video recording and playback use the MediaTek hardware codecs, and the home key LED behaves like stock.
+[B]Build 3 news:[/B] the zip now flashes the boot image by itself (no more dd), Bluetooth uses LG's stock MediaTek app, video recording and playback use the MediaTek hardware codecs, the home key LED behaves like stock, and the RIL wrapper now accepts incoming calls and attaches mobile data by itself.
 
 [B]Device specs[/B]
 [LIST]
@@ -52,8 +52,9 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 
 [B]Not tested on Build 3[/B]
 [LIST]
-[*]Calls, SMS and mobile data: my test unit is carrier-locked, so I could not check them with this build. The radio side (modem, IMEI, SIM) comes up. Calls worked on Build 2.
-[*]WiFi hotspot and USB tethering (need mobile data)
+[*]Calls, SMS and mobile data: my test unit is carrier-locked, so I could not check them on this phone. They use the same RIL wrapper as the LG L4 II build, where incoming and outgoing calls, SMS and mobile data are confirmed working (Entel Peru). The radio side (modem, IMEI, SIM) comes up here.
+[*]WiFi hotspot and USB tethering
+[*]MMS
 [*]GPS: the stock GPS daemon is included, not tested yet
 [*]Bluetooth audio (A2DP headphones/speakers), FM radio
 [/LIST]
@@ -87,7 +88,7 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 
 [URL="PUT_DOWNLOAD_LINK_HERE"]cm-10-20261025-UNOFFICIAL-vee5ss.zip[/URL]
 
-[CODE]MD5: aceb0258c295d249b15c03acdd454fb4[/CODE]
+[CODE]MD5: 1f113d114ba7aa2b9f76b81696a1e3d1[/CODE]
 
 [B]Install: clean flash (recommended)[/B]
 [LIST=1]
@@ -134,6 +135,8 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 [*][B]Video recording[/B]: MediaTek hardware encoder, MPEG-4 640×480 with AAC (was 320×240 software encoding). Fixed green/magenta colors in recorded videos.
 [*][B]Video playback[/B]: MediaTek hardware decoder for H.264 Main/High and MPEG-4 up to 720p (CyanogenMod's software decoder only played H.264 Baseline).
 [*][B]Home key LED[/B]: same behavior as LG's stock service (boot pattern, charging/full patterns with the screen off, shutdown pattern); fixed the boot color pattern never stopping.
+[*][B]Telephony[/B]: the RIL wrapper now does the MediaTek work of the stock framework: it accepts incoming calls (before, they never rang), attaches to GPRS when the radio turns on, adds the data call parameter mtk-ril needs, and reports call progress so the call screen follows the call. Confirmed on the L4 II, which shares it.
+[*]APNs for Claro, Movistar and Entel Peru; SIM Toolkit added.
 [*]Audio, camera, lights and RIL now use device-tree wrappers around the stock HALs instead of CyanogenMod patches. Fixed a crash when recording video.
 [*]Shared code with the LG L4 II moved to the new mt6575-common tree.
 [/LIST]
