@@ -23,7 +23,7 @@ This guide does two things:
 
 [B]What you get:[/B]
 [LIST]
-[*]Unsigned recovery images boot, for example [URL=""]TWRP 3.1.1-0.1 for the LG L5 II E450g[/URL].
+[*]Unsigned recovery images boot, for example [URL=""]TWRP 3.1.1-0.2 for the LG L5 II E450g[/URL].
 [*][B]No data wipe:[/B] nothing in this guide erases userdata.
 [*]Fully reversible: the stock LK is included in the kit and goes back the same way.
 [*]Android keeps booting normally with the stock boot image.
@@ -43,7 +43,7 @@ This guide does two things:
 [SIZE="4"][B]Download[/B][/SIZE]
 
 [LIST]
-[*][URL=""]LG-E450g-Bootloader-Unlock.zip[/URL] - 348 KB | MD5: fa62f72951a74ef5747b4e74514ef448
+[*][URL=""]LG-E450g-Bootloader-Unlock.zip[/URL] - 352 KB | MD5: 7ecf00b3c456dc0db76c364a9338843c
 [/LIST]
 
 The kit contains the [B]patched LK[/B] ([I]lk/lk-patched-E450g.bin[/I]), the [B]stock E450g04a LK[/B] to go back ([I]lk/lk-stock-E450g.bin[/I]), SHA256SUMS and a README.txt with the same steps. Unzip it and run every command below from its folder.
@@ -116,7 +116,9 @@ adb shell "su -c 'dd if=/sdcard/lk-patched.bin of=/dev/uboot; sync'"[/CODE]
 
 [SIZE="4"][B]Step 5 — Verify the readback before rebooting[/B][/SIZE]
 
-[CODE]adb shell "su -c 'dd if=/dev/uboot of=/sdcard/lk-readback.bin bs=512 count=1024; chmod 644 /sdcard/lk-readback.bin'"
+[I]sync[/I] and [I]drop_caches[/I] make sure the readback comes from the eMMC itself and not from what is still in memory: otherwise the check can pass while the partition is not completely written yet, and a reboot right away leaves it half written.
+
+[CODE]adb shell "su -c 'sync; echo 3 > /proc/sys/vm/drop_caches; sleep 3; dd if=/dev/uboot of=/sdcard/lk-readback.bin bs=512 count=1024; chmod 644 /sdcard/lk-readback.bin'"
 adb pull /sdcard/lk-readback.bin
 sha256sum lk-readback.bin[/CODE]
 
@@ -136,7 +138,7 @@ If you flash a KDZ later, check your LK again with Step 3 before installing a cu
 
 [SIZE="4"][B]Next step: TWRP[/B][/SIZE]
 
-Install a custom recovery: [URL=""][RECOVERY][UNOFFICIAL] TWRP 3.1.1-0.1 for LG L5 II E450g[/URL]. Then, if you want a custom ROM: [URL=""][L5 II][E450g][ROM][UNOFFICIAL][4.1.2] CyanogenMod 10[/URL].
+Install a custom recovery: [URL=""][RECOVERY][UNOFFICIAL] TWRP 3.1.1-0.2 for LG L5 II E450g[/URL]. Then, if you want a custom ROM: [URL=""][L5 II][E450g][ROM][UNOFFICIAL][4.1.2] CyanogenMod 10[/URL].
 
 [SIZE="4"][B]FAQ[/B][/SIZE]
 

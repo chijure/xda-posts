@@ -35,6 +35,7 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 [*]WiFi (MT6620)
 [*][B]Bluetooth[/B] with LG's stock MediaTek Bluetooth app (MtkBt), as on the stock ROM: pairing, sending and receiving files (OPP). Bluetooth turns itself back on at boot.
 [*]Audio: speaker, earpiece, microphone, wired headset (plug/unplug switches the output, headset microphone works)
+[*][B]FM radio[/B] with its own app (wired headphones as the antenna): headphones or speaker, seek, scan, favorites, station name (RDS), keeps playing with the screen off
 [*]Camera: photos (3 MP), correct colors
 [*][B]Video recording with the MediaTek hardware encoder[/B]: MPEG-4 640×480 with AAC audio
 [*][B]Video playback with the MediaTek hardware decoder[/B]: H.264 Baseline, Main and High, MPEG-4 and H.263, up to 1280×720
@@ -60,7 +61,6 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 
 [B]Known issues[/B]
 [LIST]
-[*][B]FM radio does not work[/B]: it needs LG's stock FM app and service, not ported.
 [*][B]1080p video does not play[/B]: the MT6575 video decoder only goes up to 1280×720 (same as stock).
 [*][B]No H.264 video recording[/B]: the camera records MPEG-4 instead; CyanogenMod's MP4 writer rejects the MediaTek H.264 encoder output.
 [*][B]Carrier-locked phones[/B] show "SIM network unlock PIN" with a SIM from another carrier. The ROM cannot remove a carrier lock; tap Dismiss to keep using the phone.
@@ -70,7 +70,7 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 [B]Important notes[/B]
 [LIST]
 [*]This ROM is for the [B]LG-E440g (vee4ss) only[/B], the only variant I could test. Do not flash it on other L4 II variants.
-[*]You need an unlocked bootloader and TWRP: see my [B]How To Root and Unlock the Bootloader LG L4 II E440g[/B] guide and the [B]TWRP 3.1.1-0.1 for LG L4 II E440g[/B] thread.
+[*]You need an unlocked bootloader and TWRP: see my [B]How To Root and Unlock the Bootloader LG L4 II E440g[/B] guide and the [B]TWRP 3.1.1-0.2 for LG L4 II E440g[/B] thread.
 [*][B]Back up your NVRAM[/B] (IMEI and calibration) before flashing any MTK ROM.
 [*]GApps: use a Jelly Bean (4.1) package.
 [/LIST]
@@ -78,7 +78,7 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 [B]Requirements[/B]
 [LIST]
 [*]LG-E440g (vee4ss)
-[*]Unlocked bootloader + TWRP 3.1.1-0.1 for LG L4 II
+[*]Unlocked bootloader + TWRP 3.1.1-0.2 for LG L4 II
 [*]At least 30% battery
 [*]Full Nandroid backup
 [/LIST]
@@ -87,7 +87,7 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 
 [URL="PUT_DOWNLOAD_LINK_HERE"]cm-10-20261025-UNOFFICIAL-vee4ss.zip[/URL]
 
-[CODE]MD5: a3c54d30f4f0d2d1701ce5a02a438df9[/CODE]
+[CODE]MD5: c591ff2e06682d4774ef72c86e2601c4[/CODE]
 
 [B]Install: clean flash (recommended)[/B]
 [LIST=1]
@@ -138,7 +138,9 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 [*][B]Bluetooth[/B]: LG's stock MediaTek Bluetooth app replaces CyanogenMod's, which could not open connections on this stack. Pairings are now saved and Bluetooth turns itself back on after a reboot.
 [*][B]Home key LED[/B]: same behavior as LG's stock service (boot pattern, charging/full patterns with the screen off).
 [*][B]Video[/B]: MediaTek hardware codecs. Recording is MPEG-4 640×480 with AAC (was 320×240 software encoding); H.264 Main/High videos now play. Fixed H.264 videos standing still or skipping: the MediaTek decoder drops the frame timestamps, the codec wrapper now restores them.
-[*]Each phone shows up in adb with its own serial (codename plus eMMC serial) instead of 0123456789ABCDEF.
+[*][B]FM radio[/B]: new app with the look of Android's own FM Radio, on LG's stock FM libraries and audio HAL.
+[*]adb, CyanogenMod and the updated TWRP report the phone's own serial, the same as the stock ROM, instead of 0123456789ABCDEF.
+[*]The zip writes the boot image safely: rebooting with the power key right after flashing could leave a phone that does not boot.
 [*]Proximity sensor confirmed working; USB defaults to MTP.
 [*]The L4 II and L5 II now share the mt6575-common tree.
 [/LIST]
