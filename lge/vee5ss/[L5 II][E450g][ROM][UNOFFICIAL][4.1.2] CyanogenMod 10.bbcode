@@ -56,12 +56,12 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 [*]WiFi hotspot and USB tethering
 [*]MMS
 [*]GPS: the stock GPS daemon is included, not tested yet
-[*]Bluetooth audio (A2DP headphones/speakers), FM radio
+[*]Bluetooth audio (A2DP headphones/speakers)
 [/LIST]
 
 [B]Known issues[/B]
 [LIST]
-[*][B]720p video plays with stutter[/B]: the hardware decodes it, but the copy to the screen falls behind. 480p plays smoothly.
+[*][B]FM radio does not work[/B]: it needs LG's stock FM app and service, not ported.
 [*][B]1080p video does not play[/B]: the MT6575 video decoder only goes up to 1280×720 (same as stock).
 [*][B]No H.264 video recording[/B]: the camera records MPEG-4 instead; CyanogenMod's MP4 writer rejects the MediaTek H.264 encoder output.
 [*][B]Carrier-locked phones[/B] show "SIM network unlock PIN" with a SIM from another carrier. The ROM cannot remove a carrier lock; tap Dismiss to keep using the phone.
@@ -88,7 +88,7 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 
 [URL="PUT_DOWNLOAD_LINK_HERE"]cm-10-20261025-UNOFFICIAL-vee5ss.zip[/URL]
 
-[CODE]MD5: 1f113d114ba7aa2b9f76b81696a1e3d1[/CODE]
+[CODE]MD5: f7b614696d7ae64396b497a151e1428a[/CODE]
 
 [B]Install: clean flash (recommended)[/B]
 [LIST=1]
@@ -133,7 +133,8 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 [*][B]The zip flashes the boot image itself[/B], in MediaTek format. No more dd from the TWRP shell.
 [*][B]Bluetooth[/B]: LG's stock MediaTek Bluetooth app replaces CyanogenMod's, as on the stock ROM (CyanogenMod's app froze trying to open sockets this stack does not provide). Fixed pairings being lost (the stack's device database could not be written), the receive dialog crash, and Bluetooth staying off after a reboot.
 [*][B]Video recording[/B]: MediaTek hardware encoder, MPEG-4 640×480 with AAC (was 320×240 software encoding). Fixed green/magenta colors in recorded videos.
-[*][B]Video playback[/B]: MediaTek hardware decoder for H.264 Main/High and MPEG-4 up to 720p (CyanogenMod's software decoder only played H.264 Baseline).
+[*][B]Video playback[/B]: MediaTek hardware decoder for H.264 Main/High and MPEG-4 up to 720p (CyanogenMod's software decoder only played H.264 Baseline). Fixed H.264 videos stuttering or standing still: the MediaTek decoder drops the frame timestamps, the codec wrapper now restores them; 720p plays smoothly.
+[*]Each phone shows up in adb with its own serial (codename plus eMMC serial) instead of 0123456789ABCDEF.
 [*][B]Home key LED[/B]: same behavior as LG's stock service (boot pattern, charging/full patterns with the screen off, shutdown pattern); fixed the boot color pattern never stopping.
 [*][B]Telephony[/B]: the RIL wrapper now does the MediaTek work of the stock framework: it accepts incoming calls (before, they never rang), attaches to GPRS when the radio turns on, adds the data call parameter mtk-ril needs, and reports call progress so the call screen follows the call. Confirmed on the L4 II, which shares it.
 [*]APNs for Claro, Movistar and Entel Peru; SIM Toolkit added.
