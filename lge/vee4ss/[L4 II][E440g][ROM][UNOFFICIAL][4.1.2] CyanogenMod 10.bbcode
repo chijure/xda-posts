@@ -15,9 +15,9 @@
 
 Unofficial CyanogenMod 10 (Android 4.1.2 Jelly Bean) port for the LG L4 II E440g, codename [B]vee4ss[/B], SoC MediaTek MT6575 — the same platform as the LG L5 II. Both phones now build from a shared common tree, [B]mt6575-common[/B], so they get the same fixes.
 
-It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RIL) are loaded through small wrappers in the device tree instead of patching CyanogenMod. The RIL wrapper also does the MediaTek-specific work that the stock telephony framework did (incoming call acceptance, data attach), so calls, SMS and mobile data work on CyanogenMod's unmodified framework.
+It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RIL, video codecs) are loaded through small wrappers in the device tree instead of patching CyanogenMod. The RIL wrapper also does the MediaTek-specific work that the stock telephony framework did (incoming call acceptance, data attach), so calls, SMS and mobile data work on CyanogenMod's unmodified framework.
 
-[B]Build 3 news:[/B] the zip now flashes the boot image by itself (no more dd), audio and camera work, video recording no longer stops after a few seconds, [B]calls, SMS and mobile data work[/B], Bluetooth uses LG's stock MediaTek app and transfers files, and the home key LED behaves like stock.
+[B]Build 3 news:[/B] the zip now flashes the boot image by itself (no more dd), audio and camera work, [B]calls, SMS and mobile data work[/B], video recording and playback use the MediaTek hardware codecs, Bluetooth uses LG's stock MediaTek app and transfers files, and the home key LED behaves like stock.
 
 [B]Device specs[/B]
 [LIST]
@@ -34,8 +34,10 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 [*]Boot, display, touchscreen, PowerVR SGX531 hardware acceleration
 [*]WiFi (MT6620)
 [*][B]Bluetooth[/B] with LG's stock MediaTek Bluetooth app (MtkBt), as on the stock ROM: pairing, sending and receiving files (OPP). Bluetooth turns itself back on at boot.
-[*]Audio: speaker and microphone
-[*]Camera: photos and video recording (MPEG-4 320×240 with AMR-WB audio), correct colors
+[*]Audio: speaker, earpiece, microphone, wired headset (plug/unplug switches the output, headset microphone works)
+[*]Camera: photos (3 MP), correct colors
+[*][B]Video recording with the MediaTek hardware encoder[/B]: MPEG-4 640×480 with AAC audio
+[*][B]Video playback with the MediaTek hardware decoder[/B]: H.264 Baseline, Main and High, MPEG-4 and H.263, up to 1280×720
 [*][B]Home key LED like stock[/B]: color pattern while booting, charging pattern with the screen off, green when full
 [*]LCD brightness
 [*]Proximity sensor
@@ -53,13 +55,14 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 [LIST]
 [*]WiFi hotspot and USB tethering
 [*]MMS
-[*]GPS (the stock GPS daemon is included), FM radio, Bluetooth audio (A2DP), wired headset
+[*]GPS (the stock GPS daemon is included), Bluetooth audio (A2DP)
 [/LIST]
 
 [B]Known issues[/B]
 [LIST]
-[*][B]Video uses the software codecs[/B]: recording is limited to 320×240, and only H.264 Baseline and MPEG-4 videos play (most phone and internet videos are H.264 Main/High). The L5 II already uses the MediaTek hardware codecs; this phone needs its own stock codec blobs first.
-[*][B]Camera can freeze for a few seconds right after boot[/B]: while Android scans the storage after a reboot, saving a photo can stall the camera app ("not responding"). Wait for it; it recovers once the scan ends.
+[*][B]FM radio does not work[/B]: it needs LG's stock FM app and service, not ported.
+[*][B]1080p video does not play[/B]: the MT6575 video decoder only goes up to 1280×720 (same as stock).
+[*][B]No H.264 video recording[/B]: the camera records MPEG-4 instead; CyanogenMod's MP4 writer rejects the MediaTek H.264 encoder output.
 [*][B]Carrier-locked phones[/B] show "SIM network unlock PIN" with a SIM from another carrier. The ROM cannot remove a carrier lock; tap Dismiss to keep using the phone.
 [*][B]MediaScanner crash[/B]: folders on the microSD with Latin-1 encoded names (for example "Imágenes" written by an old PC) make MediaScanner abort. Rename or remove them from a PC.
 [/LIST]
@@ -84,7 +87,7 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 
 [URL="PUT_DOWNLOAD_LINK_HERE"]cm-10-20261025-UNOFFICIAL-vee4ss.zip[/URL]
 
-[CODE]MD5: 8cd1ba6cda9bcdc48c7ffea83c1b2322[/CODE]
+[CODE]MD5: a3c54d30f4f0d2d1701ce5a02a438df9[/CODE]
 
 [B]Install: clean flash (recommended)[/B]
 [LIST=1]
@@ -109,7 +112,7 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 [LIST]
 [*][B]Bootloop after flashing[/B]: wipe Cache and Dalvik Cache in TWRP and reboot.
 [*][B]Another phone cannot find the L4 II[/B]: in Settings → Bluetooth tap the phone name to make it visible (2 minutes), or start the pairing from the L4 II.
-[*][B]A video says "Can't play this video"[/B]: it is probably H.264 Main/High, which the software decoder does not support yet.
+[*][B]A video says "Can't play this video"[/B]: check its resolution; anything above 1280×720 is not supported by the hardware.
 [/LIST]
 
 [COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download links without permission.[/CENTER][/SIZE][/COLOR]
@@ -134,6 +137,8 @@ It runs on the stock prebuilt kernel. The vendor HALs (audio, camera, lights, RI
 [*]APNs for Claro, Movistar and Entel Peru; SIM Toolkit added.
 [*][B]Bluetooth[/B]: LG's stock MediaTek Bluetooth app replaces CyanogenMod's, which could not open connections on this stack. Pairings are now saved and Bluetooth turns itself back on after a reboot.
 [*][B]Home key LED[/B]: same behavior as LG's stock service (boot pattern, charging/full patterns with the screen off).
+[*][B]Video[/B]: MediaTek hardware codecs. Recording is MPEG-4 640×480 with AAC (was 320×240 software encoding); H.264 Main/High videos now play. Fixed H.264 videos standing still or skipping: the MediaTek decoder drops the frame timestamps, the codec wrapper now restores them.
+[*]Each phone shows up in adb with its own serial (codename plus eMMC serial) instead of 0123456789ABCDEF.
 [*]Proximity sensor confirmed working; USB defaults to MTP.
 [*]The L4 II and L5 II now share the mt6575-common tree.
 [/LIST]
