@@ -59,7 +59,7 @@ adb pull /sdcard/recovery-stock.img[/CODE]
 adb shell "su -c 'dd if=/sdcard/twrp.img of=/dev/recovery bs=512; sync'"[/CODE]
 
 [B]3. Verify the readback before rebooting:[/B]
-[CODE]adb shell "su -c 'dd if=/dev/recovery bs=512 count=16096 | md5sum'"[/CODE]
+[CODE]adb shell "su -c 'sync; echo 3 > /proc/sys/vm/drop_caches; sleep 3; dd if=/dev/recovery bs=512 count=16096 | md5sum'"[/CODE]
 It must print [B]9a01f28ce1cb7a7e56f9c07653da85ec[/B]. [COLOR="Red"][B]If it does not match, do NOT reboot:[/B][/COLOR] repeat Step 2.
 
 [I]sync[/I] and [I]drop_caches[/I] make sure the readback comes from the eMMC itself and not from what is still in memory: otherwise the check can pass while the partition is not completely written yet, and a reboot right away leaves it half written.
