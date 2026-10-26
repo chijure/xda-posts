@@ -42,7 +42,7 @@ This guide does two things:
 [SIZE="4"][B]Download[/B][/SIZE]
 
 [LIST]
-[*][URL=""]LG-D213-Bootloader-Unlock.zip[/URL] - 328 KB | MD5: b8d3102022be39655cbf3f04e377c88c
+[*][URL=""]LG-D213-Bootloader-Unlock.zip[/URL] - 328 KB | MD5: 66d3bf48f0dc08459ad54b033a3518d6
 [/LIST]
 
 The kit contains the [B]patched LK[/B] ([I]lk/lk-patched-D213.bin[/I]), the [B]stock D21310c LK[/B] to go back ([I]lk/lk-stock-D213.bin[/I]), SHA256SUMS and a README.txt with the same steps. Unzip it and run every command below from its folder.
@@ -122,7 +122,9 @@ adb shell "su -c 'dd if=/sdcard/lk-patched.bin of=/dev/uboot; sync'"[/CODE]
 
 [SIZE="4"][B]Step 5 — Verify the readback before rebooting[/B][/SIZE]
 
-[CODE]adb shell "su -c 'dd if=/dev/uboot of=/sdcard/lk-readback.bin bs=512 count=1024; chmod 644 /sdcard/lk-readback.bin'"
+[I]sync[/I] and [I]drop_caches[/I] make sure the readback comes from the eMMC itself and not from what is still in memory: otherwise the check can pass while the partition is not completely written yet, and a reboot right away leaves it half written.
+
+[CODE]adb shell "su -c 'sync; echo 3 > /proc/sys/vm/drop_caches; sleep 3; dd if=/dev/uboot of=/sdcard/lk-readback.bin bs=512 count=1024; chmod 644 /sdcard/lk-readback.bin'"
 adb pull /sdcard/lk-readback.bin
 sha256sum lk-readback.bin[/CODE]
 
