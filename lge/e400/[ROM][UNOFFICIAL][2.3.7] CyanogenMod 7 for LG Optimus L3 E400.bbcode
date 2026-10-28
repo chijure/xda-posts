@@ -1,0 +1,158 @@
+[CENTER][SIZE="5"][B][ROM][UNOFFICIAL][2.3.7] CyanogenMod 7 for LG Optimus L3 E400[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost IMEI,
+ * missed calls, alarms that fail, or any other damage. Make a full backup
+ * before flashing. YOU are choosing to make these modifications.
+ */[/CODE]
+
+[B]About[/B]
+
+This is an unofficial CyanogenMod 7 (Android 2.3.7 Gingerbread) build for the [B]LG Optimus L3 E400[/B] (e0, Qualcomm MSM7x27A), built from a fresh device tree. The goal was to match the stock V10c behaviour wherever the stock is known to work: the kernel is the stock V10c zImage (with a single-instruction patch for the FM driver), and the graphics, camera and RIL blobs are the stock ones. Anything the ROM source does not cover is kept as small, reviewable patches in the device tree.
+
+[COLOR="Red"][B]Early test build. Read the status list before flashing. Telephony is not verified yet.[/B][/COLOR]
+
+[SIZE="4"][B]Current status — Alpha[/B][/SIZE]
+
+Build: [B]cm-7-20261028-UNOFFICIAL-e400.zip[/B]
+Kernel: stock V10c with a one-instruction patch for the FM driver, Linux 2.6.38.6-perf #1 (Aug 8 2012)
+Size: 84.5 MB
+MD5: [B]a0010139016a84bd2ad4103dc5041e41[/B]
+
+[SIZE="4"][B]What's working[/B][/SIZE]
+
+[LIST]
+[*][B]Basics:[/B] boot, reboot, power off, sleep and wake
+[*][B]Display / GPU:[/B] Adreno 200 hardware rendering (no software fallback), auto-rotation without stripes
+[*][B]Touch:[/B] multitouch, plus accelerometer, compass and proximity sensors
+[*][B]Audio:[/B] speaker, wired headset (also when plugged in before boot), microphone, voice recorder
+[*][B]FM radio:[/B] works with the headset as antenna; it turns on and off without hanging (see known issues)
+[*][B]Wi-Fi:[/B] scan, connect, browse
+[*][B]Bluetooth:[/B] works, with a stable address across reboots
+[*][B]Camera:[/B] photos up to 2048x1536 and hardware-encoded MPEG-4 video
+[*][B]Storage:[/B] internal and external SD, USB mass storage
+[*][B]Charging with the phone off:[/B] stock charger animation
+[/LIST]
+
+[SIZE="4"][B]Partly done / untested[/B][/SIZE]
+
+[LIST]
+[*][B]SIM / mobile network:[/B] the RIL is ported and the SIM reaches READY and LOADED with the IMSI read, but I could not register on a network yet. My own Movistar SIM was rejected by the network (probably a suspended SIM) and a SIM from another operator hits the carrier lock (the phone is an e0_mov_la, Movistar). [B]Calls, SMS and mobile data are NOT verified.[/B] I am getting another Movistar SIM to test.
+[*][B]GPS:[/B] sees satellites, no fix yet
+[*][B]Airplane mode, vibration[/B] and sensors beyond the basics: not tested
+[/LIST]
+
+[SIZE="4"][B]Known issues[/B][/SIZE]
+
+[LIST]
+[*][B]FM radio volume:[/B] the volume steps are still being tuned; the radio starts at a low level and the volume keys change it in coarse steps. The stock kernel's radio driver deadlocks when the radio reports an error, so the kernel in this zip has a one-instruction patch (tools/patch_kernel_fm.py in the device tree); the rest of the kernel is the stock V10c.
+[/LIST]
+
+[SIZE="4"][B]Download[/B][/SIZE]
+
+[LIST]
+[*][URL="https://www.androidfilehost.com/?fid=17900174959292982495"]cm-7-20261028-UNOFFICIAL-e400.zip[/URL]
+[*][URL="https://drive.google.com/file/d/1VUQiyAJwgIziT3s2nGUZ5nXiIUGbQ4vN/view?usp=sharing"]cm-7-20261028-UNOFFICIAL-e400.zip[/URL] (Google Drive mirror)
+[*]MD5: [CODE]a0010139016a84bd2ad4103dc5041e41[/CODE]
+[*][URL="https://xdaforums.com/t/recovery-unofficial-twrp-3-1-1-0-3-for-lg-optimus-l3-e400.4806725/"]TWRP 3.1.1-0.3 for LG Optimus L3 E400[/URL] (thread with download and flashing instructions)
+[/LIST]
+
+[SIZE="4"][B]Installation[/B][/SIZE]
+
+[COLOR="Red"][B]Back up everything first (at least /data and the boot partition). Make sure the phone is an E400.[/B][/COLOR]
+
+[LIST=1]
+[*]Install a custom recovery ([URL="https://xdaforums.com/t/recovery-unofficial-twrp-3-1-1-0-3-for-lg-optimus-l3-e400.4806725/"]TWRP for the E400[/URL]).
+[*]Copy the ROM ZIP to the phone.
+[*]Boot into TWRP and make a backup.
+[*]Wipe data/factory reset, cache and Dalvik cache (needed the first time you come from stock).
+[*]Install the ZIP, wipe cache and Dalvik cache again and reboot. The first boot takes about a minute.
+[/LIST]
+
+[COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download without permission.[/CENTER][/SIZE][/COLOR]
+
+[SIZE="4"][B]Screenshots[/B][/SIZE]
+
+[IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/e400/screenshots/cm7/01-home.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/e400/screenshots/cm7/02-about.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/e400/screenshots/cm7/04-settings.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/e400/screenshots/cm7/05-wifi.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/e400/screenshots/cm7/06-camera.png[/IMG]
+
+[SIZE="4"][B]What is different from other attempts[/B][/SIZE]
+
+[LIST]
+[*]Stock V10c kernel instead of a rebuilt one (only one instruction patched, for FM). A different kernel gave green frames in the camera and broken MDP.
+[*]Stock gralloc, copybit and camera HAL blobs. The camera uses a small wrapper over the stock LG HAL.
+[*]Stock RIL blobs. Some of the telephony blobs I started from came from another firmware and were replaced with the V10c ones.
+[*]Every change outside the device tree is a small patch in patches/apply-patches.sh.
+[/LIST]
+
+[SIZE="4"][B]Notes for developers[/B][/SIZE]
+
+[LIST]
+[*]ueventd on this device loads ueventd.lge.rc (it uses the first word of the cpuinfo "Hardware" line), so ueventd.e0.rc is never read.
+[*]debug.composition.type=mdp is not optional with the stock gralloc; without it only the status bar is drawn.
+[*]HeadsetObserver must read /sys/class/switch/h2w_headset.
+[*]The card status of the stock RIL carries three subscription indexes (GSM, CDMA, IMS).
+[*]docs/E400_NOTES.md in the device tree has the build notes, root causes and the comparison with the stock ROM.
+[/LIST]
+
+[SIZE="4"][B]Source code[/B][/SIZE]
+
+[LIST]
+[*][URL="https://github.com/chijure-android-system-development/android_device_lge_e400"]LG E400 device tree[/URL] (branch gingerbread)
+[*][URL="https://github.com/chijure/e400"]LG E400 vendor blobs[/URL]
+[/LIST]
+
+[SIZE="4"][B]Bug reports[/B][/SIZE]
+
+Please include:
+
+[LIST]
+[*]Exact phone model and original firmware version
+[*]Clean flash or update from an older build
+[*]Recovery version used
+[*]Steps required to reproduce the problem
+[*]Relevant logcat (for telephony, adb logcat -b radio) and dmesg
+[/LIST]
+
+[SIZE="4"][B]Changelog[/B][/SIZE]
+
+[B]2026-10-28 — Alpha 1[/B]
+
+[LIST]
+[*]First public build.
+[*]Stock V10c kernel, Adreno 200 hardware graphics, stock chargerlogo.
+[*]Headset detected at boot and audio routed to the headset.
+[*]RIL aligned with the stock V10c blobs; SIM reaches READY/LOADED.
+[*]FM radio working: analog DAC configuration, fminit and the FM app included, and the stock kernel's radio driver deadlock patched (see known issues).
+[/LIST]
+
+[SIZE="4"][B]Credits[/B][/SIZE]
+
+[LIST]
+[*]CyanogenMod team
+[*]Code Aurora Forum
+[*]The people who worked on other MSM7x27A Gingerbread ports (the Huawei Y210 and Y220 trees were the model for the HAL wrappers)
+[*]LG for the original device software
+[*]chijure — device tree, porting and testing
+[*]All testers and contributors
+[/LIST]
+
+[B][U][SIZE="4"][PLAIN]XDA:DevDB Information[/PLAIN][/SIZE][/U][/B]
+[SIZE=3][B]CyanogenMod 7 for LG Optimus L3 E400[/B][/SIZE]
+
+[B][U]Contributors[/U][/B]
+[B]chijure[/B]
+[B]ROM OS Version:[/B] 2.3.7 Gingerbread
+[B]ROM Kernel:[/B] Linux 2.6.38.6 (stock V10c)
+[B]ROM Firmware Required:[/B] TWRP for E400
+[B]Based On:[/B] CyanogenMod 7
+
+[B][U]Version Information[/U][/B]
+[B]Status:[/B] Alpha
+[B]Current Alpha Version:[/B] cm-7-20261028-UNOFFICIAL-e400
+[B]Build Date:[/B] 2026-10-28
+
+[B]Created[/B] 2026-10-28
+[B]Last Updated[/B] 2026-10-28

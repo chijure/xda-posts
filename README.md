@@ -10,7 +10,7 @@ Colección de 41 publicaciones exportadas o preparadas para el foro XDA Develope
 - `lge/`: 31 posts de la línea Optimus, G2 Mini y L50 (L1 II, L3, L4 II, L5 II, L7 II, G3 Stylus, D625, D213, etc.).
   - `lge/e410/`: ROMs y recoveries para LG L1 II (CWM, TWRP, CM10/11, guías de root/bootloader).
   - `lge/d625/`: desbloqueo del bootloader, TWRP 3.1.1-1 y CyanogenMod 11 para LG G2 Mini LTE D625 (Tegra 4i).
-  - `lge/e400/`: Kernel y Aroma installer para LG L3.
+  - `lge/e400/`: Kernel, Aroma installer, TWRP 3.1.1-0.3 y CyanogenMod 7 para LG Optimus L3 E400.
   - `lge/p350/`: Kernel Phoenix RC1 para Optimus Me.
   - `lge/d213/`: root y desbloqueo del bootloader, TWRP 3.1.1-0.1 y LineageOS 11 para LG L50 D213 (MT6572).
   - `lge/vee4ss/`: root y desbloqueo del bootloader, TWRP 3.1.1-0.1 y CyanogenMod 10 para LG L4 II E440g.

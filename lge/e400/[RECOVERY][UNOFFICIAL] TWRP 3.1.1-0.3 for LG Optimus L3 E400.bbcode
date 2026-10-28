@@ -1,0 +1,118 @@
+[CENTER][SIZE="5"][B][RECOVERY][UNOFFICIAL] TWRP 3.1.1-0.3 for LG Optimus L3 E400[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost IMEI,
+ * or any other damage. Make a backup and verify your exact model before
+ * flashing. YOU are choosing to make these modifications.
+ */[/CODE]
+
+[B]About[/B]
+
+This is an unofficial TWRP 3.1.1-0.3 build for the [B]LG Optimus L3 E400[/B] (e0, Qualcomm MSM7x27A, eMMC). It is built with the Omni 4.4 tree and uses the stock V10c kernel (Linux 2.6.38.6-perf). It is the recovery used to install [URL="https://xdaforums.com/t/rom-unofficial-2-3-7-cyanogenmod-7-for-lg-optimus-l3-e400.4806727/"]CyanogenMod 7 for the E400[/URL].
+
+[COLOR="Red"][B]Only flash this on the LG E400. The recovery partition is mmcblk0p17; writing it to another device or partition can brick the phone.[/B][/COLOR]
+
+[SIZE="4"][B]Current status[/B][/SIZE]
+
+Build: [B]twrp-3.1.1-0.3-e400.img[/B] (6479872 bytes)
+
+Tested on real hardware:
+
+[LIST]
+[*]Boots to recovery, with touchscreen
+[*]ADB in recovery
+[*]Installing a ROM ZIP from the internal storage (CyanogenMod 7 for the E400)
+[*]Flashing the image with dd to mmcblk0p17 and booting it
+[*][B]Not tested by me:[/B] backup and restore of every partition, and the external microSD
+[/LIST]
+
+[SIZE="4"][B]Partition layout used[/B][/SIZE]
+
+[LIST]
+[*]/recovery: mmcblk0p17
+[*]/boot: mmcblk0p9
+[*]/system: mmcblk0p14 (ext4)
+[*]/cache: mmcblk0p16 (ext4)
+[*]/data: mmcblk0p21 (ext4)
+[*]/emmc (internal storage, vfat): mmcblk0p20
+[*]/external_sd (microSD, vfat): mmcblk1p1
+[/LIST]
+
+[SIZE="4"][B]Installation[/B][/SIZE]
+
+[B]Before starting:[/B] back up your current recovery and copy the backup away from the phone.
+
+[B]From a rooted system or from your current recovery (adb root):[/B]
+
+[CODE]adb shell dd if=/dev/block/mmcblk0p17 of=/sdcard/recovery_backup.img bs=4096
+adb push twrp-3.1.1-0.3-e400.img /sdcard/
+adb shell md5sum /sdcard/twrp-3.1.1-0.3-e400.img
+adb shell dd if=/sdcard/twrp-3.1.1-0.3-e400.img of=/dev/block/mmcblk0p17 bs=4096
+adb shell sync
+adb reboot recovery[/CODE]
+
+The md5sum must match the one below before you write the partition.
+
+To go back, write your backup to the same partition.
+
+[SIZE="4"][B]Entering recovery[/B][/SIZE]
+
+From Android:
+
+[CODE]adb reboot recovery[/CODE]
+
+[SIZE="4"][B]Download[/B][/SIZE]
+
+[LIST]
+[*][URL="https://www.androidfilehost.com/?fid=17900174959292982482"]twrp-3.1.1-0.3-e400.img[/URL] — 6479872 bytes
+[*][URL="https://drive.google.com/file/d/1497u97PnR4HGh2uMaX7T7FtEAZsNkUWG/view?usp=sharing"]twrp-3.1.1-0.3-e400.img[/URL] (Google Drive mirror)
+[*]MD5: [CODE]7551e4182ae077dcbe4384384dfd72d9[/CODE]
+[*][URL="https://xdaforums.com/t/rom-unofficial-2-3-7-cyanogenmod-7-for-lg-optimus-l3-e400.4806727/"]CyanogenMod 7 for LG Optimus L3 E400[/URL]
+[/LIST]
+
+[SIZE="4"][B]Screenshots[/B][/SIZE]
+
+[IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/e400/screenshots/twrp/01-main-menu.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/e400/screenshots/twrp/02-install.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/e400/screenshots/twrp/03-backup.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/e400/screenshots/twrp/04-wipe.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/e400/screenshots/twrp/05-mount.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/e400/screenshots/twrp/06-settings.png[/IMG]
+
+[SIZE="4"][B]Source code[/B][/SIZE]
+
+[LIST]
+[*][URL="https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni/tree/twrp-4.4-deprecated"]Omni/TWRP 4.4 deprecated manifest[/URL]
+[*]LG E400 recovery device tree: device/lge/e400 in the TWRP tree
+[/LIST]
+
+[SIZE="4"][B]Device information[/B][/SIZE]
+
+[LIST]
+[*]Device: LG Optimus L3 E400
+[*]Codename: e0
+[*]SoC: Qualcomm MSM7x27A
+[*]Storage: eMMC
+[*]Stock Android: 2.3.x Gingerbread
+[*]Kernel: Linux 2.6.38.6-perf
+[/LIST]
+
+[SIZE="4"][B]Bug reports[/B][/SIZE]
+
+Include the exact model and stock firmware, what you did, and /tmp/recovery.log.
+
+[SIZE="4"][B]Changelog[/B][/SIZE]
+
+[B]2026-10-28 — 3.1.1-0.3[/B]
+
+[LIST]
+[*]ADB serial in recovery is now [B]LGOTMS[/B] followed by the serial number (for example LGOTMS4c662259), the same as in the ROM and in stock. Before, recovery showed the bare serial, so adb saw two different devices in one session. Done by init.recovery.e0.rc, which writes the USB iSerial once ro.serialno is set.
+[/LIST]
+
+[SIZE="4"][B]Credits[/B][/SIZE]
+
+[LIST]
+[*]TeamWin
+[*]OmniROM
+[*]LG for the original device software
+[*]chijure — device tree and hardware testing
+[*]All testers and contributors
+[/LIST]
