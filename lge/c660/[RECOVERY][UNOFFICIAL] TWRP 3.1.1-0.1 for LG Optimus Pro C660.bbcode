@@ -30,7 +30,10 @@ Tested on real hardware (LG-C660h):
 [*]Installing a ZIP with [B]adb sideload[/B]
 [*]USB mass storage of the microSD, including unmounting it from the phone
 [*]Flashing the image with flash_image and reading it back (identical)
-[*][B]Not tested by me:[/B] backup and restore of every partition, wipes, and the encrypted-backup options
+[*]Wipe data, cache and Dalvik cache, and installing a ZIP from the microSD with a script (OpenRecoveryScript)
+[*]Backup and restore of /system, /data and /boot: a file placed in /data came back after wiping /data and restoring, and the phone booted normally
+[*]Three recovery / system reboot cycles in a row without falling back into recovery or hanging
+[*][B]Not tested by me:[/B] backing up /cache, the encrypted-backup options and restoring on a different unit
 [/LIST]
 
 [SIZE="4"][B]Partition layout used[/B][/SIZE]
@@ -39,6 +42,7 @@ Tested on real hardware (LG-C660h):
 [*]/boot, /recovery, /misc: MTD
 [*]/system, /data, /cache: YAFFS2 on MTD
 [*]/sdcard: microSD, vfat (mmcblk0p1). The C660 has no internal storage and there is no /sd-ext
+[*]Backups go to /sdcard/TWRP/BACKUPS/0000000000000000/. The phone does not report a serial number (the kernel shows all zeros), so every C660 uses that folder name; keep backups of different phones apart yourself
 [/LIST]
 
 [SIZE="4"][B]Installation[/B][/SIZE]
