@@ -1,0 +1,119 @@
+[CENTER][SIZE="5"][B][RECOVERY][UNOFFICIAL] TWRP 3.1.1-0.1 for LG Optimus Pro C660[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost IMEI,
+ * or any other damage. Make a backup and verify your exact model before
+ * flashing. YOU are choosing to make these modifications.
+ */[/CODE]
+
+[B]About[/B]
+
+This is an unofficial TWRP 3.1.1-0.1 build for the [B]LG Optimus Pro C660 / C660h[/B] (muscat, Qualcomm MSM7227T, ARMv6, 240x320). It is built with the Omni 4.4 tree and runs on a trimmed 2.6.35 kernel, because the recovery partition of this phone is only [B]5 MB[/B] (MTD, 0x500000 bytes).
+
+[COLOR="Red"][B]Only flash this on the LG C660 / C660h. The recovery partition is mtd2; writing this image anywhere else can brick the phone.[/B][/COLOR]
+
+[SIZE="4"][B]Current status[/B][/SIZE]
+
+Build: [B]twrp-3.1.1-0.1-c660.img[/B] (4349952 bytes, fits in the 5242880-byte partition with about 0.9 MB to spare)
+MD5: [B]311221fd214daf78530c269837f8a4a5[/B]
+
+Tested on real hardware (LG-C660h):
+
+[LIST]
+[*]Boots to recovery, touchscreen works (240x320 watch theme)
+[*]ADB in recovery
+[*]The screen wakes up correctly after the screen timeout
+[*]Reboot to system (it does not fall back into recovery)
+[*]Installing a ZIP with [B]adb sideload[/B]
+[*]USB mass storage of the microSD, including unmounting it from the phone
+[*]Flashing the image with flash_image and reading it back (identical)
+[*][B]Not tested by me:[/B] backup and restore of every partition, wipes, and the encrypted-backup options
+[/LIST]
+
+[SIZE="4"][B]Partition layout used[/B][/SIZE]
+
+[LIST]
+[*]/boot, /recovery, /misc: MTD
+[*]/system, /data, /cache: YAFFS2 on MTD
+[*]/sdcard: microSD, vfat (mmcblk0p1). The C660 has no internal storage and there is no /sd-ext
+[/LIST]
+
+[SIZE="4"][B]Installation[/B][/SIZE]
+
+[B]Before starting:[/B] back up your current recovery and copy the backup away from the phone. You need root and ADB on the running system (CM7, or a rooted stock).
+
+[CODE]adb shell dump_image recovery /sdcard/recovery_backup.img
+adb pull /sdcard/recovery_backup.img
+adb push twrp-3.1.1-0.1-c660.img /data/local/tmp/r.img
+adb shell md5sum /data/local/tmp/r.img
+adb shell flash_image recovery /data/local/tmp/r.img
+adb shell dump_image recovery /data/local/tmp/rb.img
+adb reboot recovery[/CODE]
+
+The md5sum must match the one above before you write the partition. The read-back file (rb.img) is the whole 5 MB partition; its first 4349952 bytes must be identical to the image.
+
+To go back, write your backup to the same partition with flash_image.
+
+[SIZE="4"][B]Entering recovery[/B][/SIZE]
+
+[LIST]
+[*]From Android: [CODE]adb reboot recovery[/CODE]
+[*]With the phone off: hold [B]Volume Down + Home + Power[/B]
+[/LIST]
+
+[SIZE="4"][B]Download[/B][/SIZE]
+
+[LIST]
+[*][URL="TODO-DOWNLOAD-LINK"]twrp-3.1.1-0.1-c660.img[/URL] — 4349952 bytes
+[*]MD5: [CODE]311221fd214daf78530c269837f8a4a5[/CODE]
+[/LIST]
+
+[COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download without permission.[/CENTER][/SIZE][/COLOR]
+
+[SIZE="4"][B]Screenshots[/B][/SIZE]
+
+[IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/c660/screenshots/twrp/01-main.png[/IMG]
+
+[SIZE="4"][B]Known limitations[/B][/SIZE]
+
+[LIST]
+[*][B]No MTP.[/B] The recovery kernel is trimmed to fit the partition and the 2.6.35 gadget is the legacy LG one. Use USB mass storage (Mount menu), adb push or adb sideload instead.
+[*][B]No internal storage.[/B] Everything you flash or back up goes to the microSD.
+[*]The recovery has a small /sbin/sh (mksh) instead of busybox, so shell commands over adb are limited.
+[/LIST]
+
+[SIZE="4"][B]What is different from other attempts[/B][/SIZE]
+
+[LIST]
+[*]The KitKat adbd does not work on this kernel (legacy /dev/android_adb, no FunctionFS), so the recovery ships the Gingerbread adbd. That adbd also needs CONFIG_INET=y in the kernel, otherwise it exits and no adb interface appears at all.
+[*]LG's bootloader leaves a flag in the misc partition and TWRP cannot write the boot control block on MTD, so "Reboot to system" used to end in recovery again. A small init service erases misc at boot.
+[*]The command-mode LCD only refreshes on FBIOPAN_DISPLAY, so the screen showed a stale frame after the timeout. TW_FBIOPAN fixes it.
+[*]adb sideload needs FUSE, which is enabled in the recovery kernel.
+[/LIST]
+
+[SIZE="4"][B]Source code[/B][/SIZE]
+
+[LIST]
+[*][URL="https://github.com/chijure-android-system-development/android_device_lge_c660"]LG C660 device tree[/URL] (branch twrp-4.4; the README has the build steps and the table of quirks)
+[/LIST]
+
+[SIZE="4"][B]Bug reports[/B][/SIZE]
+
+Please include:
+
+[LIST]
+[*]Exact phone model (C660 or C660h) and original firmware version
+[*]Recovery you had before
+[*]Steps required to reproduce the problem
+[*]/tmp/recovery.log (adb pull /tmp/recovery.log)
+[/LIST]
+
+[SIZE="4"][B]Changelog[/B][/SIZE]
+
+[B]3.1.1-0.1[/B]
+[LIST]
+[*]First public build: adb, touch, wake-up fix, reboot to system, USB mass storage, adb sideload, bu, FAT tools and pigz included
+[/LIST]

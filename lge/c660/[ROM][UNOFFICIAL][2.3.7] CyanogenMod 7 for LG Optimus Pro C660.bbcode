@@ -1,0 +1,136 @@
+[CENTER][SIZE="5"][B][ROM][UNOFFICIAL][2.3.7] CyanogenMod 7 for LG Optimus Pro C660[/B][/SIZE][/CENTER]
+
+[CODE]#include <std_disclaimer.h>
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards, lost IMEI,
+ * or any other damage. Make a backup and verify your exact model before
+ * flashing. YOU are choosing to make these modifications.
+ */[/CODE]
+
+[B]About[/B]
+
+This is an unofficial CyanogenMod 7 (Android 2.3.7 Gingerbread) build for the [B]LG Optimus Pro C660 / C660h[/B] (muscat, Qualcomm MSM7227T, ARMv6, 240x320). It is built from the CyanogenMod 7 sources with the C660 device tree adjusted to build cleanly today and a rebuilt 2.6.35 kernel.
+
+[COLOR="Red"][B]Beta build, tested on a single unit. Read the status list before flashing. MMS does not work, and the speaker/earpiece were silent on my unit (see below).[/B][/COLOR]
+
+[SIZE="4"][B]Current status — Beta[/B][/SIZE]
+
+Build: [B]cm-7-20261110-UNOFFICIAL-c660.zip[/B]
+Kernel: 2.6.35.10-cyanogenmod
+Size: 85158211 bytes (81.2 MB)
+MD5: [B]8a7c8e4bd10b82a755a98160c6ccf3cc[/B]
+
+[SIZE="4"][B]What's working[/B][/SIZE]
+
+[LIST]
+[*][B]Basics:[/B] boot, reboot, power off, sleep and wake, launcher
+[*][B]Display / GPU:[/B] hardware compositing (SurfaceFlinger), 3D gallery
+[*][B]Keyboard:[/B] the physical QWERTY keyboard, with the ghost-key filter in the kernel driver
+[*][B]Sensors:[/B] accelerometer and compass with real data
+[*][B]Wi-Fi:[/B] scan, connect, browse
+[*][B]Bluetooth:[/B] works, device discovery is stable
+[*][B]Camera:[/B] preview and photos up to 2048x1536 with correct colours, and video recording with correct colours
+[*][B]FM radio:[/B] works
+[*][B]SIM / mobile network:[/B] with a working SIM (tested with Movistar Peru) Android reads it, registers on HSDPA and mobile data works; outgoing calls connect and SMS can be sent and received
+[*][B]Wi-Fi hotspot / tethering:[/B] a second phone connected to the hotspot and browsed over the mobile data
+[*][B]Audio:[/B] headphone output (MP3 and FM radio) and voice calls through a wired headset, in both directions
+[*][B]Charging with the phone off:[/B] charger animation without flicker
+[/LIST]
+
+[SIZE="4"][B]Partly done / untested[/B][/SIZE]
+
+[LIST]
+[*][B]Network-locked SIMs:[/B] if the SIM is locked to another operator (it was on one of mine), Android reports it as "network locked" and asks for the unlock code instead of showing a silent "no service"
+[*][B]Clock:[/B] the modem only returns a wrong date, so the time must be set by hand until a network gives NITZ
+[*][B]GPS:[/B] one session, no fix; it probably needs mobile data
+[*][B]Loudspeaker and earpiece:[/B] on my unit they were silent even though the audio HAL routes them without errors, so I believe it is that unit's hardware (not tested with the stock ROM). Please report how yours behaves.
+[*][B]A2DP and HFP:[/B] not tested
+[/LIST]
+
+[SIZE="4"][B]Known issues[/B][/SIZE]
+
+[LIST]
+[*]The first boot takes around 30 seconds to reach the launcher. That is normal on this phone: the CPU is locked to the performance governor at 800 MHz, and it must stay that way (the charger animation depends on it).
+[*]Waking the screen takes about 0.4 s: the Ilitek panel needs its full init on every wake.
+[*][B]MMS does not work.[/B] Movistar Peru no longer seems to provide MMS, so I could not test it with a valid APN.
+[*]Some extra SMD channels (DATA8/9/12/13/14) fail to open in the radio log. It is modem noise, harmless.
+[/LIST]
+
+[SIZE="4"][B]Download[/B][/SIZE]
+
+[LIST]
+[*][URL="TODO-DOWNLOAD-LINK"]cm-7-20261110-UNOFFICIAL-c660.zip[/URL]
+[*]MD5: [CODE]8a7c8e4bd10b82a755a98160c6ccf3cc[/CODE]
+[*][URL="TODO-TWRP-THREAD"]TWRP 3.1.1-0.1 for LG Optimus Pro C660[/URL] (thread with download and flashing instructions)
+[/LIST]
+
+[SIZE="4"][B]Installation[/B][/SIZE]
+
+[COLOR="Red"][B]Back up everything first (at least /data and the boot partition). Make sure the phone is a C660 / C660h.[/B][/COLOR]
+
+[LIST=1]
+[*]Install a custom recovery: [URL="TODO-TWRP-THREAD"]TWRP for the C660[/URL] (the stock-style CWM 5.0.2.7 also works).
+[*]Copy the ROM ZIP to the microSD (the C660 has no internal storage) or use adb sideload from TWRP.
+[*]Boot into recovery (Volume Down + Home + Power) and make a backup.
+[*]Wipe data/factory reset, cache and Dalvik cache (needed the first time you come from stock).
+[*]Install the ZIP, wipe cache and Dalvik cache again and reboot. The first boot takes about a minute.
+[/LIST]
+
+[COLOR="Red"][SIZE="5"][CENTER]Do not mirror the download without permission.[/CENTER][/SIZE][/COLOR]
+
+[SIZE="4"][B]Screenshots[/B][/SIZE]
+
+[IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/c660/screenshots/cm7/01-home.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/c660/screenshots/cm7/02-about.png[/IMG]
+[IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/c660/screenshots/cm7/03-about-version.png[/IMG] [IMG]https://raw.githubusercontent.com/chijure/xda-posts/master/lge/c660/screenshots/cm7/04-cyanogenmod-settings.png[/IMG]
+
+[SIZE="4"][B]What is different from other attempts[/B][/SIZE]
+
+[LIST]
+[*]The stock LG RIL blobs are used as they are; the framework only needed one extra case to understand a network-locked SIM (a one-line change in QualcommNoSimReadyRIL plus a Phone overlay).
+[*]The camera preview needed a chroma swap in the camera service to show the right colours, and the video path was checked separately.
+[*]The kernel is rebuilt with fixes for the "ANDROID_" console cursor, the charger-logo flicker and the keyboard ghost key.
+[*]A small framework patch fixes the Bluetooth "Invalid discovery session" error that appeared when a scan ended.
+[/LIST]
+
+[SIZE="4"][B]Notes for developers[/B][/SIZE]
+
+[LIST]
+[*]The stock libril returns a 340-byte card status with GSM and CDMA subscription index lists, not the Gingerbread struct.
+[*]The network-lock state shows up as app state SUBSCRIPTION_PERSO with perso substate SIM_NETWORK; QualcommNoSimReadyRIL did not handle it, so the SIM state stayed UNKNOWN.
+[*]The recovery partition is only 5 MB, so a full TWRP does not fit with the stock recovery kernel; the TWRP thread explains the trimmed kernel.
+[/LIST]
+
+[SIZE="4"][B]Source code[/B][/SIZE]
+
+[LIST]
+[*][URL="https://github.com/chijure-android-system-development/android_device_lge_c660"]LG C660 device tree[/URL] (branch gingerbread)
+[/LIST]
+
+[SIZE="4"][B]Bug reports[/B][/SIZE]
+
+Please include:
+
+[LIST]
+[*]Exact phone model (C660 or C660h) and original firmware version
+[*]Clean flash or update from an older build
+[*]Recovery version used
+[*]Steps required to reproduce the problem
+[*]Relevant logcat (for telephony, adb logcat -b radio) and dmesg
+[/LIST]
+
+[SIZE="4"][B]Changelog[/B][/SIZE]
+
+[B]2026-11-10[/B]
+[LIST]
+[*]Clean build tested on the phone after a full wipe
+[*]Movistar Peru APN included; tethering can use the mobile data interface (rmnet)
+[*]The Wi-Fi scan fallback of an earlier build was removed; Wi-Fi scan and connect work without it
+[*]CMStats and CMUpdateNotify were removed (their CyanogenMod servers no longer serve CM7), together with their entries in CMParts
+[/LIST]
+
+[B]First public build[/B]
+[LIST]
+[*]Initial release
+[/LIST]
